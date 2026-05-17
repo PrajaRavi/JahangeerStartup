@@ -1,6 +1,6 @@
 import express from "express"
 import { protect } from "../Middlewares/AuthMiddleware.js";
-import {GetLastMessageOfParticipents, GetMessagesOfPartcipants, StoreLastMsgIdOfParticipants} from "../Controllers/conversation.controller.js"
+import {GetLastMessageOfParticipents, GetMessagesOfPartcipants, StoreLastMsgIdOfConversation, StoreLastMsgIdOfParticipants} from "../Controllers/conversation.controller.js"
 export const ConvrsationRoute=express.Router();
 
 ConvrsationRoute.get("/msg-of-participents",protect,GetMessagesOfPartcipants)
@@ -17,8 +17,11 @@ ConvrsationRoute.get("/last-msg-of-participents",protect,GetLastMessageOfPartici
     //? return resp.status(200).send({success: false,msg: [],text: "no  content bhai",senderid,reciverid}); else
 
 
-  ConvrsationRoute.post("/update-user-lastmsgId",protect,StoreLastMsgIdOfParticipants)//
+  ConvrsationRoute.post("/update-user-lastmsgId",protect,StoreLastMsgIdOfParticipants)
   //? let {userId,msgid,conversationId}=req.body;
   //? if(data) return resp.status(200).send({success:true,msg:"successfully updated!!!!"})   
    
+ConvrsationRoute.put("/store-conversation-last-msg-id",protect,StoreLastMsgIdOfConversation)
+    //? let {msgid,conversationId}=req.body;
+
 

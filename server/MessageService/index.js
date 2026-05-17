@@ -130,16 +130,64 @@ async function StoreMesageInDB(senderID, reciverID, text, time,ConversationID) {
   }
 }
 
-app.post("/ravi", async (req, resp) => {
+app.get("/ravi", async (req, resp) => {
   try {
-    let {userId,msgid,conversationId}=req.body;
-if(!userId||!msgid||!conversationId) return resp.status(200).send({success:false,msg:"kuch aya hi nahi hahi bhai!!!"})
-let data = await ConversationModel.updateOne({
-       _id:conversationId, "participants.userID": userId
-      },{$set:{"participants.$.LastMsgID":msgid}});  
-  if(data) return resp.status(200).send({success:true,msg:"successfully updated!!!!"})   
-
+ let {userID}=req.query;
+ let ConversationID=null;
+if(!userID) return resp.status(200).send({success:false,msg:"Requrired data not found"})
+let ResultMap=new Map();//This will store senderId(key),(unseenmsg arr)(value)
+  // finding all the conversation document where the logedInUser is reciver
+ let data=await ConversationModel.find({"participants.1.userID":userID})
+ ConversationID=data[0]._id
+ if(data?.length>0){
+  //now find that participants where userID is equal to logedinuser 
+  let participants=[]
+   data?.map((covnersationdoc)=>{
+    covnersationdoc.participants.map((participant)=>{
+      if(participant.userID==userID){
+        participants.push(participant)
+      }
       
+    })
+   })
+   console.log(participants)
+   let PromiseResult=await Promise.all(participants.map(async (item)=>{
+let UnSeenMsgs=await MsgModel.find({ConversationID,_id:{$gt:item.LastMsgID}})
+let ArrayOfMsgIDS=UnSeenMsgs.map((item)=>{
+  return item._id;
+})
+
+
+if(UnSeenMsgs.length>0){
+  let AlreadyExist=ResultMap.get(item.userID);
+  if(AlreadyExist){
+    AlreadyExist.push(ArrayOfMsgIDS)
+
+  }else{
+    ResultMap.set(item.userID,ArrayOfMsgIDS)
+  }
+}
+   }))
+   
+   console.log(ResultMap)
+   if(Number(ResultMap.size)>1){
+     return resp.status(200).send({success:true,msg:data})
+    }
+    else{
+      return resp.status(200).send({success:true,msg:[]})
+
+    }
+
+     
+
+
+  }
+
+
+
+
+
+
   } catch (error) {
     console.log(error);
     return resp
@@ -166,6 +214,7 @@ io.on("connection", async (socket) => {
     socket.on("send-message", async ({ roomid, msg,GroupID,profilePicture }) => {
       // await CheckConversationBwTwoUser(msg?.senderID, msg?.reciverID, msgid);
       let ConversationID=await CheckConversationBwTwoUser(msg);//overall it will return the createdConversationID
+      //This function is creating conversation if it not exist and then returning it's _id and if it already exist then also it is returning it's _id
 
       //!Important
       // !handling messagestore when the lastmsgid of everuser is null(basically first time conversation document is created)
@@ -222,6 +271,7 @@ io.on("connection", async (socket) => {
     text: msg.text,
     status: "deliverd",
     time: msg.time,
+    ConversationID,
   });
 }
 
@@ -229,7 +279,7 @@ io.on("connection", async (socket) => {
       console.log("roomid")
 
       if (msg?.senderID !== msg?.reciverID) {
-        socket.to(roomid).emit("recive-message", { roomid, msg, msgid ,profilePicture,GroupID}); //this msg contains _id(nanoid) and this msgid is mongodb id of the message
+        socket.to(roomid).emit("recive-message", { roomid, msg, msgid ,profilePicture,GroupID,ConversationID}); //this msg contains _id(nanoid) and this msgid is mongodb id of the message
       } else {
         // self message(message yourself)
         try {

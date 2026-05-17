@@ -1,0 +1,5 @@
+let map=new Map()
+map.set("helllo",0)
+map.set("helllo1",10)
+map.set("helllo12",1220)
+console.log(map.size)

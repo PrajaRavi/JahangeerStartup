@@ -101,7 +101,7 @@ export default function Hero() {
   };
 
   let [AllUsersUnSeenMsg, setAllUsersUnseenMsg] = useState<
-    Map<string, number>
+    Map<string, string[]>
   >(new Map()); //This map is storing all the unseen messages of diffrent senders when user is online/offline but activeuser is !=that user which is sending the message Map<senderId,[messageids]>
 
   let [SelectedSideBar, setSelectedSideBar] = useState<string>(myobject[0]);
@@ -132,8 +132,7 @@ export default function Hero() {
             newdata.set(String(item[0]),item[1])
           }
         }
-        console.log(newdata)
-        setAllUsersUnseenMsg(new Map([...AllUsersUnSeenMsg,...newdata]))
+      setAllUsersUnseenMsg(new Map([...AllUsersUnSeenMsg,...newdata]))
         
       }
     } catch (error) {
@@ -165,25 +164,21 @@ export default function Hero() {
     }
   }
   async function GetUnseenMsgFromDB(reciverID: string) {
-    //This for chat of two users
+    //This for chat of two users 
     try {
       let { data } = await axios.get(
-        `http://localhost:7000/conversation/unsees-msg-of-participents?reciverID=${reciverID}`,
+        `http://localhost:7000/message/unseen-messages-of-conversation?userID=${String(localStorage.getItem(LocalStorageLogedinuserId))}`,
         { withCredentials: true },
       );
+      console.log(data);
       if (data.success) {
         if (data?.msg?.length > 0) {
-          let newmap = new Map();
-          for (let item of data?.msg) {
-            console.log(item);
-            newmap.set(item?.senderID, item?.messages);
-          }
-          console.log("hi hi hi ");
-          setAllUsersUnseenMsg(newmap);
+            let resultMap:Map<string,string[]>=new Map(data?.msg)
+            
+            setAllUsersUnseenMsg(resultMap);
         } else {
           console.log("empty data kuch aya hi nahi hai!!!");
         }
-        console.log(data);
       }
     } catch (error) {
       console.log(error);
@@ -234,6 +229,18 @@ export default function Hero() {
   useEffect(() => {
     GroupDataRef.current = GroupData;
   }, [GroupData]);
+  
+  
+  async function UpdateUserLastMsgIdInConversation(msgid:string,conversationId:string|null){
+    try {
+      let {data}=await axios.post(`http://localhost:7000/conversation/update-user-lastmsgId`,{userId:localStorage.getItem(LocalStorageLogedinuserId),msgid,conversationId},{withCredentials:true})
+      if(data.success){
+        console.log(data?.msg)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   useEffect(() => {
     socket.on("connect", () => {
       socket.on("reciver-ne-message-seen-kar-liya-hai", (data: any) => {
@@ -270,6 +277,11 @@ export default function Hero() {
              */
 
           if (data1.msg.senderID === localStorage.getItem("ActiveUser")) {
+            // !If the reciver is online and also it is opened the same chat i have to update it's lastmsgid in the conversation document
+            if(data1?.ConversationID){
+UpdateUserLastMsgIdInConversation(data1?.msgid,data1?.ConversationID)
+            }
+
             reciverAudio.play();
             // now this MsgNanoId is the MsgMongodbId
             socket.emit("message-seen-ho-gaya", {
@@ -283,22 +295,24 @@ export default function Hero() {
               console.log(oldData);
               console.log(AllUsersUnSeenMsg)
               // console.log(data1.msgid);
+              
               StoreUnseenMsginDB(
                 data1?.msg?.senderID,
                 data1?.msg?.reciverID,
                 data1?.msgid,
               );
-              let newMap:Map<string,number>=new Map()
               if (oldData) {
-                newMap.set(data1?.msg?.senderID,oldData+1)
-              } else {
-                newMap.set(data1?.msg?.senderID, 1);
+                oldData.push(data1?.msgid)
+                } else {
+                AllUsersUnSeenMsg.set(data1?.msg.senderID,[data1?.msgid])
               }
-              setAllUsersUnseenMsg(new Map([...AllUsersUnSeenMsg,...newMap]))
+              /**
+               * 
               socket.emit(
                 "store-all-unseenmsg-id",
                 Array.from(AllUsersUnSeenMsg),
               );
+              */
             } else {
               if (localStorage.getItem("ActiveUser") === data1?.GroupID) {
                 //it means that reciver ne group hi open kiya hua hai
@@ -408,13 +422,20 @@ export default function Hero() {
 
     if (IfActiveUserExistOrNotInAllUsersUnSeenMsg != undefined) {
       if (ShowGroupOrChat == "chat") {
-        // 1.updating all the unseen messages seen=true
+        //! 1.updating all the unseen messages seen=true
         UpdateUnseenMsgToSeen(IfActiveUserExistOrNotInAllUsersUnSeenMsg);
-        // 2.removing this Activeuser from AlluserUnSennMsg Map in clientside as well as serverside
-        AllUsersUnSeenMsg.delete(ActiveUser._id);
-        // 3.Update the UnseenMsg collection in DB make the respective Activeuser._id=senderID and logedinuser._id=reciverID messages=[] or delte
-        UpdateUnseenMsgCollection(ActiveUser._id, user._id);
+        let msgid=IfActiveUserExistOrNotInAllUsersUnSeenMsg.pop();
+
+        
+        //! 2.Update the lastMsgId of the LogedInUser in Conversation collection 
         // 4.Emit an event such that sender can know that reciver ne uska message dekh liya(means update the messages array on the sender side)(not for group messages)
+        console.log(IfActiveUserExistOrNotInAllUsersUnSeenMsg)
+        console.log(AllUsersUnSeenMsg)
+        
+        UpdateUserLastMsgIdInConversation(String(msgid),null)
+        IfActiveUserExistOrNotInAllUsersUnSeenMsg.push(String(msgid))
+        //! 3.removing this Activeuser from AlluserUnSennMsg Map in clientside as well as serverside
+        AllUsersUnSeenMsg.delete(ActiveUser._id);
         socket.emit("unseen-msg-ko-reciver-ne-seen-kar-liya", {
           data: IfActiveUserExistOrNotInAllUsersUnSeenMsg,
           roomid: Onlineuser.get(ActiveUser._id),

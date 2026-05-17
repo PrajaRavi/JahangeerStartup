@@ -54,8 +54,8 @@ export const GetMessagesOfPartcipants = async (req, resp, next) => {
       });
       if (data.length > 0) {
         if (page == 1) {
-          let data = await MsgModel.find({ ConversationID: data[0]._id });
-          totalpage = data[0].length;
+          let mydata = await MsgModel.find({ ConversationID: data[0]._id });
+          totalpage = mydata[0].length;
         }
 
         //! 2. then i have to use this conversationID to fetch all the messages
@@ -101,7 +101,7 @@ export const GetLastMessageOfParticipents = async (req, resp) => {
       if (data.length > 0) {
         return resp
           .status(200)
-          .send({ success: true, msg: data, senderid, reciverid });
+          .send({ success: true, msg: data[0].LastMsgID, senderid, reciverid });
       } else {
         return resp
           .status(200)
@@ -148,7 +148,11 @@ export const GetLastMessageOfParticipents = async (req, resp) => {
 export const StoreLastMsgIdOfParticipants=async (req,resp)=>{
 try {
     let {userId,msgid,conversationId}=req.body;
-if(!userId||!msgid||!conversationId) return resp.status(200).send({success:false,msg:"kuch aya hi nahi hahi bhai!!!"})
+    if(!conversationId){
+      let data=await MsgModel.find({_id:msgid})
+      conversationId=data[0].ConversationID;
+    }
+  if(!userId||!msgid) return resp.status(200).send({success:false,msg:"kuch aya hi nahi hahi bhai!!!"})
 let data = await ConversationModel.updateOne({
        _id:conversationId, "participants.userID": userId
       },{$set:{"participants.$.LastMsgID":msgid}});  
@@ -163,3 +167,20 @@ let data = await ConversationModel.updateOne({
   }  
 }
 
+export const StoreLastMsgIdOfConversation=async(req,resp)=>{
+  try {
+    let {msgid,conversationId}=req.body;
+if(!msgid||!conversationId) return resp.status(200).send({success:false,msg:"kuch aya hi nahi hahi bhai!!!"})
+let data = await ConversationModel.updateOne({
+       _id:conversationId
+      },{$set:{LastMsgID:msgid}});  
+  if(data) return resp.status(200).send({success:true,msg:"successfully updated!!!!"})   
+
+      
+  } catch (error) {
+    console.log(error);
+    return resp
+      .status(500)
+      .send({ success: false, msg: "internal server error StoreLastMsgIdOfParticipants" });
+  }
+}

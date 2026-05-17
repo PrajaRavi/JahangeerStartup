@@ -14,7 +14,7 @@ import { MessageCircle, MessageSquare, Search } from "lucide-react";
 type PropsOfSideBar = {
   SelectedSideBar: string;
   setSelectedSideBar: React.Dispatch<React.SetStateAction<string>>;
-  AllUsersUnSeenMsg: Map<string, number>;
+  AllUsersUnSeenMsg: Map<string, string[]>;
   GroupData: GroupDataType[];
   setGroupData: React.Dispatch<React.SetStateAction<GroupDataType[]>>;
   GroupIdWithUnseenMsgCount:Map<string,number>;
@@ -161,13 +161,13 @@ export function Sidebar({
 
       if (data?.msg?.length > 0) {
         LastMsgAndSeenObj.set(data.reciverid, {
-          lastmsg: data?.msg[0]?.text,
-          lastseen: data?.msg[0]?.time,
+          lastmsg: data?.msg?.text,
+          lastseen: data?.msg?.time,
         });
       } else {
         LastMsgAndSeenObj.set(data.reciverid, {
-          lastmsg: data?.msg[0]?.text,
-          lastseen: data?.msg[0]?.time,
+          lastmsg: data?.msg?.text,
+          lastseen: data?.msg?.time,
         });
       }
     } catch (error) {
@@ -347,16 +347,16 @@ export function Sidebar({
             !Never call a function inside jsx it is wrong and inefficient
              */}
 
-                  {/* {ReturnCountOfUnseenMsg(user._id) == undefined ? (
+                  {AllUsersUnSeenMsg?.get(user._id) == undefined ? (
                     <p className="time font-semibold text-xs  absolute right-5">
                       {LogedInUser._id &&
                         (GetLastMsgOfChat(user._id)?.lastseen as ReactNode)}
                     </p>
                   ) : (
                     <p className="UnSeenMsgCount bg-green-600 w-5 h-5 flex items-center justify-center rounded-full text-black font-semibold text-xs  absolute right-5">
-                      {ReturnCountOfUnseenMsg(user._id)}
+                      {AllUsersUnSeenMsg.get(user._id)?.length}
                     </p>
-                  )} */}
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start flex-col">
                       <h3 className="font-medium truncate">

@@ -23,6 +23,18 @@ export function MessageInput() {
 
   const LogedInUser = useSelector((state: any) => state.Auth.user);
   const [text, setText] = useState("");
+
+  async function StoreLastMsgIdOfConversation(msgid:string,conversationId:string){
+    try {
+      let {data}=await axios.put(`http://localhost:7000/conversation/store-conversation-last-msg-id`,{msgid,conversationId},{withCredentials:true}) 
+      if(data.success){
+        console.log(data.msg)
+      }
+    } catch (error) {
+      console.log(error)
+      console.log("error in StoreLastMsgIdOfParticipants")
+    }
+  }
   function SendMessage() {
     if (text != "") {
       let myobj: messageType = {
@@ -55,6 +67,7 @@ export function MessageInput() {
           !->as well as they will open the group i will update their lastmsgid(which will be the lastmsg of the group)->so for that i have to store the lastmsgID of group
           !->now if they are offline again but this time their lastmsgid!=null(so i will fetch all the messages of that group)->and i will count all the messages which are after the lastmsgid of that member 
 */
+
           socket.emit("send-message", {
             roomid: CurrntlyOnlineUsers,
             msg: myobj,
@@ -141,12 +154,9 @@ export function MessageInput() {
     });
     socket.on("msg-status-is-deliverd", (data: any) => {
       console.log("deliverd");
-      // UpdateGroupMembersLastMsgID(
-      //   String(localStorage.getItem(LocalStorageLogedinuserId)),
-      //   ActiveUser._id,
-      //   data?._id,
-      // );
-
+      if(data?.ConversationID &&data?.ConversationID!=="" ){
+        StoreLastMsgIdOfConversation(data?._id,data?.ConversationID);
+      }
       console.log(ActiveUser._id, LogedInUser._id);
       console.log(ActiveUser._id === LogedInUser._id);
       if (ActiveUser._id === LogedInUser._id) {
