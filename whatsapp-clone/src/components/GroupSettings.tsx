@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SetAllUsers } from "../Redux/Slice/Auth.slice";
 import type { AppDispatch } from "../Redux/Stores/Store.files";
 import { GroupSettingObject } from "./Hero";
+import type { MembersOfGroup } from "../utils/Types";
 
 interface User {
   _id: string;
@@ -24,7 +25,7 @@ interface CreateGroupPayload {
   groupName: string;
   groupDescription: string;
   groupProfile: File | null;
-  members: User[];
+  members: MembersOfGroup[];
   settings: GroupSetting;
   admins:string[]
 }
@@ -144,7 +145,6 @@ const handleDeselectUser = (
       
      },[])
 async function HandleGroupUpdate(){
-  console.log(LogedInUser)
   if(data?.settings.includes(GroupSettingObject.onlyAdminsCanEditInfo) &&!data?.admins?.includes(LogedInUser._id)){
     return alert("Only admin can edit info")
   }
@@ -152,11 +152,34 @@ async function HandleGroupUpdate(){
     return item._id;
 
   })
+  
+  //! since in backend the members array is array of objects(userid,lastmsgid) so i have to fetch all members lastmsgid and then i have to create a new array and send it
+  //! also one thing if i added a new members then it lastmsgid will be equal to lastmsgId of group
+  
+  // ?This  members array contains the recent selected users
+  // ?The members inside data contains all the real members
+  let FormatedMembers:MembersOfGroup[]=[]
+  members.map((userid:string)=>{
+    for (let member of data?.members){
+      if(member.userID==userid){
+        FormatedMembers.push({userID:userid,LastMsgID:member.LastMsgID} as MembersOfGroup)
+        return;
+      }
+    }
+        
+    FormatedMembers.push({userID:userid,LastMsgID:null})
+  })
+    
+
+
+    
+
+    
   let formdata=new FormData();
   formdata.append("userId",data._id)
   formdata.append("groupName",groupName)
   formdata.append("groupDescription",groupDescription)
-  formdata.append("members",JSON.stringify(members))
+  formdata.append("members",JSON.stringify(FormatedMembers))
   formdata.append("groupSettings",JSON.stringify(settings))
   formdata.append("GroupProfile",groupProfile)
   try {

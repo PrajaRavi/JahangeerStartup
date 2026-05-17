@@ -126,13 +126,15 @@ export default function Hero() {
       );
       if (data.success) {
         console.log(data);
-        let newdata = new Map();
-        for(let item of data?.msg){
-          if(item[1]!==0){
-            newdata.set(String(item[0]),item[1])
-          }
-        }
-      setAllUsersUnseenMsg(new Map([...AllUsersUnSeenMsg,...newdata]))
+        if(data?.msg?.length>0){
+          let newMap:Map<string,string[]>=new Map()
+            for (let item of data?.msg){
+              if(item[1]?.length>0){
+                AllUsersUnSeenMsg.set(item[0],item[1])
+              }
+            }
+              
+            }
         
       }
     } catch (error) {
@@ -338,13 +340,12 @@ UpdateUserLastMsgIdInConversation(data1?.msgid,data1?.ConversationID)
                     data1?.GroupID,
                     data1?.msgid,
                   );
+               
                   if (oldData) {
-                    // console.log(AllUsersUnSeenMsg);
-                    // oldData.push(data1?.msgid);
-                    AllUsersUnSeenMsg.set(data1?.GroupID,oldData+1)
-                  } else {
-                    AllUsersUnSeenMsg.set(data1?.GroupID, 1);
-                  }
+                oldData.push(data1?.msgid)
+                } else {
+                AllUsersUnSeenMsg.set(data1?.GroupID,[data1?.msgid])
+              }
                   socket.emit(
                     "store-all-unseenmsg-id",
                     Array.from(AllUsersUnSeenMsg),
@@ -433,7 +434,7 @@ UpdateUserLastMsgIdInConversation(data1?.msgid,data1?.ConversationID)
         console.log(AllUsersUnSeenMsg)
         
         UpdateUserLastMsgIdInConversation(String(msgid),null)
-        IfActiveUserExistOrNotInAllUsersUnSeenMsg.push(String(msgid))
+        // IfActiveUserExistOrNotInAllUsersUnSeenMsg.push(String(msgid))
         //! 3.removing this Activeuser from AlluserUnSennMsg Map in clientside as well as serverside
         AllUsersUnSeenMsg.delete(ActiveUser._id);
         socket.emit("unseen-msg-ko-reciver-ne-seen-kar-liya", {

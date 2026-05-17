@@ -181,9 +181,10 @@ export const UpdateGroupWithID=async (req,resp)=>{
       members,
       groupSettings,
 }=req.body;
-
+members=JSON.parse(members);
+groupSettings=JSON.parse(groupSettings)
     if(!userId) return resp.send({success:false,msg:"nothing"})
-      let data=await Group.updateOne({_id:userId},{$set:{groupName,groupDescription,members:JSON.parse(members),groupSettings:JSON.parse(groupSettings),groupProfileImage:req.file.filename||"Unknown file"}})
+      let data=await Group.updateOne({_id:userId},{$set:{groupName,groupDescription,members,groupSettings,groupProfileImage:req.file.filename||"Unknown file"}})
     
     if(data){
       return resp.status(200).send({success:true,msg:"updated bhaiya!!!!!"})
@@ -252,7 +253,10 @@ let data=await Promise.all(GroupIDArray.map(async (GroupID)=>{
       console.log("if")
       // This filtering is for members who lasgMsgId is not null
       let groupmessages=await MsgModel.find({GroupID:GroupID,_id:{$gt:lastmsgId}})
-      response.set(GroupID,groupmessages?.length)
+      let MsgIds=groupmessages.map((item)=>{
+        return item._id;
+      })
+      response.set(GroupID,MsgIds)
       
     }
     else{
@@ -260,7 +264,10 @@ let data=await Promise.all(GroupIDArray.map(async (GroupID)=>{
       // Now if the lastMsgId is  null
 
       let groupmessages=await MsgModel.find({GroupID:GroupID})
-    response.set(GroupID,groupmessages?.length)
+      let MsgIds=groupmessages.map((item)=>{
+        return item._id;
+      })
+    response.set(GroupID,MsgIds)
 
     }
   }

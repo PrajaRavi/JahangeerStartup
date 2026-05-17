@@ -76,6 +76,7 @@ const groupSchema = new mongoose.Schema(
     LastMsgID:{
           type:mongoose.Schema.Types.ObjectId,
           ref: "Message",
+          default:null,
         },
 
     /*

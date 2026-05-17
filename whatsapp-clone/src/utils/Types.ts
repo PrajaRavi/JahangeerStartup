@@ -4,10 +4,16 @@ export type GroupDataType = {
   groupDescription: string;
   groupProfileImage: string;
   groupSettings: string[];
-  members: string[];
+  members: MembersOfGroup[];
   admins: string[];
+  LastMsgID:string|null;
+  
   createdBy: string;
 };
+export type MembersOfGroup={
+  userID:string;
+  LastMsgID:string|null;
+}
 
 export type LastMsgAndSeenObjType = {
     lastmsg: string;

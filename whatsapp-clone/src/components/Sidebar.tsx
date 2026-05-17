@@ -108,10 +108,7 @@ export function Sidebar({
             CheckIfUserExistInMembers(
               item?.members,
               String(localStorage.getItem(LocalStorageLogedinuserId)),
-            ) ||
-            item?.admins.includes(
-              String(localStorage.getItem(LocalStorageLogedinuserId)),
-            )
+            ) 
           );
         });
         console.log(GroupData);
@@ -193,6 +190,9 @@ export function Sidebar({
     }
   }
 
+  useEffect(()=>{
+console.log(AllUsersUnSeenMsg)
+  },[AllUsersUnSeenMsg])
   
   useEffect(() => {
     if (ShowGroupOrChat == "group") {
@@ -271,7 +271,9 @@ export function Sidebar({
         <div className="p-4 border-b w-full gap-3 flex items-center justify-between">
           <h2 className="font-semibold text-lg">Chats</h2>
           {ShowSearchBox == false ? (
-            <button title="button" onClick={() => setShowSearchBox(true)}>
+            <button title="button" onClick={() => {setShowSearchBox(true)
+              console.log(ActiveUser)
+            }}>
               <Search className="w-5 h-5 text-gray-600" />
             </button>
           ) : (
@@ -450,6 +452,8 @@ export function Sidebar({
                           members: group.members,
                           settings: group.groupSettings,
                           admins: group.admins,
+                          LastMsgID:group.LastMsgID
+                          
                         }),
                       );
                       dispatch(SetShowChatOrGroup("group"));
@@ -467,7 +471,7 @@ export function Sidebar({
                       alt={group.groupName}
                       className="w-12 h-12 rounded-full object-cover"
                     />
-                    {!AllUsersUnSeenMsg.get(group._id)? (
+                    {AllUsersUnSeenMsg.get(group._id)===undefined||AllUsersUnSeenMsg.get(group._id)?.length===0? (
                       <p className="time font-semibold text-xs  absolute right-5">
                         {LastMsgAndSeenObj.get(group._id)?.lastseen}
                       </p>
@@ -476,7 +480,7 @@ export function Sidebar({
                         
                         className="UnSeenMsgCount bg-green-600 w-5 h-5 flex items-center justify-center rounded-full text-black font-semibold text-xs  absolute right-5"
                       >
-                        {AllUsersUnSeenMsg.get(group._id)}
+                        {AllUsersUnSeenMsg.get(group._id)?.length}
                       </p>
                     )}
                     <div className="flex-1 min-w-0">
