@@ -2,10 +2,10 @@ import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { SocketContext } from "../context/socket.context";
 import type { SignupFormData } from "../Redux/Slice/Auth.slice";
-import type { memberObject } from "../utils/Types";
+import { GroupOptions, type memberObject } from "../utils/Types";
 import { LocalStorageLogedinuserId } from "../utils/Dotenv";
 import GroupSettings from "./GroupSettings";
-import Modal from "../utils/Modal.util";
+import Modal, { type Options } from "../utils/Modal.util";
 import { MoreVertical } from "lucide-react";
 import CreateGroupPage from "./GroupCreation";
 import axios from "axios";
@@ -23,6 +23,7 @@ export function ChatHeader() {
   let [ShowOptions, setShowOptions] = useState<boolean>(false);
   let [SelectedOption, setSelectedOption] = useState<string>("");
   let { Onlineuser } = useContext(SocketContext);
+  let [ModalOptions,setModalOptions]=useState<Options[]>([])
   let [FilterdUsers, setFilterdUsers] = useState<SignupFormData[]>([]); //This contains alluserdata except the logedinuser
   useEffect(() => {
     socket.on("typing-acknowledgement", (data: string) => {
@@ -51,6 +52,20 @@ export function ChatHeader() {
   }
 
   useEffect(() => {
+    setModalOptions([{label:GroupOptions.newgroup,onClick:(e)=>{
+      setShowOptions(false);
+                setSelectedOption(String(e.target.title).toLowerCase());
+                if (String(e.target.title).toLowerCase() == "new group") {
+                } else if (
+                  String(e.target.title).toLowerCase() == "new community"
+                ) {
+                }
+    }},{label:GroupOptions.newcommu,onClick:()=>{}},{label:GroupOptions.settings,onClick:()=>{
+      setShowOptions(false);
+      setShowGroupSettingPage(true);
+    }}])
+
+       
     if (user._id !== "") {
       let newdata = AllUserData.filter((item: SignupFormData) => {
         return item._id != user._id;
@@ -107,12 +122,9 @@ export function ChatHeader() {
             <Modal
               top={"60px"}
               right={"30px"}
-              settingclick={() => {
-                setShowOptions(false);
-
-                setShowGroupSettingPage(true);
-              }}
-              options={["New Group", "New Community", "settings"]}
+              position="fixed"
+              
+              options={ModalOptions}
             />
           ) : (
             false
@@ -193,20 +205,11 @@ export function ChatHeader() {
         <div className="p-4 border-b bg-white flex items-center justify-between">
           {ShowOptions ? (
             <Modal
-              groupclick={(e) => {
-                // alert("group clicked")
-                console.log(e.target.title);
-                setShowOptions(false);
-                setSelectedOption(String(e.target.title).toLowerCase());
-                if (String(e.target.title).toLowerCase() == "new group") {
-                } else if (
-                  String(e.target.title).toLowerCase() == "new community"
-                ) {
-                }
-              }}
+            
+              position="fixed"
               top={"60px"}
               right={"30px"}
-              options={["New Group", "New Community"]}
+              options={ModalOptions}
             />
           ) : (
             false
@@ -245,9 +248,10 @@ export function ChatHeader() {
         <div className="p-4 border-b bg-white flex items-center justify-between">
           {ShowOptions ? (
             <Modal
+            position="fixed"
               top={"60px"}
               right={"30px"}
-              options={["New Group", "New Community"]}
+              options={ModalOptions}
             />
           ) : (
             false

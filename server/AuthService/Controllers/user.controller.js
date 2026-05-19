@@ -443,3 +443,30 @@ export const StoreSocketId=async(req,resp)=>{
   }
 }
 
+
+export const UpdatewhoCanSee=async(req,resp)=>{
+ try {
+  let {whoCanSee}=req.body;
+  if(!whoCanSee ||whoCanSee?.length==0) return resp.status(200).send({success:false,msg:"nothing kuch aya hi nahi!!!"})
+  whoCanSee=JSON.parse(whoCanSee); 
+  let data=await UserModel.updateOne({_id:req.user.id},{$set:{whoCanSee}});
+  if(data) return resp.status(200).send({success:true,msg:"updated successfully!!!"})
+    
+  } catch (error) {
+    console.log(error)
+    return resp.status(500).send({success:false,msg:"Internal server error"})
+  }
+} 
+
+export const GetAllWhoCanSeeUsers=async(req,resp)=>{
+  try {
+    let data=await UserModel.find({_id:req.user.id}).populate({path:"whoCanSee"})
+    console.log(data)
+    if(data[0].whoCanSee.length>0) return resp.status(200).send({success:true,msg:data[0].whoCanSee})
+      return resp.status(200).send({success:false,msg:[]})
+  } catch (error) {
+    console.log(error)
+    return resp.status(500).send({success:false,msg:"Internal server error"})
+    
+  }
+}

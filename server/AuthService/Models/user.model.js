@@ -66,6 +66,14 @@ verificationCodeExpires: {
       type: Date,
       default: null,
     },
+    // Privacy Layer (Who is allowed to see status fo this user)
+  // If empty, it could mean "Public" or "All Contacts" depending on your business logic
+  whoCanSee: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User',
+    index: true // Indexed because friends will query this field to see their feed
+  }],
+
 
     role: {
       type: String,

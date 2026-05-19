@@ -37,6 +37,8 @@ export interface SignupFormData {
   phoneNumber: string;
   bio: string;
   profilePicture: File | null;
+  whoCanSee?:string[]
+
 }
 const initialState: FileStates = {
   ActiveUser:{username:"",email:"",_id:"",phoneNumber:"",bio:"",profilePicture:null},

@@ -35,7 +35,7 @@ export function MessageList() {
         if (data?.msg.length > 0) {
           //  for proper ordering of these messages we have to reverse them
           // using two pointer method for reversing them
-          if(String(localStorage.getItem(LocalStorageLogedinuserId))!==ActiveUser._id){
+          // if(String(localStorage.getItem(LocalStorageLogedinuserId))!==ActiveUser._id){
 
             let i = 0;
             let j = data?.msg?.length - 1;
@@ -47,7 +47,7 @@ export function MessageList() {
               i++;
               j--;
             }
-          }
+          // }
             if (page == 1) {
             console.log(data?.totalpage + "totalpage");
             setTotalPage(data?.totalpage);

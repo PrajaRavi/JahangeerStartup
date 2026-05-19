@@ -10,10 +10,12 @@ import { formatTime12Hour, localStorageLastMsg, LocalStorageLogedinuserId } from
 import axios from "axios";
 import { GroupSettingObject } from "./Hero";
 import { Mic, Paperclip, Send, Smile } from "lucide-react";
+import AttachmentModal from "./Attchments";
 
 export function MessageInput() {
   const { socket, Onlineuser } = useContext(SocketContext);
   let senderaudio = new Audio(SendAudioPath);
+  let [ShowAttachments,setShowAttachments]=useState<boolean>(false)
 
   const dispatch = useDispatch<AppDispatch>();
   const messages = useSelector((state: any) => state.Auth.messages);
@@ -169,13 +171,18 @@ export function MessageInput() {
 
   return (
     <>
+    {
+      <AttachmentModal isOpen={ShowAttachments} onClose={()=>setShowAttachments(false)} onAudioClick={()=>{}} onCameraClick={()=>{} } onContactClick={()=>{}} onDocumentClick={()=>{}} onGalleryClick={()=>{}} onLocationClick={()=>{}} onPollClick={()=>{}} key={"ravi"}/>
+    }
       {(ShowGroupOrChat == "group" &&
         (((ActiveUser?.settings.includes(GroupSettingObject.onlyAdminsCanSend) && ActiveUser?.admins?.includes(String(localStorage.getItem(LocalStorageLogedinuserId))))||ActiveUser?.settings.includes(GroupSettingObject.onlyAdminsCanEditInfo)||ActiveUser?.settings.includes(GroupSettingObject.approveNewMembers)) 
         )) ||
       ShowGroupOrChat == "chat" ? (
         <div className="p-4 border-t bg-white flex items-center gap-3">
           <Smile className="w-6 h-6 text-gray-500 cursor-pointer" />
-          <Paperclip className="w-6 h-6 text-gray-500 cursor-pointer" />
+          <Paperclip onClick={()=>{
+            setShowAttachments(!ShowAttachments)
+          }} className="w-6 h-6 text-gray-500 cursor-pointer" />
 
           <input
             type="text"

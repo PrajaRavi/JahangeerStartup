@@ -1,14 +1,9 @@
-import {
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "../index.css"
+import "../index.css";
 import { Link } from "react-router";
 import ReciveAudioPath from "../assets/music/reciver.mp3";
-import "../App.css"
+import "../App.css";
 import {
   SetMessages,
   UpdateMsgSeen,
@@ -25,17 +20,13 @@ import { Sidebar } from "./Sidebar";
 import { ChatHeader } from "./Chatheader";
 import { MessageInput } from "./MessageInput";
 import { MessageList } from "./MessageList";
-
+import StatusPage from "./status";
 
 export const GroupSettingObject = {
   onlyAdminsCanSend: "onlyAdminsCanSend",
   onlyAdminsCanEditInfo: "onlyAdminsCanEditInfo",
   approveNewMembers: "approveNewMembers",
 };
-
-
-
-
 
 type PropsOfChatWindow = {
   SelectedSideBar: string;
@@ -51,7 +42,14 @@ function ChatWindow({ SelectedSideBar }: PropsOfChatWindow) {
 
   // const dispatch = useDispatch();
 
-  if (ActiveUser?.username == "") {
+  if (SelectedSideBar == myobject[1]) {
+    return (
+      <div className="flex-1 z-50 flex w-full flex-col h-full">
+        <StatusPage/>
+             </div>
+    );
+  }
+  else if (ActiveUser?.username == "") {
     return (
       <div>
         <h1>Select any one to chat!!!!</h1>
@@ -65,13 +63,7 @@ function ChatWindow({ SelectedSideBar }: PropsOfChatWindow) {
         <MessageInput />
       </div>
     );
-  } else if (SelectedSideBar == myobject[1]) {
-    return (
-      <div className="flex-1 flex flex-col h-full">
-        <h1>Implement karna hai abhi</h1>
-      </div>
-    );
-  }
+  } 
 }
 
 export default function Hero() {
@@ -85,9 +77,8 @@ export default function Hero() {
     Map<string, number>
   >(new Map(null)); //This variable will keep count of group and their unseenmsg
 
-  let [GroupData, setGroupData] = useState<GroupDataType[]>([
-    
-  ]);
+  let [GroupData, setGroupData] = useState<GroupDataType[]>([]);
+
   let GroupDataRef = useRef<GroupDataType[]>(null);
   type GroupDataType = {
     _id: string;
@@ -126,23 +117,20 @@ export default function Hero() {
       );
       if (data.success) {
         console.log(data);
-        if(data?.msg?.length>0){
-          let newMap:Map<string,string[]>=new Map()
-            for (let item of data?.msg){
-              if(item[1]?.length>0){
-                AllUsersUnSeenMsg.set(item[0],item[1])
-              }
+        if (data?.msg?.length > 0) {
+          let newMap: Map<string, string[]> = new Map();
+          for (let item of data?.msg) {
+            if (item[1]?.length > 0) {
+              AllUsersUnSeenMsg.set(item[0], item[1]);
             }
-              
-            }
-        
+          }
+        }
       }
     } catch (error) {
       console.log(error);
       console.log("error in GetGroupUnseenMsgCount");
     }
   }
-
 
   async function StoreUnseenMsginDB(
     senderID: string,
@@ -166,7 +154,7 @@ export default function Hero() {
     }
   }
   async function GetUnseenMsgFromDB(reciverID: string) {
-    //This for chat of two users 
+    //This for chat of two users
     try {
       let { data } = await axios.get(
         `http://localhost:7000/message/unseen-messages-of-conversation?userID=${String(localStorage.getItem(LocalStorageLogedinuserId))}`,
@@ -175,9 +163,9 @@ export default function Hero() {
       console.log(data);
       if (data.success) {
         if (data?.msg?.length > 0) {
-            let resultMap:Map<string,string[]>=new Map(data?.msg)
-            
-            setAllUsersUnseenMsg(resultMap);
+          let resultMap: Map<string, string[]> = new Map(data?.msg);
+
+          setAllUsersUnseenMsg(resultMap);
         } else {
           console.log("empty data kuch aya hi nahi hai!!!");
         }
@@ -208,39 +196,34 @@ export default function Hero() {
       console.log("err in UpdateGroupMembersLastMsgID");
     }
   }
-  function ReturnIfLogedinUserIsMemberOfGroupOrNot(GroupID: string) {
-    if (
-      !GroupDataRef.current ||
-      GroupDataRef.current.length == 0 ||
-      !GroupID ||
-      GroupID == ""
-    )
-      return alert("kuch aya hi nahi bhai");
-    for (let group of GroupDataRef.current) {
-      console.log("second");
-      console.log(group);
-      if (group._id == GroupID) {
-        if (
-          group?.members?.includes(String(localStorage.getItem("LogedInUser")))
-        )
-          return true;
-      }
-    }
-    return false;
-  }
+  
+  /**
+   * 
   useEffect(() => {
     GroupDataRef.current = GroupData;
   }, [GroupData]);
-  
-  
-  async function UpdateUserLastMsgIdInConversation(msgid:string,conversationId:string|null){
+
+  */
+
+  async function UpdateUserLastMsgIdInConversation(
+    msgid: string,
+    conversationId: string | null,
+  ) {
     try {
-      let {data}=await axios.post(`http://localhost:7000/conversation/update-user-lastmsgId`,{userId:localStorage.getItem(LocalStorageLogedinuserId),msgid,conversationId},{withCredentials:true})
-      if(data.success){
-        console.log(data?.msg)
+      let { data } = await axios.post(
+        `http://localhost:7000/conversation/update-user-lastmsgId`,
+        {
+          userId: localStorage.getItem(LocalStorageLogedinuserId),
+          msgid,
+          conversationId,
+        },
+        { withCredentials: true },
+      );
+      if (data.success) {
+        console.log(data?.msg);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
   useEffect(() => {
@@ -265,9 +248,6 @@ export default function Hero() {
         console.log(data1);
         // now getting the UnseenGroupMsg
 
-        
-        
-
         let IfUserIsOnline = OnlineUserRef.current.has(data1.msg.senderID);
         if (IfUserIsOnline) {
           // console.log(data1.msg)
@@ -280,8 +260,11 @@ export default function Hero() {
 
           if (data1.msg.senderID === localStorage.getItem("ActiveUser")) {
             // !If the reciver is online and also it is opened the same chat i have to update it's lastmsgid in the conversation document
-            if(data1?.ConversationID){
-UpdateUserLastMsgIdInConversation(data1?.msgid,data1?.ConversationID)
+            if (data1?.ConversationID) {
+              UpdateUserLastMsgIdInConversation(
+                data1?.msgid,
+                data1?.ConversationID,
+              );
             }
 
             reciverAudio.play();
@@ -292,21 +275,20 @@ UpdateUserLastMsgIdInConversation(data1?.msgid,data1?.ConversationID)
             });
           } else {
             if (!data1?.GroupID) {
-              
               let oldData = AllUsersUnSeenMsg.get(data1.msg.senderID);
               console.log(oldData);
-              console.log(AllUsersUnSeenMsg)
+              console.log(AllUsersUnSeenMsg);
               // console.log(data1.msgid);
-              
+
               StoreUnseenMsginDB(
                 data1?.msg?.senderID,
                 data1?.msg?.reciverID,
                 data1?.msgid,
               );
               if (oldData) {
-                oldData.push(data1?.msgid)
-                } else {
-                AllUsersUnSeenMsg.set(data1?.msg.senderID,[data1?.msgid])
+                oldData.push(data1?.msgid);
+              } else {
+                AllUsersUnSeenMsg.set(data1?.msg.senderID, [data1?.msgid]);
               }
               /**
                * 
@@ -334,26 +316,24 @@ UpdateUserLastMsgIdInConversation(data1?.msgid,data1?.ConversationID)
                 // ->solution i created this funtion ReturnIfLogedinUserIsMemberOfGroupOrNot
                 // alert("Jyes")
                 // alert(data)
-                  let oldData = AllUsersUnSeenMsg.get(data1.GroupID);
-                  StoreUnseenMsginDB(
-                    data1?.msg?.senderID,
-                    data1?.GroupID,
-                    data1?.msgid,
-                  );
-               
-                  if (oldData) {
-                oldData.push(data1?.msgid)
+                let oldData = AllUsersUnSeenMsg.get(data1.GroupID);
+                StoreUnseenMsginDB(
+                  data1?.msg?.senderID,
+                  data1?.GroupID,
+                  data1?.msgid,
+                );
+
+                if (oldData) {
+                  oldData.push(data1?.msgid);
                 } else {
-                AllUsersUnSeenMsg.set(data1?.GroupID,[data1?.msgid])
-              }
-                  socket.emit(
-                    "store-all-unseenmsg-id",
-                    Array.from(AllUsersUnSeenMsg),
-                  );
-                  console.log(AllUsersUnSeenMsg)
-                  
-                  
+                  AllUsersUnSeenMsg.set(data1?.GroupID, [data1?.msgid]);
                 }
+                socket.emit(
+                  "store-all-unseenmsg-id",
+                  Array.from(AllUsersUnSeenMsg),
+                );
+                console.log(AllUsersUnSeenMsg);
+              }
             }
           }
         } else {
@@ -425,18 +405,15 @@ UpdateUserLastMsgIdInConversation(data1?.msgid,data1?.ConversationID)
       if (ShowGroupOrChat == "chat") {
         //! 1.updating all the unseen messages seen=true
         UpdateUnseenMsgToSeen(IfActiveUserExistOrNotInAllUsersUnSeenMsg);
-        let msgid=IfActiveUserExistOrNotInAllUsersUnSeenMsg.pop();
+        let msgid = IfActiveUserExistOrNotInAllUsersUnSeenMsg[IfActiveUserExistOrNotInAllUsersUnSeenMsg.length-1];
 
+        //! 2.Update the lastMsgId of the LogedInUser in Conversation collection
+        UpdateUserLastMsgIdInConversation(String(msgid), null);
         
-        //! 2.Update the lastMsgId of the LogedInUser in Conversation collection 
-        // 4.Emit an event such that sender can know that reciver ne uska message dekh liya(means update the messages array on the sender side)(not for group messages)
-        console.log(IfActiveUserExistOrNotInAllUsersUnSeenMsg)
-        console.log(AllUsersUnSeenMsg)
-        
-        UpdateUserLastMsgIdInConversation(String(msgid),null)
-        // IfActiveUserExistOrNotInAllUsersUnSeenMsg.push(String(msgid))
         //! 3.removing this Activeuser from AlluserUnSennMsg Map in clientside as well as serverside
         AllUsersUnSeenMsg.delete(ActiveUser._id);
+
+        //! 4.Emit an event such that sender can know that reciver ne uska message dekh liya(means update the messages array on the sender side)(not for group messages)
         socket.emit("unseen-msg-ko-reciver-ne-seen-kar-liya", {
           data: IfActiveUserExistOrNotInAllUsersUnSeenMsg,
           roomid: Onlineuser.get(ActiveUser._id),
@@ -444,11 +421,8 @@ UpdateUserLastMsgIdInConversation(data1?.msgid,data1?.ConversationID)
       } else {
         // 2.removing this Activeuser from AlluserUnSennMsg Map in clientside as well as serverside
         AllUsersUnSeenMsg.delete(ActiveUser._id);
-        // 3.Update the UnseenMsg collection in DB make the respective Activeuser._id=senderID and logedinuser._id=reciverID messages=[] or delte
-        UpdateUnseenMsgCollection(
-          String(localStorage.getItem("LogedInUser")),
-          ActiveUser._id,
-        );
+        // 3.Update the lastmsgid of the respective user in group members
+        
       }
     }
   }, [ActiveUser]);

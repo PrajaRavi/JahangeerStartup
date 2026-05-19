@@ -83,3 +83,11 @@ i)Here i am storing groupId as key and in backend as i am tracking every member 
 
 
 <---------------------------------Adding status feature------------------------------------>
+i)defining Model(schema)
+->User(kisne status lagaya hai),Time(Today or tomarrow)[not need i will use createdAt feild and in frontend using a function i will show today,tommarow,just],Viewed(array of user have seen this status),WhoCanSee(privace an array containing users who can see the users status (future me dekhunga)),Type(means it is Text/Video/Audio)[if it is Text then data to be stored{text,bgcolor,font}]
+-->How i will manage Time
+
+->challange----------------------> how to show status
+->requirment->i want an array having status data and also whoCanSee array (also if multiple status contains same userId means they are created by same user so i do not have to show multiple status)
+->what i have 1.status data with userId and 2.alluserdata having _id
+solution->if i create a Map having key(userid) and value([{statusdata,username,userProfile}])

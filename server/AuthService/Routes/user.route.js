@@ -1,5 +1,5 @@
 import express from "express"
-import {GetAllUser, getLoggedInUser, login, logout, refreshAccessToken, signup, StoreSocketId, verifyOtp} from "../Controllers/user.controller.js"
+import {GetAllUser, GetAllWhoCanSeeUsers, getLoggedInUser, login, logout, refreshAccessToken, signup, StoreSocketId, UpdatewhoCanSee, verifyOtp} from "../Controllers/user.controller.js"
 import { upload } from "../utilities/user.multer.js";
 import { protect } from "../Middlewares/AuthMiddleware.js";
 export const UserRouter=express.Router();
@@ -11,7 +11,12 @@ UserRouter.post("/logout-user",protect,logout)
 UserRouter.get("/all-users",protect,GetAllUser)
 UserRouter.put("/store-socket-id",protect,StoreSocketId)
 
+UserRouter.put("/update-who-can-see",protect,UpdatewhoCanSee)//This api updates the WhoCanSee array 
+//? let {whoCanSee}=req.body;
+
 UserRouter.get("/loged-in-user",protect,getLoggedInUser)
+UserRouter.get("/Getall-whoCanSee-user",protect,GetAllWhoCanSeeUsers)
+
 
 
 

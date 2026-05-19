@@ -36,6 +36,7 @@ interface CreateGroupPageProps {
   setSelectedOption: React.Dispatch<
     React.SetStateAction<string>
   >;
+  
 }
 
 const CreateGroupPage: React.FC<

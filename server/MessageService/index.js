@@ -14,6 +14,8 @@ import mongoose from "mongoose";
 import { GroupRoute } from "./Routes/group.route.js";
 import path from "path";
 import { Group } from "./Models/group.model.js";
+import { StatusModel } from "./Models/status.model.js";
+import { StatusRoute } from "./Routes/status.route.js";
 let OnLineUsers = new Map(); //This map  keeps all the onlineuser
 let AllUsersUnSeenMsg = new Map(); // This map  keeps all the unseenmessages localid of respectiveuser
 dotenv.config();
@@ -30,6 +32,7 @@ app.use(express.json());
 app.use("/message", MsgRouter);
 app.use("/group", GroupRoute);
 app.use("/conversation", ConvrsationRoute);
+app.use("/status", StatusRoute);
 // path->Image/GroupProfile/abc.jpg
 app.use("/Images", express.static(path.join(process.cwd(), "Images")));
 
@@ -130,64 +133,14 @@ async function StoreMesageInDB(senderID, reciverID, text, time,ConversationID) {
   }
 }
 
-app.get("/ravi", async (req, resp) => {
+app.post("/ravi", async (req, resp) => {
   try {
- let {userID}=req.query;
- let ConversationID=null;
-if(!userID) return resp.status(200).send({success:false,msg:"Requrired data not found"})
-let ResultMap=new Map();//This will store senderId(key),(unseenmsg arr)(value)
-  // finding all the conversation document where the logedInUser is reciver
- let data=await ConversationModel.find({"participants.1.userID":userID})
- ConversationID=data[0]._id
- if(data?.length>0){
-  //now find that participants where userID is equal to logedinuser 
-  let participants=[]
-   data?.map((covnersationdoc)=>{
-    covnersationdoc.participants.map((participant)=>{
-      if(participant.userID==userID){
-        participants.push(participant)
-      }
-      
-    })
-   })
-   console.log(participants)
-   let PromiseResult=await Promise.all(participants.map(async (item)=>{
-let UnSeenMsgs=await MsgModel.find({ConversationID,_id:{$gt:item.LastMsgID}})
-let ArrayOfMsgIDS=UnSeenMsgs.map((item)=>{
-  return item._id;
-})
-
-
-if(UnSeenMsgs.length>0){
-  let AlreadyExist=ResultMap.get(item.userID);
-  if(AlreadyExist){
-    AlreadyExist.push(ArrayOfMsgIDS)
-
-  }else{
-    ResultMap.set(item.userID,ArrayOfMsgIDS)
-  }
-}
-   }))
-   
-   console.log(ResultMap)
-   if(Number(ResultMap.size)>1){
-     return resp.status(200).send({success:true,msg:data})
-    }
-    else{
-      return resp.status(200).send({success:true,msg:[]})
-
-    }
-
-     
-
-
-  }
-
-
-
-
-
-
+  let {viewedBy,statusId}=req.body;//This viewby will be a userId not an array fo id's
+  if(!viewedBy || !statusId) return resp.status(200).send({success:false,msg:"nothing(kuch aya hi nahi)"})
+  let data=await StatusModel.updateOne({_id:statusId},{$addToSet:{viewedBy}})
+  if(data)
+    return resp.status(200).send({success:true,msg:"Updated successfully!!!"})
+ 
   } catch (error) {
     console.log(error);
     return resp

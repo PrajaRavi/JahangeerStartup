@@ -24,3 +24,18 @@ export  type memberObject = {
   LastMsgID: string;
 };
 
+export const StatusOptions={
+  statpriv:"Status Privacy",
+  sett:"Settings"
+}
+export const GroupOptions={
+  newgroup:"New Group",
+  newcommu:"New Community",
+  settings:"setting"
+}
+export const StatusTypes={
+  text:"text",
+  video:"video",
+  image:'image',
+  audio:"audio"
+}

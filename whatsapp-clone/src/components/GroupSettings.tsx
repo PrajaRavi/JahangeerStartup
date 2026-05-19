@@ -6,6 +6,7 @@ import { SetAllUsers } from "../Redux/Slice/Auth.slice";
 import type { AppDispatch } from "../Redux/Stores/Store.files";
 import { GroupSettingObject } from "./Hero";
 import type { MembersOfGroup } from "../utils/Types";
+import { LocalStorageLogedinuserId } from "../utils/Dotenv";
 
 interface User {
   _id: string;
@@ -376,7 +377,7 @@ alert("something went wrong")
                     accept="image/*"
                     onChange={(e)=>{
 
-                      data?.settings.includes(GroupSettingObject.onlyAdminsCanEditInfo) ?alert("only admim can send message"): handleProfileChange(e)
+                      data?.settings.includes(GroupSettingObject.onlyAdminsCanEditInfo) && !data?.admins.includes(String(localStorage.getItem(LocalStorageLogedinuserId))) ?alert("only admin can send message"): handleProfileChange(e)
                     }
                   }
                   />
