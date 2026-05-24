@@ -137,6 +137,7 @@ export function MessageList() {
 
   useEffect(() => {
     dispatch(SetMessagesEmpty());
+    // setTotalPage(0);
     if (ShowGroupOrChat == "chat") {
       GetMessagesOfParticipents(20, page);
     } else {

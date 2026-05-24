@@ -65,9 +65,9 @@ export const GetMessagesOfPartcipants = async (req, resp, next) => {
         
         //! 2. then i have to use this conversationID to fetch all the messages
         let Messages = await MsgModel.find({ ConversationID: data[0]._id })
+          .sort({ createdAt: -1 })
           .limit(limit)
-          .skip(page - 1)
-          .sort({ createdAt: -1 });
+          .skip((page - 1)*limit);
 
         if (Messages.length > 0) {
           console.log(Messages);
