@@ -6,12 +6,14 @@ import {
   Type,
   Palette,
   MoreVertical,
+  Heart,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import Modal, { type Options } from "../utils/Modal.util";
 import { StatusOptions, StatusTypes } from "../utils/Types";
 import StatusPrivacy from "./StatusPrivacy";
 import axios from "axios";
+import { formatStatusTime, LocalStorageLogedinuserId } from "../utils/Dotenv";
 
 /*
   Status type
@@ -25,6 +27,8 @@ interface Status {
   WhoCanSee:string[];
   bgColorIdx:number;
   fontIdx:number;
+  viewedBy:string[];
+
   
 
 }
@@ -62,10 +66,14 @@ const StatusPage = () => {
   let [ShowModal,setShowModal]=useState<boolean>(false)
   let [statusPrivacy,setStatusPrivacy]=useState<boolean>(false)
   let AllUserData = useSelector((state: any) => state.Auth.AllUsers);
-let [NotVeiwedStatus,setNotVeiwedStatus]=useState<Status[]>([])
+let [NotVeiwedStatus,setNotVeiwedStatus]=useState<Status[][]>([])
 let [StatusMap,setStatusMap]=useState<Map<string,Status[]>>(()=>new Map())
+let [ShowStatus,setShowStatus]=useState<boolean>(false)
+let [SelectedStatus,setSelectedStatus]=useState<Status[]>([])
+let [CurrStatus,setCurrStatus]=useState<Status>({_id:"ravi",bgColorIdx:0,createdAt:"noting",fontIdx:0,profilePicture:"nothing",username:"nothing",WhoCanSee:[],text:"hellllok",viewedBy:[]})
+let [count,setcount]=useState<number>(0)
 // let StatusMap:Map<string,Status[]>=new Map()
-let [viewedStatus,setviewedStatus]=useState<Status[]>([])
+let [viewedStatus,setviewedStatus]=useState<Status[][]>([])
   let [ModalOption,setModalOption]=useState<Options[]>([])
   /*
     All statuses
@@ -126,9 +134,6 @@ let [viewedStatus,setviewedStatus]=useState<Status[]>([])
   /*
     Upload text status
   */
- useEffect(()=>{
-console.log(StatusMap)
- },[StatusMap])
  const GetAllStatus=async ()=>{
   try {
     let {data}=await axios.get(`http://localhost:7000/status/all-status`,{withCredentials:true})
@@ -139,28 +144,37 @@ for (let status of data?.msg){
     
     if(user._id==status?.userId){
       if(StatusMap?.get(status?.userId)){
-
-        StatusMap?.get(status?.userId)?.push({_id:status._id,bgColorIdx:Number(status?.content?.bgColor),fontIdx:Number(status?.content?.font),createdAt:status?.createdAt,profilePicture:user.profilePicture,username:user.username,WhoCanSee:user.WhoCanSee,text:status?.content?.text})
+        
+        StatusMap?.get(status?.userId)?.push({_id:status._id,bgColorIdx:Number(status?.content?.bgColor),fontIdx:Number(status?.content?.font),createdAt:status?.createdAt,profilePicture:user.profilePicture,username:user.username,viewedBy:status.viewedBy,WhoCanSee:user.WhoCanSee,text:status?.content?.text})
       }else{
-        StatusMap?.set(user._id,[{_id:status._id,bgColorIdx:Number(status?.content?.bgColor),fontIdx:Number(status?.content?.font),createdAt:status?.createdAt,profilePicture:user.profilePicture,username:user.username,WhoCanSee:user.whoCanSee,text:status?.content?.text}])
+        StatusMap?.set(user._id,[{_id:status._id,bgColorIdx:Number(status?.content?.bgColor),fontIdx:Number(status?.content?.font),createdAt:status?.createdAt,profilePicture:user.profilePicture,username:user.username,WhoCanSee:user.whoCanSee,viewedBy:status.viewedBy,text:status?.content?.text}])
       }
       setStatusMap(new Map(StatusMap))
       break;
     }
   }
 }
-console.log(AllUserData)
-console.log(StatusMap)
     }
   } catch (error) {
     console.log(error)
+  }
+  finally{
+    StatusMap.forEach((value:Status[],key:string)=>{
+      if(value[0].viewedBy.includes(String(localStorage.getItem(LocalStorageLogedinuserId)))){
+        viewedStatus.push(value)
+      }else{
+
+        NotVeiwedStatus.push(value)
+      }
+        })
+    console.log(NotVeiwedStatus)
   }
 
  }
   const uploadTextStatus =async  () => {
     if (!statusText.trim()) return;
 
-    const newStatus: Status = {
+    const status: Status = {
       _id: Date.now().toString(),
       text: statusText,
       createdAt: "Just now",
@@ -169,6 +183,8 @@ console.log(StatusMap)
       bgColorIdx:bgIndex,
       fontIdx:fontIndex,
       WhoCanSee:[],
+      viewedBy:[]
+
       
 
     };
@@ -179,17 +195,29 @@ console.log(StatusMap)
 let {data}= await axios.post(`http://localhost:7000/status/create-status`,{type:StatusTypes.text,content:JSON.stringify({text:statusText,bgColor:bgIndex,font:fontIndex})},{withCredentials:true})
 if(data.success){
   console.log(data)
-  setNotVeiwedStatus((prev) => [
-    newStatus,
-    ...prev,
-  ]);
-  
+  if(StatusMap?.get(status?._id)){
+
+        StatusMap?.get(status?._id)?.push({_id:status._id,bgColorIdx:Number(status?.bgColorIdx),fontIdx:Number(status?.fontIdx),createdAt:status?.createdAt,profilePicture:status.profilePicture,username:status.username,viewedBy:status.viewedBy,WhoCanSee:status.WhoCanSee,text:status?.text})
+      }else{
+        StatusMap?.set(user._id,[{_id:status._id,bgColorIdx:Number(status?.bgColorIdx),fontIdx:Number(status?.fontIdx),createdAt:status?.createdAt,profilePicture:status.profilePicture,username:status.username,WhoCanSee:status.WhoCanSee,viewedBy:status.viewedBy,text:status?.text}])
+      }
+
   setStatusText("");
   setShowTextEditor(false);
 }
 
   };
 
+async function UpdateStatusViewedBy(statusId:string){
+  try {
+    let {data}=await axios.put(`http://localhost:7000/status/update-status-viewedBy`,{viewedBy:String(localStorage.getItem(LocalStorageLogedinuserId)),statusId},{withCredentials:true})
+    if(data.success) {
+      console.log(data)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}  
   useEffect(()=>{
     GetAllStatus();
 setModalOption([{label:StatusOptions.statpriv,onClick:()=>{
@@ -202,9 +230,30 @@ setStatusPrivacy(true)
 UserRef.current=user;
   },[user])
 
-  return (
+  useEffect(()=>{
+if(ShowStatus){
+  UpdateStatusViewedBy(CurrStatus._id);
+  setTimeout(() => {
+    
+    if(count<SelectedStatus.length){
+      setCurrStatus(SelectedStatus[count]);
+      setcount(count+1);
+      
+    } 
+    // else{
+    //   setcount(0)
+    // }
+    
+  }, 2000);
 
-    <div className="min-h-screen w-full border-2 border-red-400 bg-white text-black">
+}
+else{
+  setcount(0)
+}
+  },[ShowStatus,count])
+  return (
+<>
+   { ShowStatus==false?<div className="min-h-screen w-full  bg-white text-black">
       {ShowModal&&<Modal options={ModalOption} position="fixed" right="100px" top="100px" />}
       {statusPrivacy&&<StatusPrivacy LogedInUser={UserRef.current} onclose={()=>{
         setStatusPrivacy(false);
@@ -227,6 +276,7 @@ UserRef.current=user;
         </button> */}
         <button onClick={()=>{
           console.log(StatusMap)
+          console.log(NotVeiwedStatus)
           setShowModal(!ShowModal)
         }} className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
           <MoreVertical/>
@@ -273,41 +323,54 @@ UserRef.current=user;
         </h2>
 
         <div className="space-y-1 z-10 ">
-          {NotVeiwedStatus.map(
-            (status) => (
-              <div
-                key={status._id}
-                className="flex items-center gap-4 p-1 rounded-2xl hover:bg-green-100 cursor-pointer transition"
+                    
+          {NotVeiwedStatus.map((statuses:Status[]) => {
+              
+              
+             return(
+               
+
+              // !if whocansee==null or whocansee.length==0 means every user can see
+                  <div
+                  
+                  onClick={()=>{
+                    setShowStatus(true);
+                    setSelectedStatus(statuses)
+                    setCurrStatus(statuses[0]);
+                  }}
+                  key={statuses[statuses.length-1]._id}
+                className={statuses[statuses.length-1].WhoCanSee==null ||statuses[statuses.length-1].WhoCanSee.length==0||(statuses[statuses.length-1].WhoCanSee.includes(String(localStorage.getItem(LocalStorageLogedinuserId))) || statuses[statuses.length-1].username==UserRef.current.username)?"flex items-center gap-4 p-1 rounded-2xl hover:bg-green-100 cursor-pointer relative transition":"hidden"}
               >
-                {/* Ring */}
                 <div className="p-[3px] rounded-full bg-green-500">
                   <img
                     
-                    src={`http://localhost:4500/Images/Profile/${status.profilePicture}`}
-
+                    src={`http://localhost:4500/Images/Profile/${statuses[statuses.length-1].profilePicture}`}
+                    
                     alt={
-                      status.username
+                      statuses[statuses.length-1].username
                     }
                     className="w-13 h-13 rounded-full object-cover border-2 border-black"
-                  />
+                    />
                 </div>
 
                 <div>
                   <h3 className="font-semibold text-lg">
                     {
-                      status.username
+                      statuses[statuses.length-1].username
                     }
                   </h3>
-
+                    <p className="font-bold absolute top-5 right-5">{statuses?.length>1 &&statuses?.length}</p>
                   <p className="text-gray-400 text-sm">
                     {
-                      status.createdAt
+                      formatStatusTime(statuses[statuses.length-1].createdAt)
                     }
                   </p>
                 </div>
               </div>
-            )
-          )}
+               
+              )
+}
+)}
         </div>
       </div>
 
@@ -319,19 +382,24 @@ UserRef.current=user;
 
         <div className="space-y-1">
           {viewedStatus.map(
-            (status) => (
+            (statuses) => (
               <div
-                key={status._id}
-                className="flex items-center gap-1 p-3 rounded-2xl hover:bg-green-600 cursor-pointer transition"
+                key={statuses[statuses.length-1]._id}
+                onClick={()=>{
+                    setShowStatus(true);
+                    setSelectedStatus(statuses)
+                    setCurrStatus(statuses[0]);
+                  }}
+                  // key={statuses[statuses.length-1]._id}
+                className={statuses[statuses.length-1].WhoCanSee==null ||statuses[statuses.length-1].WhoCanSee.length==0||(statuses[statuses.length-1].WhoCanSee.includes(String(localStorage.getItem(LocalStorageLogedinuserId))) || statuses[statuses.length-1].username==UserRef.current.username)?"flex items-center gap-4 p-1 rounded-2xl hover:bg-green-100 cursor-pointer relative transition":"hidden"}
               >
                 {/* Gray ring */}
                 <div className="p-[3px] rounded-full bg-gray-600">
                   <img
-                    src={
-                      status.profilePicture
-                    }
+                  src={`http://localhost:4500/Images/Profile/${statuses[statuses.length-1].profilePicture}`}
+
                     alt={
-                      status.username
+                      statuses[statuses.length-1].username
                     }
                     className="w-13 h-13 rounded-full object-cover border-2 border-black"
                   />
@@ -340,13 +408,14 @@ UserRef.current=user;
                 <div>
                   <h3 className="font-semibold text-lg">
                     {
-                      status.username
+                      statuses[statuses.length-1].username
                     }
                   </h3>
-
+<p className="font-bold absolute top-5 right-5">{statuses?.length>1 &&statuses?.length}</p>
+                  
                   <p className="text-gray-400 text-sm">
                     {
-                      status.createdAt
+                      formatStatusTime(statuses[statuses.length-1].createdAt)
                     }
                   </p>
                 </div>
@@ -496,7 +565,61 @@ UserRef.current=user;
           </div>
         </div>
       )}
-    </div>
+    </div>:<div className="h-screen relative w-full   bg-white text-black">
+     
+<div
+          className="abs inset-0 z-50 h-full flex flex-col text-white transition-all"
+          style={{
+            background:
+              bgColors[CurrStatus.bgColorIdx],
+            fontFamily:
+              fonts[CurrStatus.fontIdx],
+          }}
+        >
+          {/* Top */}
+          <div className="flex items-center justify-between p-5">
+            {/* Back */}
+            <button
+              onClick={() =>
+                setShowStatus(
+                  false
+                )
+              }
+            >
+              <ArrowLeft size={30} />
+            </button>
+            {String(UserRef.current.username)==CurrStatus.username?<span className="absolute top-5 right-5">
+              {CurrStatus?.viewedBy.length} views
+            </span>:null}
+
+             </div>
+
+          {/* Text input */}
+          <div className="flex-1  flex items-center justify-center p-6">
+            <textarea
+              placeholder="Type a status..."
+              value={CurrStatus.text}
+              onChange={(e) =>
+                setStatusText(
+                  e.target.value
+                )
+              }
+              className="w-full bg-transparent text-center text-4xl outline-none resize-none placeholder:text-white/70"
+              rows={5}
+            />
+          </div>
+
+          {/* Reply Input */}
+          <div className="p-6 flex items-center justify-between">
+
+             <input type="text" name="reply" id="hiiii" placeholder="Type for reply..." className="w-[80%] bg-white text-black font-semibold py-4 rounded-2xl"/>
+             <button className="flex items-center gap-5"><Heart color="red" size={30}/><span className="font-bold">5</span></button>
+          </div>
+        </div>
+     
+      </div>}
+</>
+
   );
 };
 

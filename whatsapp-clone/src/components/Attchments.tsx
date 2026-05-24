@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
+
 import {
   Image,
   Camera,
   FileText,
   Music,
+  Video,
   MapPin,
-  User,
-  
   Contact,
+  
   X,
 } from "lucide-react";
 
@@ -16,22 +17,30 @@ interface AttachmentModalProps {
   onClose: () => void;
 
   /*
-    Attachment handlers
+    File handlers
   */
-  onGalleryClick: () => void;
-  onCameraClick: () => void;
-  onDocumentClick: () => void;
-  onAudioClick: () => void;
+  onImageSelect: (
+    file: File
+  ) => void;
+
+  onVideoSelect: (
+    file: File
+  ) => void;
+
+  onAudioSelect: (
+    file: File
+  ) => void;
+
+  onDocumentSelect: (
+    file: File
+  ) => void;
+
+  /*
+    Other handlers
+  */
   onLocationClick: () => void;
   onContactClick: () => void;
   onPollClick: () => void;
-}
-
-interface AttachmentItem {
-  title: string;
-  icon: React.ReactNode;
-  bgColor: string;
-  onClick: () => void;
 }
 
 const AttachmentModal: React.FC<
@@ -39,78 +48,129 @@ const AttachmentModal: React.FC<
 > = ({
   isOpen,
   onClose,
-  onGalleryClick,
-  onCameraClick,
-  onDocumentClick,
-  onAudioClick,
+
+  onImageSelect,
+  onVideoSelect,
+  onAudioSelect,
+  onDocumentSelect,
+
   onLocationClick,
   onContactClick,
   onPollClick,
 }) => {
   /*
-    Prevent render if modal closed
+    Hidden input refs
   */
+  const imageInputRef =
+    useRef<HTMLInputElement>(null);
+
+  const videoInputRef =
+    useRef<HTMLInputElement>(null);
+
+  const audioInputRef =
+    useRef<HTMLInputElement>(null);
+
+  const documentInputRef =
+    useRef<HTMLInputElement>(null);
+
+  const cameraInputRef =
+    useRef<HTMLInputElement>(null);
+
   if (!isOpen) return null;
 
   /*
-    All attachment items
+    Handle file selection
   */
-  const attachmentItems: AttachmentItem[] =
-    [
-      {
-        title: "Gallery",
-        icon: <Image size={26} />,
-        bgColor: "bg-purple-500",
-        onClick: onGalleryClick,
-      },
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    callback: (file: File) => void
+  ) => {
+    const file =
+      e.target.files?.[0];
 
-      {
-        title: "Camera",
-        icon: <Camera size={26} />,
-        bgColor: "bg-pink-500",
-        onClick: onCameraClick,
-      },
+    if (!file) return;
 
-      {
-        title: "Document",
-        icon: <FileText size={26} />,
-        bgColor: "bg-blue-500",
-        onClick: onDocumentClick,
-      },
+    callback(file);
 
-      {
-        title: "Audio",
-        icon: <Music size={26} />,
-        bgColor: "bg-orange-500",
-        onClick: onAudioClick,
-      },
-
-      {
-        title: "Location",
-        icon: <MapPin size={26} />,
-        bgColor: "bg-green-500",
-        onClick: onLocationClick,
-      },
-
-      {
-        title: "Contact",
-        icon: <Contact size={26} />,
-        bgColor: "bg-cyan-500",
-        onClick: onContactClick,
-      },
-
-      {
-        title: "Poll",
-        icon: "nothing",
-        bgColor: "bg-red-500",
-        onClick: onPollClick,
-      },
-    ];
+    onClose();
+  };
 
   return (
-    <div className="fixed inset-0 z-50  flex items-end justify-center bg-black/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm">
+      {/* Hidden Inputs */}
+
+      {/* Gallery */}
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={(e) =>
+          handleFileChange(
+            e,
+            onImageSelect
+          )
+        }
+      />
+
+      {/* Video */}
+      <input
+        ref={videoInputRef}
+        type="file"
+        accept="video/*"
+        hidden
+        onChange={(e) =>
+          handleFileChange(
+            e,
+            onVideoSelect
+          )
+        }
+      />
+
+      {/* Audio */}
+      <input
+        ref={audioInputRef}
+        type="file"
+        accept="audio/*"
+        hidden
+        onChange={(e) =>
+          handleFileChange(
+            e,
+            onAudioSelect
+          )
+        }
+      />
+
+      {/* Document */}
+      <input
+        ref={documentInputRef}
+        type="file"
+        hidden
+        onChange={(e) =>
+          handleFileChange(
+            e,
+            onDocumentSelect
+          )
+        }
+      />
+
+      {/* Camera */}
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        hidden
+        onChange={(e) =>
+          handleFileChange(
+            e,
+            onImageSelect
+          )
+        }
+      />
+
       {/* Modal */}
-      <div className="w-full max-w-md bg-white rounded-t-3xl p-6 animate-slideUp">
+      <div className="w-full max-w-md bg-[#111] text-white rounded-t-3xl p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold">
@@ -119,38 +179,144 @@ const AttachmentModal: React.FC<
 
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 transition"
+            className="p-2 rounded-full hover:bg-gray-800"
           >
-            <X size={22} />
+            <X />
           </button>
         </div>
 
-        {/* Attachment grid */}
+        {/* Grid */}
         <div className="grid grid-cols-3 gap-5">
-          {attachmentItems.map(
-            (item, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  item.onClick();
-                  onClose();
-                }}
-                className="flex flex-col items-center gap-3"
-              >
-                {/* Circle icon */}
-                <div
-                  className={`w-16 h-16 rounded-full flex items-center justify-center text-white shadow-lg ${item.bgColor}`}
-                >
-                  {item.icon}
-                </div>
+          {/* Gallery */}
+          <button
+            onClick={() =>
+              imageInputRef.current?.click()
+            }
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="w-16 h-16 rounded-full bg-purple-500 flex items-center justify-center">
+              <Image size={28} />
+            </div>
 
-                {/* Title */}
-                <span className="text-sm font-medium">
-                  {item.title}
-                </span>
-              </button>
-            )
-          )}
+            <span className="text-sm">
+              Gallery
+            </span>
+          </button>
+
+          {/* Camera */}
+          <button
+            onClick={() =>
+              cameraInputRef.current?.click()
+            }
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="w-16 h-16 rounded-full bg-pink-500 flex items-center justify-center">
+              <Camera size={28} />
+            </div>
+
+            <span className="text-sm">
+              Camera
+            </span>
+          </button>
+
+          {/* Video */}
+          <button
+            onClick={() =>
+              videoInputRef.current?.click()
+            }
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center">
+              <Video size={28} />
+            </div>
+
+            <span className="text-sm">
+              Video
+            </span>
+          </button>
+
+          {/* Audio */}
+          <button
+            onClick={() =>
+              audioInputRef.current?.click()
+            }
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center">
+              <Music size={28} />
+            </div>
+
+            <span className="text-sm">
+              Audio
+            </span>
+          </button>
+
+          {/* Document */}
+          <button
+            onClick={() =>
+              documentInputRef.current?.click()
+            }
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center">
+              <FileText size={28} />
+            </div>
+
+            <span className="text-sm">
+              Document
+            </span>
+          </button>
+
+          {/* Location */}
+          <button
+            onClick={() => {
+              onLocationClick();
+              onClose();
+            }}
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center">
+              <MapPin size={28} />
+            </div>
+
+            <span className="text-sm">
+              Location
+            </span>
+          </button>
+
+          {/* Contact */}
+          <button
+            onClick={() => {
+              onContactClick();
+              onClose();
+            }}
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="w-16 h-16 rounded-full bg-cyan-500 flex items-center justify-center">
+              <Contact size={28} />
+            </div>
+
+            <span className="text-sm">
+              Contact
+            </span>
+          </button>
+
+          {/* Poll */}
+          <button
+            onClick={() => {
+              onPollClick();
+              onClose();
+            }}
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="w-16 h-16 rounded-full bg-yellow-500 flex items-center justify-center">
+             <span>nothing</span>
+            </div>
+
+            <span className="text-sm">
+              Poll
+            </span>
+          </button>
         </div>
       </div>
     </div>

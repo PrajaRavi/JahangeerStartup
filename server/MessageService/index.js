@@ -101,10 +101,10 @@ console.log("ravi")
   }
 }
 
-async function StoreMesageInDBForGroup(senderID, reciverID, text, status, time,GroupID,profilePicture,ConversationID) {
+async function StoreMesageInDBForGroupText(senderID, reciverID, text, status, time,GroupID,profilePicture,ConversationID) {
   try {
     // mongodb.create() method by default returns the created document
-   let   data = await MsgModel.create({ senderID, reciverID, text, time,GroupID,profilePicture }); //by default i am storing status as deliverd
+   let   data = await MsgModel.create({ senderID, reciverID, "content.text":text, time,GroupID,profilePicture }); //by default i am storing status as deliverd
    
 
     if (!data) {
@@ -116,10 +116,42 @@ async function StoreMesageInDBForGroup(senderID, reciverID, text, status, time,G
     console.log(error);
   }
 }
-async function StoreMesageInDB(senderID, reciverID, text, time,ConversationID) {
+async function StoreMesageInDBForGroupImageOrAudio(senderID, reciverID, text, status, time,GroupID,profilePicture,ConversationID,type) {
   try {
     // mongodb.create() method by default returns the created document
-    let   data = await MsgModel.create({ senderID, reciverID, text, time ,ConversationID}); //by default i am storing status as deliverd
+   let   data = await MsgModel.create({ senderID, reciverID, type, time,GroupID,profilePicture }); //by default i am storing status as deliverd
+   
+
+    if (!data) {
+      console.log("message not sent!!!");
+    }
+    return String(data._id);
+  } catch (error) {
+    console.log("function StoreMesageInDB(senderId,reciverId,newmsg)");
+    console.log(error);
+  }
+}
+async function StoreMesageInDBText(senderID, reciverID, text, time,ConversationID) {
+  try {
+    // mongodb.create() method by default returns the created document
+    let   data = await MsgModel.create({ senderID, reciverID,type:"text", "content.text":text, time ,ConversationID}); //by default i am storing status as deliverd
+    
+
+
+    if (!data) {
+      console.log("message not sent!!!");
+    }
+    return String(data._id);
+  } catch (error) {
+    console.log("function StoreMesageInDB(senderId,reciverId,newmsg)");
+    console.log(error);
+  }
+}
+        //  msg?.content?.,
+async function StoreMesageInDBVideoOrImageOrAudio(senderID, reciverID,mediaUrl , time,ConversationID,type) {
+  try {
+    // mongodb.create() method by default returns the created document
+    let   data = await MsgModel.create({ senderID, reciverID, "content.mediaUrl":mediaUrl, time ,ConversationID,type}); //by default i am storing status as deliverd
     
 
 
@@ -135,12 +167,11 @@ async function StoreMesageInDB(senderID, reciverID, text, time,ConversationID) {
 
 app.post("/ravi", async (req, resp) => {
   try {
-  let {viewedBy,statusId}=req.body;//This viewby will be a userId not an array fo id's
-  if(!viewedBy || !statusId) return resp.status(200).send({success:false,msg:"nothing(kuch aya hi nahi)"})
-  let data=await StatusModel.updateOne({_id:statusId},{$addToSet:{viewedBy}})
-  if(data)
-    return resp.status(200).send({success:true,msg:"Updated successfully!!!"})
- 
+    if(!req.file) return resp.status(200).send({success:false,msg:"no file"})
+  let file=req.file;
+  if(file){
+    return resp.status(200).send({success:true,msg:req.file.filename})
+  }
   } catch (error) {
     console.log(error);
     return resp
@@ -179,28 +210,57 @@ io.on("connection", async (socket) => {
 
       let msgid=null;
       if(GroupID){
-        msgid= await StoreMesageInDBForGroup(
-         msg?.senderID,
+        if(msg.type=="text"){
+
+          msgid= await StoreMesageInDBForGroupText(
+            msg?.senderID,
          msg?.reciverID,
-         msg?.text,
+         msg?.content?.text,
          msg?.status,
          msg?.time,
          GroupID,
          profilePicture,
          ConversationID,
        );
+        }
+        else{
+          msgid= await StoreMesageInDBForGroupImageOrAudio(
+            msg?.senderID,
+         msg?.reciverID,
+         msg?.content?.mediaUrl,
+         msg?.status,
+         msg?.time,
+         GroupID,
+         profilePicture,
+         ConversationID,
+         msg.type
+       );
+        }
        
       }
       else{
-        console.log("else")
-        console.log(ConversationID)
-        msgid= await StoreMesageInDB(
+        if(msg.type=="text"){
+
+          msgid= await StoreMesageInDBText(
          msg?.senderID,
          msg?.reciverID,
-         msg?.text,
+         msg?.content.text,
+         
          msg?.time,
          ConversationID,
-         );
+        );
+      }
+      else{
+         msgid= await StoreMesageInDBVideoOrImageOrAudio(
+         msg?.senderID,
+         msg?.reciverID,
+         msg?.content?.mediaUrl,
+         msg?.time,
+         ConversationID,
+         msg.type
+         
+        );
+      }
         }
          
         // after storing the message updating the sender's lastmsgId of the respective ConversationID
@@ -209,7 +269,7 @@ io.on("connection", async (socket) => {
       
       socket.emit("msg-status-is-sent", {
         _id: msg._id,
-        text: msg.text,
+        content: msg.content.text,
         status: "sent",
         time: msg.time,
         msgid, //This Id is the messages mongodb id
@@ -221,7 +281,7 @@ io.on("connection", async (socket) => {
         */
   socket.emit("msg-status-is-deliverd", {
     _id: msgid,
-    text: msg.text,
+    content: msg.content.text,
     status: "deliverd",
     time: msg.time,
     ConversationID,
@@ -287,6 +347,7 @@ io.on("connection", async (socket) => {
     console.log("unseen-msg-ko-reciver-ne-seen-kar-liya");
     console.log(data);
     console.log(roomid);
+    console.log("unseen-msg-ko-reciver-ne-seen-kar-liya")
     socket
       .to(roomid)
       .emit(

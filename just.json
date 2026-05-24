@@ -1,0 +1,347 @@
+{
+  "success": true,
+  "msg": [
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "jfdijf"
+      },
+      "_id": "6a127db1ac2e54bdd6f4922f",
+      "senderID": "69f08d87d263e51eef96336f",
+      "reciverID": "69f352be8a0cd73f036a3db4",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:55 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:25:21.219Z",
+      "updatedAt": "2026-05-24T04:25:27.572Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "okkk bhai"
+      },
+      "_id": "6a127dafac2e54bdd6f49228",
+      "senderID": "69f08d87d263e51eef96336f",
+      "reciverID": "69f352be8a0cd73f036a3db4",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:55 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:25:19.399Z",
+      "updatedAt": "2026-05-24T04:25:27.572Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "thik hai"
+      },
+      "_id": "6a127da3ac2e54bdd6f49209",
+      "senderID": "69f352be8a0cd73f036a3db4",
+      "reciverID": "69f08d87d263e51eef96336f",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:55 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:25:07.908Z",
+      "updatedAt": "2026-05-24T04:25:07.937Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "accha"
+      },
+      "_id": "6a127da1ac2e54bdd6f49200",
+      "senderID": "69f352be8a0cd73f036a3db4",
+      "reciverID": "69f08d87d263e51eef96336f",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:55 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:25:05.926Z",
+      "updatedAt": "2026-05-24T04:25:05.980Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "bro"
+      },
+      "_id": "6a127d8aac2e54bdd6f491a6",
+      "senderID": "69f08d87d263e51eef96336f",
+      "reciverID": "69f352be8a0cd73f036a3db4",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:54 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:24:42.937Z",
+      "updatedAt": "2026-05-24T04:24:47.637Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "oook"
+      },
+      "_id": "6a127d89ac2e54bdd6f4919f",
+      "senderID": "69f08d87d263e51eef96336f",
+      "reciverID": "69f352be8a0cd73f036a3db4",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:54 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:24:41.423Z",
+      "updatedAt": "2026-05-24T04:24:47.637Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "la"
+      },
+      "_id": "6a127d82ac2e54bdd6f49162",
+      "senderID": "69f08d87d263e51eef96336f",
+      "reciverID": "69f352be8a0cd73f036a3db4",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:54 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:24:34.303Z",
+      "updatedAt": "2026-05-24T04:24:47.637Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "la"
+      },
+      "_id": "6a127d80ac2e54bdd6f4915b",
+      "senderID": "69f08d87d263e51eef96336f",
+      "reciverID": "69f352be8a0cd73f036a3db4",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:54 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:24:32.756Z",
+      "updatedAt": "2026-05-24T04:24:47.637Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "helllo"
+      },
+      "_id": "6a127d7fac2e54bdd6f49154",
+      "senderID": "69f08d87d263e51eef96336f",
+      "reciverID": "69f352be8a0cd73f036a3db4",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:54 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:24:31.385Z",
+      "updatedAt": "2026-05-24T04:24:47.637Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "ki hal"
+      },
+      "_id": "6a127d76ac2e54bdd6f49135",
+      "senderID": "69f08d87d263e51eef96336f",
+      "reciverID": "69f352be8a0cd73f036a3db4",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:54 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:24:22.860Z",
+      "updatedAt": "2026-05-24T04:24:22.904Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "helllo bhai"
+      },
+      "_id": "6a127d73ac2e54bdd6f4912c",
+      "senderID": "69f08d87d263e51eef96336f",
+      "reciverID": "69f352be8a0cd73f036a3db4",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:54 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:24:19.966Z",
+      "updatedAt": "2026-05-24T04:24:20.018Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "hai"
+      },
+      "_id": "6a127d52ac2e54bdd6f49064",
+      "senderID": "69f352be8a0cd73f036a3db4",
+      "reciverID": "69f08d87d263e51eef96336f",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:53 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:23:46.851Z",
+      "updatedAt": "2026-05-24T04:23:55.374Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "thik"
+      },
+      "_id": "6a127d51ac2e54bdd6f4905d",
+      "senderID": "69f352be8a0cd73f036a3db4",
+      "reciverID": "69f08d87d263e51eef96336f",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:53 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:23:45.795Z",
+      "updatedAt": "2026-05-24T04:23:55.374Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "accha"
+      },
+      "_id": "6a127d4fac2e54bdd6f49056",
+      "senderID": "69f352be8a0cd73f036a3db4",
+      "reciverID": "69f08d87d263e51eef96336f",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:53 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:23:43.372Z",
+      "updatedAt": "2026-05-24T04:23:55.374Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "ook"
+      },
+      "_id": "6a127d48ac2e54bdd6f49037",
+      "senderID": "69f352be8a0cd73f036a3db4",
+      "reciverID": "69f08d87d263e51eef96336f",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:53 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:23:36.524Z",
+      "updatedAt": "2026-05-24T04:23:36.587Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "helllo"
+      },
+      "_id": "6a127d42ac2e54bdd6f4902e",
+      "senderID": "69f08d87d263e51eef96336f",
+      "reciverID": "69f352be8a0cd73f036a3db4",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:53 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:23:30.476Z",
+      "updatedAt": "2026-05-24T04:23:30.544Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "oook"
+      },
+      "_id": "6a127d0eac2e54bdd6f48fee",
+      "senderID": "69f352be8a0cd73f036a3db4",
+      "reciverID": "69f08d87d263e51eef96336f",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:52 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:22:38.407Z",
+      "updatedAt": "2026-05-24T04:22:51.624Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "accha"
+      },
+      "_id": "6a127d0cac2e54bdd6f48fe7",
+      "senderID": "69f352be8a0cd73f036a3db4",
+      "reciverID": "69f08d87d263e51eef96336f",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:52 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:22:36.115Z",
+      "updatedAt": "2026-05-24T04:22:51.624Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "\\bhai"
+      },
+      "_id": "6a127d04ac2e54bdd6f48fc8",
+      "senderID": "69f352be8a0cd73f036a3db4",
+      "reciverID": "69f08d87d263e51eef96336f",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:52 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:22:28.022Z",
+      "updatedAt": "2026-05-24T04:22:28.065Z"
+    },
+    {
+      "content": {
+        "mediaUrl": null,
+        "duration": null,
+        "text": "hellllo"
+      },
+      "_id": "6a127d02ac2e54bdd6f48fbf",
+      "senderID": "69f352be8a0cd73f036a3db4",
+      "reciverID": "69f08d87d263e51eef96336f",
+      "ConversationID": "6a113b0d73ff638157d24e00",
+      "type": "text",
+      "time": "9:52 AM",
+      "seen": true,
+      "status": "delivered",
+      "createdAt": "2026-05-24T04:22:26.442Z",
+      "updatedAt": "2026-05-24T04:22:26.531Z"
+    }
+  ],
+  "page": 2,
+  "totalpage": 0
+}

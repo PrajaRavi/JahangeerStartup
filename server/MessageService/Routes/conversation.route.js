@@ -3,7 +3,7 @@ import { protect } from "../Middlewares/AuthMiddleware.js";
 import {GetLastMessageOfParticipents, GetMessagesOfPartcipants, StoreLastMsgIdOfConversation, StoreLastMsgIdOfParticipants} from "../Controllers/conversation.controller.js"
 export const ConvrsationRoute=express.Router();
 
-ConvrsationRoute.get("/msg-of-participents",protect,GetMessagesOfPartcipants)
+ConvrsationRoute.get("/msg-of-participents",GetMessagesOfPartcipants)
     //? let { senderid, reciverid } = req.query;
     // !Responses return buy this api
     //? return resp.status(200).send({success:true,msg:Messages,page,totalpage:Math.ceil((totalpage)/limit)}) length>0

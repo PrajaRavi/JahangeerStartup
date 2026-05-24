@@ -152,3 +152,18 @@ export const GetUnseenMsgOfUser = async (req, resp) => {
       .send({ success: false, msg: "internal server error" });
   }
 };
+
+export const UploadMsgPhotos=async (req,resp)=>{
+  try {
+    if(!req.file) return resp.status(200).send({success:false,msg:"no file"})
+  let file=req.file;
+  if(file){
+    return resp.status(200).send({success:true,msg:req.file.filename})
+  }
+  } catch (error) {
+    console.log(error);
+    return resp
+      .status(500)
+      .send({ success: false, msg: "internal server error" });
+  }
+}

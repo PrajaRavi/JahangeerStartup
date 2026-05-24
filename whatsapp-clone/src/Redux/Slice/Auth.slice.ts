@@ -1,5 +1,3 @@
-// src/features/counter/counterSlice.ts
-// let [CurrFileOpendId,setCurrFileOpenedId]=useState<string>("456")
 
 
 import { createSlice } from '@reduxjs/toolkit';
@@ -7,17 +5,35 @@ import { signupUser } from '../Thunk/Auth.thunk';
 import type { MessageStatus } from '../../components/MessageStatus';
 export type messageType={
   _id:string,
-  text:string,
+  content:MsgContent,
+  type:MsgType,
   status?:MessageStatus,
   time:string,
   senderID:string,
+  profilePicture?:string,
   seen:boolean,
   reciverID:string,
+  progress?:number
+ }
+ export type MsgContent={
+  text?:string,
+  mediaUrl?:string,
  }
  export type GroupOrChat=
   |"group"
   |"chat"
 
+ export type MsgType=
+  |"text"
+  |"video"
+  |"audio"
+  |"image"
+
+  export type AttachmentsType={
+    type:MsgType,
+    file:File|null,
+    text?:string,
+  }
 
 interface FileStates {
   ActiveUser: SignupFormData,//this is nothing but the right side active tab
@@ -28,7 +44,7 @@ interface FileStates {
   AllUsers:SignupFormData[];
   messages:messageType[],
   UnseenMessages:string[],
-  ShowGroupOrChat:GroupOrChat //This will keep track that right side page shows normal chats or a group chat
+  ShowGroupOrChat:GroupOrChat, //This will keep track that right side page shows normal chats or a group chat
 }
 export interface SignupFormData {
   username: string;
@@ -37,7 +53,8 @@ export interface SignupFormData {
   phoneNumber: string;
   bio: string;
   profilePicture: File | null;
-  whoCanSee?:string[]
+  whoCanSee?:string[];
+  
 
 }
 const initialState: FileStates = {
@@ -83,6 +100,14 @@ export const counterSlice = createSlice({
         msg.status=status
         if(msgMongoId) msg._id=msgMongoId
 
+      }
+    },
+    UpdateMsgProgress: (state, action) => {
+      let {msgid,progress}=action.payload;//msgid->local msg id,msgMongoId->message mongodb id
+      const msg=state.messages.find((item)=>item._id==msgid)
+      if(msg){
+        msg.progress=progress;
+        
       }
     },
     SetShowChatOrGroup:(state, action) => {
@@ -163,5 +188,5 @@ export const counterSlice = createSlice({
    
 });
 
-export const { setActiveUser,SetIsUserLogin,SetUser,SetAllUsers,SetMessages,UpdateMsg,UpdateMessageBySpread,SetMessagesEmpty,UpdateMsgSeen,SetUnseenMsg,SetShowChatOrGroup} = counterSlice.actions;
+export const { setActiveUser,SetIsUserLogin,SetUser,SetAllUsers,SetMessages,UpdateMsg,UpdateMessageBySpread,SetMessagesEmpty,UpdateMsgSeen,SetUnseenMsg,SetShowChatOrGroup,UpdateMsgProgress} = counterSlice.actions;
 export const FileReducer = counterSlice.reducer;

@@ -4,9 +4,11 @@ import {
   GetGroupMsg,
   GetUnseenMsgOfUser,
   UpdateMultipleMessages,
+  UploadMsgPhotos,
 } from "../Controllers/Message.controller.js";
 import { protect } from "../Middlewares/AuthMiddleware.js";
 import { GetLastMsgOFGroup } from "../Controllers/group.controller.js";
+import { upload } from "../utilities/MsgPhotos.multer.js";
 export const MsgRouter = express.Router();
 MsgRouter.put("/update-msg-seen", protect, UpdateMultipleMessages);
 //? let {IDarray}=req.body;
@@ -22,3 +24,5 @@ MsgRouter.get("/unseen-messages-of-conversation", protect, GetUnseenMsgOfUser);
 //? let { userID } = req.query;
 //?return resp.status(200).send({ success: true, msg: Array.from(ResultMap) });
 //? return resp.status(200).send({ success: true, msg: [] });
+
+MsgRouter.post("/upload-msg-photos",protect,upload.single("MsgPhotos"),UploadMsgPhotos)

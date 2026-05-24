@@ -14,33 +14,35 @@ export const GetMessagesOfPartcipants = async (req, resp, next) => {
     }
     let page = parseInt(req.query.page) || 1;
     let limit = parseInt(req.query.limit) || 9;
-    let totalpage = null;
+    let totalpage = req.query.totalpage?req.query.totalpage:0;
     if (senderid !== reciverid) {
       let data = await ConversationModel.find({
         "participants.userID":{$all:[senderid,reciverid]}
       });
-      // console.log(data)
       if (data.length > 0) {
         if (page == 1) {
           let data1 = await MsgModel.find({ ConversationID: data[0]._id });
-          totalpage = data1[0].length;
+          totalpage=data1?.length
         }
 
         //! 2. then i have to use this conversationID to fetch all the messages
         let Messages = await MsgModel.find({ ConversationID: data[0]._id })
+          .sort({ createdAt: -1 })
           .limit(limit)
-          .skip(page - 1)
-          .sort({ createdAt: -1 });
+          .skip((page - 1)*limit)
 
         if (Messages.length > 0) {
-          console.log(Messages);
+          console.log(totalpage,limit);
+          console.log(Math.ceil(totalpage / limit))
+          // console.log("response return ")
+
           return resp
             .status(200)
             .send({
               success: true,
               msg: Messages,
               page,
-              totalpage: Math.ceil(totalpage / limit),
+              totalpage: (Math.ceil(totalpage / limit)),
             });
         }
       } else {
@@ -54,10 +56,13 @@ export const GetMessagesOfPartcipants = async (req, resp, next) => {
       });
       if (data.length > 0) {
         if (page == 1) {
-          let mydata = await MsgModel.find({ ConversationID: data[0]._id });
-          totalpage = mydata[0].length;
-        }
 
+          let mydata = await MsgModel.find({ ConversationID: data[0]._id });
+          console.log(mydata.length)
+          console.log("totalpage")
+          totalpage = mydata.length;
+        }
+        
         //! 2. then i have to use this conversationID to fetch all the messages
         let Messages = await MsgModel.find({ ConversationID: data[0]._id })
           .limit(limit)

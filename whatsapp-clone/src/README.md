@@ -91,3 +91,7 @@ i)defining Model(schema)
 ->requirment->i want an array having status data and also whoCanSee array (also if multiple status contains same userId means they are created by same user so i do not have to show multiple status)
 ->what i have 1.status data with userId and 2.alluserdata having _id
 solution->if i create a Map having key(userid) and value([{statusdata,username,userProfile}])
+
+<----------------------------------------------Handling Attachments--------------------->
+->created a  variable Attachments for keeping the attachments
+->steps->as soon as user will select an image first i will store it in server and show progress bar (in future store it in cloud) then immidiatly i will create a Blob url and show the preview of the image and when the image is uploaded 100% then i will emit send-message event

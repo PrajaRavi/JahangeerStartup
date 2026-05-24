@@ -132,27 +132,7 @@ export default function Hero() {
     }
   }
 
-  async function StoreUnseenMsginDB(
-    senderID: string,
-    reciverID: string,
-    msgid: string,
-  ) {
-    try {
-      let { data } = await axios.post(
-        `http://localhost:7000/conversation/unsees-msg-of-participents`,
-        { senderID, reciverID, msgid },
-        { withCredentials: true },
-      );
-      if (data.success) {
-        console.log(data);
-      }
-    } catch (error) {
-      console.log(error);
-      console.log(
-        "error in  StoreUnseenMsginDB(senderid:string,reciverid:string)",
-      );
-    }
-  }
+  
   async function GetUnseenMsgFromDB(reciverID: string) {
     //This for chat of two users
     try {
@@ -237,7 +217,8 @@ export default function Hero() {
       socket.on("recive-message", (data1: any) => {
         let myobj: messageType = {
           _id: data1.msgid,
-          text: data1.msg.text,
+          content: {text:data1.msg.content.text},
+          type:"text",
           seen: false,
           time: formatTime12Hour(Date.now()),
           senderID: data1.msg.senderID,
@@ -280,11 +261,7 @@ export default function Hero() {
               console.log(AllUsersUnSeenMsg);
               // console.log(data1.msgid);
 
-              StoreUnseenMsginDB(
-                data1?.msg?.senderID,
-                data1?.msg?.reciverID,
-                data1?.msgid,
-              );
+              
               if (oldData) {
                 oldData.push(data1?.msgid);
               } else {
@@ -317,12 +294,7 @@ export default function Hero() {
                 // alert("Jyes")
                 // alert(data)
                 let oldData = AllUsersUnSeenMsg.get(data1.GroupID);
-                StoreUnseenMsginDB(
-                  data1?.msg?.senderID,
-                  data1?.GroupID,
-                  data1?.msgid,
-                );
-
+                
                 if (oldData) {
                   oldData.push(data1?.msgid);
                 } else {

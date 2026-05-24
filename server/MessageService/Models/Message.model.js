@@ -18,12 +18,23 @@ const msgschema=new mongoose.Schema({
       ref:"Conversation",
     },
       
-
-  text:{
-    type:String,
-    trim:true,
+// Media Type Indicator
+  type: { 
+    type: String, 
+    enum: ['text', 'video', 'audio', 'image'], 
+    default: 'text',
+    required: true 
   },
+
   
+  content: {
+    // For 'text' type
+    text: { type: String, trim: true },
+    
+    // For future 'video/audio/image' types
+    mediaUrl: { type: String, default: null },
+    duration: { type: Number, default: null } // useful for video/audio length
+  },
 profilePicture:{
     type:String,
     trim:true,
