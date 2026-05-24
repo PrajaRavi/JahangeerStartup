@@ -13,7 +13,9 @@ export type messageType={
   profilePicture?:string,
   seen:boolean,
   reciverID:string,
-  progress?:number
+  progress?:number,
+  hiddenBy?:string[]
+
  }
  export type MsgContent={
   text?:string,

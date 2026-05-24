@@ -1,5 +1,7 @@
 import express from "express";
 import {
+  DeleteForMe,
+  DeleteMsg,
   DeleteUnseenMsg,
   GetGroupMsg,
   GetUnseenMsgOfUser,
@@ -26,3 +28,6 @@ MsgRouter.get("/unseen-messages-of-conversation", protect, GetUnseenMsgOfUser);
 //? return resp.status(200).send({ success: true, msg: [] });
 
 MsgRouter.post("/upload-msg-photos",protect,upload.single("MsgPhotos"),UploadMsgPhotos)
+MsgRouter.delete("/delete-msg/:id",protect,DeleteMsg)
+MsgRouter.delete("/delete-for-me",protect,DeleteForMe)
+      // ?let  {msgId,userId}=req.query;

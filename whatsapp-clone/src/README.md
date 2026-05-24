@@ -95,3 +95,8 @@ solution->if i create a Map having key(userid) and value([{statusdata,username,u
 <----------------------------------------------Handling Attachments--------------------->
 ->created a  variable Attachments for keeping the attachments
 ->steps->as soon as user will select an image first i will store it in server and show progress bar (in future store it in cloud) then immidiatly i will create a Blob url and show the preview of the image and when the image is uploaded 100% then i will emit send-message event
+
+<-------------------------------------adding delete functionality----------------------------->
+->delete for everyOne->delete from database
+->delete for me->i will add a feild(IsDeletedForMe) in db and if it is true then i will not show that message to sender(but here is a glitch their is possibility that the reciver also doing delete for me for the same message)->solution->i will create two feild IsDeletedForSender and second IsDeletedForReciver
+==>solid solution->create only one feild hiddenBy(array of ids)->it will store id's of users who are doing delete for me

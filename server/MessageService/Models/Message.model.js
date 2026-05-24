@@ -26,6 +26,12 @@ const msgschema=new mongoose.Schema({
     required: true 
   },
 
+  // This is for (delete for me delete section)
+  hiddenBy:[{ 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'User',
+      index: true // Indexed because friends will query this field to see their feed
+    }],
   
   content: {
     // For 'text' type

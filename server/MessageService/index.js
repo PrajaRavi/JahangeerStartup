@@ -166,11 +166,13 @@ async function StoreMesageInDBVideoOrImageOrAudio(senderID, reciverID,mediaUrl ,
 }
 
 app.post("/ravi", async (req, resp) => {
+
   try {
-    if(!req.file) return resp.status(200).send({success:false,msg:"no file"})
-  let file=req.file;
-  if(file){
-    return resp.status(200).send({success:true,msg:req.file.filename})
+    let  {msgId,userId}=req.body;
+    if(!msgId || !userId) return resp.status(200).send({success:false,msg:"nothing"})
+    let data=await MsgModel.updateOne({_id:msgId},{$addToSet:{hiddenBy:userId}})
+  if(data){
+    return resp.status(200).send({success:false,msg:"update ho gaya hai "})
   }
   } catch (error) {
     console.log(error);

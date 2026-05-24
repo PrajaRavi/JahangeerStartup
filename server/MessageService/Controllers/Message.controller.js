@@ -167,3 +167,30 @@ export const UploadMsgPhotos=async (req,resp)=>{
       .send({ success: false, msg: "internal server error" });
   }
 }
+export const DeleteMsg=async (req,resp)=>{
+  try {
+    if(!req.params.id) return resp.status(200).send({success:false,msg:"id nahi aya hai "})
+    let data=await MsgModel.deleteOne({_id:req.params.id})
+  if(data) return resp.status(200).send({success:true,msg:"successfully"})
+    } catch (error) {
+      console.log(error);
+      return resp
+        .status(500)
+        .send({ success: false, msg: "internal server error" });
+    }
+}
+export const DeleteForMe=async(req,resp)=>{
+  try {
+      let  {msgId,userId}=req.query;
+      if(!msgId || !userId) return resp.status(200).send({success:false,msg:"nothing"})
+      let data=await MsgModel.updateOne({_id:msgId},{$addToSet:{hiddenBy:userId}})
+    if(data){
+      return resp.status(200).send({success:true,msg:"update ho gaya hai "})
+    }
+    } catch (error) {
+      console.log(error);
+      return resp
+        .status(500)
+        .send({ success: false, msg: "internal server error" });
+    }
+}

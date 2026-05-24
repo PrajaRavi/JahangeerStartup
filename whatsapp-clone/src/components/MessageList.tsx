@@ -1,18 +1,27 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SetMessagesEmpty, UpdateMessageBySpread, type messageType } from "../Redux/Slice/Auth.slice";
+import { SetMessages, SetMessagesEmpty, UpdateMessageBySpread, type messageType, type MsgType } from "../Redux/Slice/Auth.slice";
 import { BiDownArrow } from "react-icons/bi";
 import { MessageStatus } from "./MessageStatus";
 import UploadProgressCircle from "./Progress";
 import { ProgressiveReceiverImage } from "./ProgressiveReciverImage";
-
+import Modal, { type Options } from "../utils/Modal.util";
+import { LocalStorageLogedinuserId } from "../utils/Dotenv";
+interface ModalPostion{
+  x:number,
+  y:number
+}
 export function MessageList() {
   const messages = useSelector((state: any) => state.Auth.messages);
   let ActiveUser = useSelector((state: any) => state.Auth.ActiveUser);
   let [IsScrolling, setIsScrolling] = useState<boolean>(false);
   let ShowGroupOrChat = useSelector((state: any) => state.Auth.ShowGroupOrChat);
-
+  let [showDeleteModal,setshowDeleteModal]=useState<boolean>(false);
+  let [ModalPosition,setModalPosition]=useState<ModalPostion>()
+  let [SelectedMsg,setSelectedMsg]=useState<messageType>()
+  
+ 
   let TopScrollRef = useRef(null);
 
   let ScrollRef = useRef(null);
@@ -64,6 +73,7 @@ export function MessageList() {
     }
   }
 
+  
   async function GetMessagesOfGroup(limit: number, page: number = 1) {
     try {
       let { data } = await axios.get(
@@ -102,6 +112,22 @@ export function MessageList() {
     } finally {
     }
   }
+  async function DeleteForMe(msgId:string|undefined=SelectedMsg?._id,userId:string|null=localStorage.getItem(LocalStorageLogedinuserId)){
+    try {
+      let {data}=await axios.delete(`http://localhost:7000/message/delete-for-me?msgId=${msgId}&userId=${userId}`,{withCredentials:true})
+      if(data.success){
+        setshowDeleteModal(false);
+        dispatch(SetMessagesEmpty())
+        GetMessagesOfParticipents(20, page);
+        
+
+
+      }
+    } catch (error) {
+      console.log(error)
+      console.log("error in DeleteForMe")
+    }
+  }
 
   useEffect(() => {
     if (IsScrolling == false) {
@@ -131,6 +157,7 @@ export function MessageList() {
     }
   }, [page]);
   useEffect(() => {
+    // setOptionsForDeleteMsg()
     if (!TopScrollRef.current) return;
     const Topobserver = new IntersectionObserver(
       ([data]) => {
@@ -150,6 +177,37 @@ export function MessageList() {
       }
     };
   }, []);
+  useEffect(()=>{
+console.log(SelectedMsg)
+  },[SelectedMsg])
+  async function DeleteMsg(msgId:string|undefined){
+    if(SelectedMsg?.senderID == LogedInUser?._id ){
+      
+      try {
+        if(msgId){
+          
+          let {data}=await axios.delete(`http://localhost:7000/message/delete-msg/${msgId}`,{withCredentials:true})
+        if(data.success){
+
+          setshowDeleteModal(false);
+          let newarr=messages.filter((item:messageType)=>{
+            return item._id!=msgId
+          })
+          dispatch(SetMessagesEmpty())
+          dispatch(SetMessages(newarr))
+        }
+      }
+      else{
+        alert("msgId hi nahi mila")
+      }
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }else{
+    alert("you can't do that ")
+  }
+  }
   if (ShowGroupOrChat == "chat") {
     return (
       <div
@@ -171,10 +229,27 @@ export function MessageList() {
         >
           <BiDownArrow />
         </div>
+        {showDeleteModal&&<Modal options={[{label:"Delete for everyone",onClick:()=>{
+      DeleteMsg(SelectedMsg?._id);
+      
+  }},{label:"Delete for Me",onClick:()=>{
+    DeleteForMe();
+
+    
+  }},{label:"cancel",onClick:()=>{
+    setshowDeleteModal(false);
+  }}]}  position="fixed" top={String(ModalPosition?.y)+"px"} left={String(ModalPosition?.x-200)+"px"}/>}
         {messages.map((msg: messageType) => (
           <div
+          onClick={(e)=>{
+            setSelectedMsg({_id:msg._id,content:msg.content,reciverID:msg.reciverID,senderID:msg.senderID,seen:msg.seen,time:msg.time,type:msg.type,profilePicture:msg.profilePicture,status:msg.status})
+              console.log(e)
+              setshowDeleteModal(true)
+              setModalPosition({x:e.clientX,y:e.clientY})
+            }}
+            
             key={msg._id}
-            className={`flex ${msg.senderID == LogedInUser._id ? "justify-end" : ActiveUser._id === msg.senderID && msg.reciverID === LogedInUser._id ? "justify-start" : "hidden"}`}
+            className={`flex ${msg.senderID == LogedInUser._id &&!msg?.hiddenBy?.includes(LogedInUser._id) ?  "justify-end" : ActiveUser._id === msg.senderID && msg.reciverID === LogedInUser._id && !msg?.hiddenBy?.includes(LogedInUser._id) ? "justify-start" : "hidden"}`}
             // className={`flex ${ (msg.senderID==LogedInUser._id ) ? "justify-end":"justify-start"}`}
           >
             {!msg?.content?.mediaUrl?<div
