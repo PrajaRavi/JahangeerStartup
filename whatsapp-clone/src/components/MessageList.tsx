@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { LocalStorageLogedinuserId } from "../utils/Dotenv";
 import { SetMessagesEmpty, UpdateMessageBySpread, type messageType } from "../Redux/Slice/Auth.slice";
 import { BiDownArrow } from "react-icons/bi";
 import { MessageStatus } from "./MessageStatus";
 import UploadProgressCircle from "./Progress";
+import { ProgressiveReceiverImage } from "./ProgressiveReciverImage";
 
 export function MessageList() {
   const messages = useSelector((state: any) => state.Auth.messages);
@@ -196,21 +196,21 @@ export function MessageList() {
                 </p>
               </div>
             </div>:<div
-              className={`max-w-[75%] relative  px-4 py-2 w-[300px] h-[300px] pb-5 rounded-2xl text-sm shadow ${
+              className={`max-w-[75%] relative  px-4 py-2 w-75 h-75 pb-5 rounded-2xl text-sm shadow ${
                 msg.senderID == LogedInUser._id
                   ? "bg-green-500 text-white"
                   : "bg-white text-black"
               }`}
             >
-              <div className={msg.progress && msg.progress!==100?"absolute bottom-1 left-1":"hidden"}>
+              {msg.senderID == LogedInUser._id?<div className={msg.progress && msg.progress!==100?"absolute bottom-1 left-1":"hidden"}>
                 <UploadProgressCircle  progress={msg.progress}
         size={30}
         strokeWidth={3}
 
         text="Uploading"/>
-              </div>
+              </div>:<ProgressiveReceiverImage highResUrl={msg?.content?.mediaUrl}/>}
               {/* <p className="mr-3">{msg?.content?.text}</p> */}
-              {msg.type=="image"?<img src={`${msg.content.mediaUrl}`} alt="logo" className="w-full h-full" />:null}
+              {msg.type=="image" &&msg.senderID == LogedInUser._id?<img src={`${msg.content.mediaUrl}`} alt="logo" className="w-full h-full" />:null}
               <div className=" flex items-center justify-end gap-1 right-2 text-xs text-gray-300 font-bold bottom-0">
                 <p>{msg.time}</p>
                 <p>
