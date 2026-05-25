@@ -69,18 +69,21 @@ export const signup = async (req, res) => {
       
 
     
-    // // Send verification email
-    // await transporter.sendMail({
-    //   from: process.env.EMAIL_USER,
-    //   to: email,
-    //   subject: "Verify your account",
-    //   html: `
-    //     <h2>Email Verification</h2>
-    //     <p>Your verification code is:</p>
-    //     <h1>${verificationCode}</h1>
-    //     <p>This code will be used to verify your account.</p>
-    //   `,
-    // });
+    // Send verification email
+    if(user._id){
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Verify your account",
+      html: `
+        <h2>Email Verification</h2>
+        <p>Your verification code is:</p>
+        <h1>${verificationCode}</h1>
+        <p>This code will be used to verify your account.</p>
+        `,
+      });
+    }
 
     return res.status(201).json({
       success: true,
@@ -155,6 +158,7 @@ export const verifyOtp = async (req, res) => {
       });
     }
 
+    
     // 4. OTP expired
     if (user.verificationCodeExpires < Date.now()) {
       return res.status(410).json({ 
@@ -426,22 +430,6 @@ if(data){
 }
 
 
-export const StoreSocketId=async(req,resp)=>{
-  try {
-    let {userid,socketid}=req.body;
-    console.log(userid,socketid)
-    let data=await UserModel.updateOne({_id:userid},{$set:{SocketId:socketid}})
-    if(data){
-    return resp.send({ success: true, msg: "successfull!!" });
-  }
-
-  return resp.send({ success: false, msg: "storesocketid" });
-  } catch (error) {
-    console.log(error)
-    return resp.send({ success: false, msg: error });
-    
-  }
-}
 
 
 export const UpdatewhoCanSee=async(req,resp)=>{

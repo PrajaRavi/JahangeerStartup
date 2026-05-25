@@ -55,7 +55,7 @@ export const ProgressiveReceiverImage: React.FC<ProgressiveReceiverImageProps> =
       <img
         src={status==="completed"?highResUrl:""}
         alt="Chat attachment"
-        className={`w-full h-auto block object-cover transition-opacity duration-300 ${
+        className={`w-full h-full block object-cover transition-opacity duration-300 ${
           status !== 'completed' ? 'opacity-50' : 'opacity-100'
         }`}
       />

@@ -1,30 +1,38 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SetMessages, SetMessagesEmpty, UpdateMessageBySpread, type messageType, type MsgType } from "../Redux/Slice/Auth.slice";
+import {
+  SetMessages,
+  SetMessagesEmpty,
+  UpdateMessageBySpread,
+  type messageType,
+  type MsgType,
+} from "../Redux/Slice/Auth.slice";
 import { BiDownArrow } from "react-icons/bi";
 import { MessageStatus } from "./MessageStatus";
 import UploadProgressCircle from "./Progress";
 import { ProgressiveReceiverImage } from "./ProgressiveReciverImage";
 import Modal, { type Options } from "../utils/Modal.util";
 import { LocalStorageLogedinuserId } from "../utils/Dotenv";
-interface ModalPostion{
-  x:number,
-  y:number
+interface ModalPostion {
+  x: number;
+  y: number;
 }
 export function MessageList() {
   const messages = useSelector((state: any) => state.Auth.messages);
   let ActiveUser = useSelector((state: any) => state.Auth.ActiveUser);
   let [IsScrolling, setIsScrolling] = useState<boolean>(false);
   let ShowGroupOrChat = useSelector((state: any) => state.Auth.ShowGroupOrChat);
-  let [showDeleteModal,setshowDeleteModal]=useState<boolean>(false);
-  let [ModalPosition,setModalPosition]=useState<ModalPostion>()
-  let [SelectedMsg,setSelectedMsg]=useState<messageType>()
-  
- 
+  let [showDeleteModal, setshowDeleteModal] = useState<boolean>(false);
+  let [ModalPosition, setModalPosition] = useState<ModalPostion>({
+    x: 0,
+    y: 0,
+  });
+  let [SelectedMsg, setSelectedMsg] = useState<messageType>();
+
   let TopScrollRef = useRef(null);
 
-  let ScrollRef = useRef(null);
+  let ScrollRef = useRef<any>(null);
   let [page, setpage] = useState<number>(1);
   const dispatch = useDispatch();
   let [TotalPage, setTotalPage] = useState<number>(2);
@@ -47,18 +55,18 @@ export function MessageList() {
           // using two pointer method for reversing them
           // if(String(localStorage.getItem(LocalStorageLogedinuserId))!==ActiveUser._id){
 
-            let i = 0;
-            let j = data?.msg?.length - 1;
-            while (i < j) {
-              let temp = data?.msg[i];
-              data.msg[i] = data?.msg[j];
-              data.msg[j] = temp;
-              
-              i++;
-              j--;
-            }
+          let i = 0;
+          let j = data?.msg?.length - 1;
+          while (i < j) {
+            let temp = data?.msg[i];
+            data.msg[i] = data?.msg[j];
+            data.msg[j] = temp;
+
+            i++;
+            j--;
+          }
           // }
-            if (page == 1) {
+          if (page == 1) {
             console.log(data?.totalpage + "totalpage");
             setTotalPage(data?.totalpage);
           }
@@ -73,7 +81,6 @@ export function MessageList() {
     }
   }
 
-  
   async function GetMessagesOfGroup(limit: number, page: number = 1) {
     try {
       let { data } = await axios.get(
@@ -112,20 +119,23 @@ export function MessageList() {
     } finally {
     }
   }
-  async function DeleteForMe(msgId:string|undefined=SelectedMsg?._id,userId:string|null=localStorage.getItem(LocalStorageLogedinuserId)){
+  async function DeleteForMe(
+    msgId: string | undefined = SelectedMsg?._id,
+    userId: string | null = localStorage.getItem(LocalStorageLogedinuserId),
+  ) {
     try {
-      let {data}=await axios.delete(`http://localhost:7000/message/delete-for-me?msgId=${msgId}&userId=${userId}`,{withCredentials:true})
-      if(data.success){
+      let { data } = await axios.delete(
+        `http://localhost:7000/message/delete-for-me?msgId=${msgId}&userId=${userId}`,
+        { withCredentials: true },
+      );
+      if (data.success) {
         setshowDeleteModal(false);
-        dispatch(SetMessagesEmpty())
+        dispatch(SetMessagesEmpty());
         GetMessagesOfParticipents(20, page);
-        
-
-
       }
     } catch (error) {
-      console.log(error)
-      console.log("error in DeleteForMe")
+      console.log(error);
+      console.log("error in DeleteForMe");
     }
   }
 
@@ -178,36 +188,36 @@ export function MessageList() {
       }
     };
   }, []);
-  useEffect(()=>{
-console.log(SelectedMsg)
-  },[SelectedMsg])
-  async function DeleteMsg(msgId:string|undefined){
-    if(SelectedMsg?.senderID == LogedInUser?._id ){
-      
+  useEffect(() => {
+    console.log(SelectedMsg);
+  }, [SelectedMsg]);
+  async function DeleteMsg(msgId: string | undefined) {
+    if (SelectedMsg?.senderID == LogedInUser?._id) {
       try {
-        if(msgId){
-          
-          let {data}=await axios.delete(`http://localhost:7000/message/delete-msg/${msgId}`,{withCredentials:true})
-        if(data.success){
+        if (msgId) {
+          let { data } = await axios.delete(
+            `http://localhost:7000/message/delete-msg/${msgId}`,
+            { withCredentials: true },
+          );
+          if (data.success) {
+            setshowDeleteModal(false);
+            let newarr = messages.filter((item: messageType) => {
+              return item._id != msgId;
+            });
+            console.log(newarr)
+            dispatch(SetMessagesEmpty());
+            dispatch(SetMessages(newarr));
 
-          setshowDeleteModal(false);
-          let newarr=messages.filter((item:messageType)=>{
-            return item._id!=msgId
-          })
-          dispatch(SetMessagesEmpty())
-          dispatch(SetMessages(newarr))
+          }
+        } else {
+          alert("msgId hi nahi mila");
         }
+      } catch (error) {
+        console.log(error);
       }
-      else{
-        alert("msgId hi nahi mila")
-      }
-      
-    } catch (error) {
-      console.log(error)
+    } else {
+      alert("you can't do that ");
     }
-  }else{
-    alert("you can't do that ")
-  }
   }
   if (ShowGroupOrChat == "chat") {
     return (
@@ -230,74 +240,125 @@ console.log(SelectedMsg)
         >
           <BiDownArrow />
         </div>
-        {showDeleteModal&&<Modal options={[{label:"Delete for everyone",onClick:()=>{
-      DeleteMsg(SelectedMsg?._id);
-      
-  }},{label:"Delete for Me",onClick:()=>{
-    DeleteForMe();
-
-    
-  }},{label:"cancel",onClick:()=>{
-    setshowDeleteModal(false);
-  }}]}  position="fixed" top={String(ModalPosition?.y)+"px"} left={String(ModalPosition?.x-200)+"px"}/>}
-        {messages.map((msg: messageType) => (
+        {showDeleteModal && (
+          <Modal
+            options={[
+              {
+                label: "Delete for everyone",
+                onClick: () => {
+                  DeleteMsg(SelectedMsg?._id);
+                },
+              },
+              {
+                label: "Delete for Me",
+                onClick: () => {
+                  DeleteForMe();
+                },
+              },
+              {
+                label: "cancel",
+                onClick: () => {
+                  setshowDeleteModal(false);
+                },
+              },
+            ]}
+            position="fixed"
+            top={String(ModalPosition?.y) + "px"}
+            left={String(ModalPosition?.x - 200) + "px"}
+          />
+        )}
+        {messages?.map((msg: messageType) => (
           <div
-          onClick={(e)=>{
-            setSelectedMsg({_id:msg._id,content:msg.content,reciverID:msg.reciverID,senderID:msg.senderID,seen:msg.seen,time:msg.time,type:msg.type,profilePicture:msg.profilePicture,status:msg.status})
-              console.log(e)
-              setshowDeleteModal(true)
-              setModalPosition({x:e.clientX,y:e.clientY})
+          
+          key={msg._id}
+            onClick={(e) => {
+              setSelectedMsg({
+                _id: msg._id,
+                content: msg.content,
+                reciverID: msg.reciverID,
+                senderID: msg.senderID,
+                seen: msg.seen,
+                time: msg.time,
+                type: msg.type,
+                profilePicture: msg.profilePicture,
+                status: msg.status,
+              });
+              console.log(e);
+              setshowDeleteModal(true);
+              setModalPosition({ x: e.clientX, y: e.clientY });
             }}
-            
-            key={msg._id}
-            className={`flex ${msg.senderID == LogedInUser._id &&!msg?.hiddenBy?.includes(LogedInUser._id) ?  "justify-end" : ActiveUser._id === msg.senderID && msg.reciverID === LogedInUser._id && !msg?.hiddenBy?.includes(LogedInUser._id) ? "justify-start" : "hidden"}`}
+            className={`flex ${msg.senderID == LogedInUser._id && !msg?.hiddenBy?.includes(LogedInUser._id) ? "justify-end" : ActiveUser._id === msg.senderID && msg.reciverID === LogedInUser._id && !msg?.hiddenBy?.includes(LogedInUser._id) ? "justify-start" : "hidden"}`}
             // className={`flex ${ (msg.senderID==LogedInUser._id ) ? "justify-end":"justify-start"}`}
           >
-            {!msg?.content?.mediaUrl?<div
-              className={`max-w-[75%]  px-4 py-2 rounded-2xl text-sm shadow ${
-                msg.senderID == LogedInUser._id
-                  ? "bg-green-500 text-white"
-                  : "bg-white text-black"
-              }`}
-            >
-              <p className="mr-3">{msg?.content?.text}</p>
-              <div className=" flex items-center justify-end gap-1 right-2 text-xs text-gray-300 font-bold bottom-0">
-                <p>{msg.time}</p>
-                <p>
-                  {msg.senderID == LogedInUser._id ? (
-                    <MessageStatus seen={msg?.seen} status={msg?.status} />
-                  ) : (
-                    ""
-                  )}
-                </p>
+            {!msg?.content?.mediaUrl ? (
+              <div
+                className={`max-w-[75%]  px-4 py-2 rounded-2xl text-sm shadow ${
+                  msg.senderID == LogedInUser._id
+                    ? "bg-green-500 text-white"
+                    : "bg-white text-black"
+                }`}
+              >
+                <p className="mr-3">{msg?.content?.text}</p>
+                <div className=" flex items-center justify-end gap-1 right-2 text-xs text-gray-300 font-bold bottom-0">
+                  <p>{msg.time}</p>
+                  <p>
+                    {msg.senderID == LogedInUser._id ? (
+                      <MessageStatus seen={msg?.seen} status={msg?.status} />
+                    ) : (
+                      ""
+                    )}
+                  </p>
+                </div>
               </div>
-            </div>:<div
-              className={`max-w-[75%] relative  px-4 py-2 w-75 h-75 pb-5 rounded-2xl text-sm shadow ${
-                msg.senderID == LogedInUser._id
-                  ? "bg-green-500 text-white"
-                  : "bg-white text-black"
-              }`}
-            >
-              {msg.senderID == LogedInUser._id?<div className={msg.progress && msg.progress!==100?"absolute bottom-1 left-1":"hidden"}>
-                <UploadProgressCircle  progress={msg.progress}
-        size={30}
-        strokeWidth={3}
+            ) : (
+              <div
+                className={`max-w-[75%] relative  px-4 py-2 w-75 h-75 pb-5 rounded-2xl text-sm shadow ${
+                  msg.senderID == LogedInUser._id
+                    ? "bg-green-500 text-white"
+                    : "bg-white text-black"
+                }`}
+              >
+                {msg.senderID == LogedInUser._id ? (
+                  <div
+                    className={
+                      msg.progress && msg.progress !== 100
+                        ? "absolute bottom-1 left-1"
+                        : "hidden"
+                    }
+                  >
+                    <UploadProgressCircle
+                      progress={msg.progress}
+                      size={30}
+                      strokeWidth={3}
+                      text="Uploading"
+                    />
+                  </div>
+                ) : (
+                  <ProgressiveReceiverImage
+                    highResUrl={msg?.content?.mediaUrl}
+                  />
+                )}
 
-        text="Uploading"/>
-              </div>:<ProgressiveReceiverImage highResUrl={msg?.content?.mediaUrl}/>}
-              {/* <p className="mr-3">{msg?.content?.text}</p> */}
-              {msg.type=="image" &&msg.senderID == LogedInUser._id?<img src={`${msg.content.mediaUrl}`} alt="logo" className="w-full h-full" />:null}
-              <div className=" flex items-center justify-end gap-1 right-2 text-xs text-gray-300 font-bold bottom-0">
-                <p>{msg.time}</p>
-                <p>
-                  {msg.senderID == LogedInUser._id ? (
-                    <MessageStatus seen={msg?.seen} status={msg?.status} />
-                  ) : (
-                    ""
-                  )}
-                </p>
+                {msg.type == "image" && msg.senderID == LogedInUser._id ? (
+                  <img
+                    src={`${msg.content.mediaUrl}`}
+                    alt="logo"
+                    className="w-full h-full"
+                  />
+                ) : null}
+
+                <div className=" flex items-center justify-end gap-1 right-2 text-xs text-gray-300 font-bold bottom-0">
+                  <p>{msg.time}</p>
+                  <p>
+                    {msg.senderID == LogedInUser._id ? (
+                      <MessageStatus seen={msg?.seen} status={msg?.status} />
+                    ) : (
+                      ""
+                    )}
+                  </p>
+                </div>
               </div>
-            </div>}
+            )}
           </div>
         ))}
         <div
@@ -327,31 +388,74 @@ console.log(SelectedMsg)
         >
           <BiDownArrow />
         </div>
-        {messages.map((msg: messageType) => (
+        {showDeleteModal && (
+          <Modal
+            options={[
+              {
+                label: "Delete for everyone",
+                onClick: () => {
+                  DeleteMsg(SelectedMsg?._id);
+                },
+              },
+              {
+                label: "Delete for Me",
+                onClick: () => {
+                  DeleteForMe();
+                },
+              },
+              {
+                label: "cancel",
+                onClick: () => {
+                  setshowDeleteModal(false);
+                },
+              },
+            ]}
+            position="fixed"
+            top={String(ModalPosition?.y) + "px"}
+            left={String(ModalPosition?.x - 200) + "px"}
+          />
+        )}
+        {messages?.map((msg: messageType) => (
           <div
             key={msg._id}
+            onClick={(e) => {
+              setSelectedMsg({
+                _id: msg._id,
+                content: msg.content,
+                reciverID: msg.reciverID,
+                senderID: msg.senderID,
+                seen: msg.seen,
+                time: msg.time,
+                type: msg.type,
+                profilePicture: msg.profilePicture,
+                status: msg.status,
+              });
+              console.log(e);
+              setshowDeleteModal(true);
+              setModalPosition({ x: e.clientX, y: e.clientY });
+            }}
             className={`flex relative z-20 ${msg.senderID == LogedInUser._id ? "justify-end  " : "justify-start my-2"}`}
-            // className={`flex ${ (msg.senderID==LogedInUser._id ) ? "justify-end":"justify-start"}`}
           >
             {msg.senderID !== LogedInUser._id ? (
               <div className="photo bg-green-300 w-8 h-8 rounded-full absolute -top-5 -left-2">
                 <img
-                  src={`http://localhost:4500/Images/Profile/${msg.profilePicture}`}
+                  src={`http://localhost:4500/Images/Profile/${msg?.profilePicture}`}
                   className="w-full h-full content-center rounded-full"
                   alt=""
                 />
               </div>
             ) : null}
+            {!msg?.content?.mediaUrl?
             <div
               className={`max-w-[75%]  px-4 py-2 rounded-2xl text-sm shadow ${
-                msg.senderID == LogedInUser._id
+                msg?.senderID == LogedInUser?._id
                   ? "bg-green-500 text-white"
                   : "bg-white text-black"
               }`}
             >
-              <p className="mr-3">{msg.content.text}</p>
+              <p className="mr-3">{msg?.content?.text}</p>
               <div className=" flex items-center justify-end gap-1 right-2 text-xs text-gray-300 font-bold bottom-0">
-                <p>{msg.time}</p>
+                <p>{msg?.time}</p>
                 <p>
                   {msg.senderID == LogedInUser._id ? (
                     <MessageStatus seen={msg?.seen} status={msg?.status} />
@@ -360,7 +464,53 @@ console.log(SelectedMsg)
                   )}
                 </p>
               </div>
-            </div>
+            </div>:
+            <div
+              className={`w-75 h-75 pb-4 relative  px-4 py-2 rounded-2xl text-sm shadow ${
+                msg.senderID == LogedInUser._id
+                  ? "bg-green-500 text-white"
+                  : "bg-white text-black"
+              }`}
+            >
+              {msg.senderID == LogedInUser._id ? (
+                  <div
+                    className={
+                      msg.progress && msg.progress !== 100
+                        ? "absolute bottom-1 left-1"
+                        : "hidden"
+                    }
+                  >
+                    <UploadProgressCircle
+                      progress={msg?.progress}
+                      size={30}
+                      strokeWidth={3}
+                      text="Uploading"
+                    />
+                  </div>
+                ) : (
+                  <ProgressiveReceiverImage
+                    highResUrl={msg?.content?.mediaUrl}
+                  />
+                )}
+                {msg.type == "image" && msg.senderID == LogedInUser._id ? (
+                  <img
+                    src={`${msg?.content?.mediaUrl}`}
+                    alt="logo"
+                    className="w-full h-full"
+                  />
+                ) : null}
+                 <div className=" flex items-center justify-end gap-1 right-2 text-xs text-gray-300 font-bold bottom-0">
+                  <p>{msg.time}</p>
+                  <p>
+                    {msg.senderID == LogedInUser._id ? (
+                      <MessageStatus seen={msg?.seen} status={msg?.status} />
+                    ) : (
+                      ""
+                    )}
+                  </p>
+                </div>
+
+              </div>}
           </div>
         ))}
         <div

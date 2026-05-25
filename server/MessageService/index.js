@@ -116,10 +116,10 @@ async function StoreMesageInDBForGroupText(senderID, reciverID, text, status, ti
     console.log(error);
   }
 }
-async function StoreMesageInDBForGroupImageOrAudio(senderID, reciverID, text, status, time,GroupID,profilePicture,ConversationID,type) {
+async function StoreMesageInDBForGroupImageOrAudio(senderID, reciverID, mediaUrl, status, time,GroupID,profilePicture,ConversationID,type) {
   try {
     // mongodb.create() method by default returns the created document
-   let   data = await MsgModel.create({ senderID, reciverID, type, time,GroupID,profilePicture }); //by default i am storing status as deliverd
+   let   data = await MsgModel.create({ senderID, reciverID, type, time,GroupID,profilePicture,"content.mediaUrl":mediaUrl }); //by default i am storing status as deliverd
    
 
     if (!data) {
@@ -215,7 +215,7 @@ io.on("connection", async (socket) => {
         if(msg.type=="text"){
 
           msgid= await StoreMesageInDBForGroupText(
-            msg?.senderID,
+          msg?.senderID,
          msg?.reciverID,
          msg?.content?.text,
          msg?.status,
@@ -227,7 +227,7 @@ io.on("connection", async (socket) => {
         }
         else{
           msgid= await StoreMesageInDBForGroupImageOrAudio(
-            msg?.senderID,
+          msg?.senderID,
          msg?.reciverID,
          msg?.content?.mediaUrl,
          msg?.status,

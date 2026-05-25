@@ -310,7 +310,6 @@ dispatch(UpdateMsgProgress({msgid:myobj._id,progress:Math.round(Number(progressE
         reciverID: ActiveUser._id,
       };
         if (LogedInUser._id !== ActiveUser._id && ShowGroupOrChat=="group") {
-        
         let CurrntlyOnlineUsers: string[] = [];
         for (let member of ActiveUser?.members) {
           console.log(member);

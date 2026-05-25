@@ -215,8 +215,11 @@ export default function Hero() {
       });
 
       socket.on("recive-message", (data1: any) => {
-        let myobj: messageType = {
-          _id: data1.msgid,
+        let myobj: messageType|null=null;
+        if(data1?.msg.type=="text"){
+
+           myobj= {
+            _id: data1.msgid,
           content: {text:data1.msg.content.text},
           type:"text",
           seen: false,
@@ -225,6 +228,19 @@ export default function Hero() {
           reciverID: data1.msg.reciverID,
           profilePicture: data1?.profilePicture,
         };
+      }
+      else{
+        myobj= {
+            _id: data1.msgid,
+          content: {mediaUrl:data1.msg.content.mediaUrl},
+          type:"text",
+          seen: false,
+          time: formatTime12Hour(Date.now()),
+          senderID: data1.msg.senderID,
+          reciverID: data1.msg.reciverID,
+          profilePicture: data1?.profilePicture,
+        };
+      }
         dispatch(SetMessages(myobj));
         console.log(data1);
         // now getting the UnseenGroupMsg
