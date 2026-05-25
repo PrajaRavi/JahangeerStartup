@@ -137,8 +137,9 @@ export function Sidebar({
         { withCredentials: true },
       );
       if (data.success) {
+        console.log(data?.msg)
         LastMsgAndSeenObj.set(String(localStorage.getItem("ActiveUser")), {
-          lastmsg: data?.msg?.text,
+          lastmsg: data?.msg?.content?.text,
           lastseen: data?.msg.time,
         });
       }
@@ -156,16 +157,27 @@ export function Sidebar({
         { withCredentials: true },
       );
 
-      if (data?.msg?.length > 0) {
-        LastMsgAndSeenObj.set(data.reciverid, {
-          lastmsg: data?.msg?.text,
-          lastseen: data?.msg?.time,
-        });
+      
+      if (data?.msg?._id) {
+        if(data?.msg?.type=="text"){
+
+          LastMsgAndSeenObj.set(data.reciverid, {
+            lastmsg: data?.msg?.content?.text,
+            lastseen: data?.msg?.time,
+          });
+        }
+        else{
+          LastMsgAndSeenObj.set(data.reciverid, {
+            lastmsg: data?.msg?.type,
+            lastseen: data?.msg?.time,
+          });
+        }
       } else {
-        LastMsgAndSeenObj.set(data.reciverid, {
-          lastmsg: data?.msg?.text,
-          lastseen: data?.msg?.time,
-        });
+            LastMsgAndSeenObj.set(data.reciverid, {
+            lastmsg: "",
+            lastseen: data?.msg?.time,
+          });
+        
       }
     } catch (error) {
       console.log(error);
@@ -190,9 +202,6 @@ export function Sidebar({
     }
   }
 
-  useEffect(()=>{
-console.log(AllUsersUnSeenMsg)
-  },[AllUsersUnSeenMsg])
   
   useEffect(() => {
     if (ShowGroupOrChat == "group") {
@@ -272,7 +281,7 @@ console.log(AllUsersUnSeenMsg)
           <h2 className="font-semibold text-lg">Chats</h2>
           {ShowSearchBox == false ? (
             <button title="button" onClick={() => {setShowSearchBox(true)
-              console.log(ActiveUser)
+              console.log(AllUsersUnSeenMsg)
             }}>
               <Search className="w-5 h-5 text-gray-600" />
             </button>
@@ -368,8 +377,10 @@ console.log(AllUsersUnSeenMsg)
                       {/* <span className="text-xs text-gray-500"></span> */}
                     </div>
                     <p className="text-sm text-gray-500 truncate">
-                      {LogedInUser._id &&
-                        (GetLastMsgOfChat(user._id)?.lastmsg as ReactNode)}
+                      {
+                        (GetLastMsgOfChat(String(user._id))?.lastmsg as ReactNode)
+                        // "hello"
+                        }
                       {/* {chat.lastMessage} */}
                     </p>
                   </div>

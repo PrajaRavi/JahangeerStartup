@@ -103,6 +103,7 @@ export const GetLastMessageOfParticipents = async (req, resp) => {
       let data = await ConversationModel.find({
         "participants.userID": { $all: [senderid, reciverid] },
       }).populate({ path: "LastMsgID" });
+      
       if (data.length > 0) {
         return resp
           .status(200)
@@ -112,7 +113,7 @@ export const GetLastMessageOfParticipents = async (req, resp) => {
           .status(200)
           .send({
             success: false,
-            msg: [],
+            msg: {},
             text: "no  content bhai",
             senderid,
             reciverid,
