@@ -1,94 +1,120 @@
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router"
-import SignupPage from "./components/Signup"
-import { useDispatch, useSelector} from "react-redux"
-import Hero from "./components/Hero";
-import { PrivateComp } from "./utils/PrivateComp";
-import VerifyOtpPage from "./components/EmailVerification";
-import LoginPage from "./components/Signin";
-import type { AppDispatch } from "./Redux/Stores/Store.files";
-import { GetAllUser, GetLogedInUser, RefreshToken } from "./Redux/Thunk/Auth.thunk";
-import { useEffect, useMemo, useState } from "react";
-import {io} from "socket.io-client"
-import { SocketContext } from "./context/socket.context";
+import { BrowserRouter, Route, Routes } from "react-router"
+import Home from "./components/Home"
+import LandingPage from "./components/LandingPage"
+import Signup from "./components/Signup"
+import { useTheme } from "./context/theme.context";
+import Navbar from "./components/Navbar";
+import Signin from "./components/Signin";
+import PhoneVerificationPage from "./components/Verification";
+import { useDispatch } from "react-redux";
+import { GetAllUser, GetLogedInUser } from "./Redux/Thunk/Auth.thunk";
+import { LocalStorageLogedinuserId } from "./utils/Dotenv";
+import axios from "axios";
+import { setActiveUser, SetProductPickUpDay, SetProductPickUpTime } from "./Redux/Slice/Auth.slice";
+import { useEffect, useState } from "react";
+import LaundryServiceModalDemo from "./components/ServiceDetails";
+import SchedulePickupPage from "./components/DeliveryDate";
+import OrderSummaryPage from "./components/CartPage";
+import OrdersPage from "./components/ShowOrder";
+import AdminPanel from "./components/Admin";
+import { toast } from "react-toastify";
+
 function App() {
-  const dispatch=useDispatch<AppDispatch>()
-  let [Onlineuser,setOnlineuser]=useState<Map<string,string>>(new Map())
-  const IsUserLogin =useSelector((state:any)=>state.Auth.IsUserLogin)
-  const LogedInUser=useSelector((state:any)=>state.Auth.user)
-
-
-  const socket=useMemo(()=>{
-return io("http://localhost:7000")
-},[])
-
-  async function refreshtoken(){
-
-    if(localStorage.getItem("email")){
-
-      setTimeout(() => {
-        dispatch(RefreshToken())    
-      }, 5000);
+    const { dark, toggleTheme } = useTheme();
+    const dispatch=useDispatch();
+  let [just,setjust]=useState()
+    async function GetLogedInUser(){
+      try {
+        let {data}=await axios.get(`http://localhost:4500/user/loged-in-user`,{withCredentials:true})
+        if(data.success){
+          console.log(data)
+          dispatch(setActiveUser(data?.data))
+        }
+      } catch (error) {
+        console.log(error)
+        console.log("error in  GetLogedInUser ")
+      }
     }
-      
-  }
-   async function getalluser(){
-    if(localStorage.getItem("email")){
-       dispatch(GetAllUser())
-    }
-  }
-  async function getlogedinuser(){
-    if(localStorage.getItem("email")){
-      dispatch(GetLogedInUser())
-      
-    }
-  }
-
-      useEffect(()=>{
-  // console.log("sidebar chal raha hai")
-  if(IsUserLogin){
-    socket.emit("user-connected",{userid:LogedInUser._id,socketid:socket.id})
-    
-    socket.on("online-users",(data:any)=>{
-      
-       Onlineuser=new Map(data)
-      setOnlineuser(Onlineuser)
-      
-      
-      
-    })
-  }
-  },[IsUserLogin])
-
-  useEffect(()=>{
-    getlogedinuser();
-    getalluser();
-    
-refreshtoken();
-return ()=>{
-  socket.off()
+    useEffect(()=>{
+if(localStorage.getItem(LocalStorageLogedinuserId)){
+  GetLogedInUser();
 }
-  },[])
+    },[])
+
+    async function RefreshToken(){
+      try {
+        let {data}=await axios.post(`http://localhost:4500/user/refresh-token`,{},{withCredentials:true})
+        if(data.success){
+          console.log(data)
+           }
+      } catch (error) {
+        console.log(error)
+        console.log("error in  GetLogedInUser ")
+      }
+    }
+    useEffect(()=>{
+      GetProductPickUpDays();
+      GetProductPickUpTime();
+      RefreshToken();
+let interval=setInterval(RefreshToken,10000)
+
+return ()=>{
+  clearInterval(interval)
+}
+    },[])
+
+async  function GetProductPickUpTime(){
+  try {
+    let {data}=await axios.get(`http://localhost:4500/DateTime/time`,{withCredentials:true})
+    if(data.success){
+      dispatch(SetProductPickUpTime(data?.msg))
+    }
+  } catch (error) {
+  console.log(error)
+  toast.error("erro in GetProductPickUpDays")  
+  }
+}
+async  function GetProductPickUpDays(){
+  try {
+    let {data}=await axios.get(`http://localhost:4500/DateTime/day`,{withCredentials:true})
+    if(data.success){
+      dispatch(SetProductPickUpDay(data?.msg))
+    }
+  } catch (error) {
+  console.log(error)
+  toast.error("erro in GetProductPickUpDays")  
+  }
+}
   return (
     <>
-    <SocketContext.Provider value={{socket,Onlineuser}}>
-
+    <div
+      className={`min-h-screen overflow-hidden w-full transition-all duration-500 ${
+        dark
+        ? "bg-gradient-to-br  from-[#023B40] to-[#01BCBC] text-white"
+        : "bg-slate-50 text-slate-900"
+        }`}
+    >
+    
     <BrowserRouter>
+        <Navbar />
     <Routes>
+      <Route path="/signup" element={<Signup/>}/>
+      <Route path="/signin/:phone" element={<Signin/>}/>
+      <Route path="/verify/:phone" element={<PhoneVerificationPage/>}/>
+      <Route path="/" element={<Home/>}/>
+      <Route path="/DeliveryDate" element={<SchedulePickupPage/>}/>
+      <Route path="/cart" element={<OrderSummaryPage/>}/>
+      <Route path="/show-orders" element={<OrdersPage/>}/>
+      <Route path="/admin" element={<AdminPanel/>}/>
 
-      <Route path="/signup" element={<SignupPage/>}/>
-      <Route path="/signin/:email" element={<LoginPage/>}/>
- <Route path="/" element={<Hero />}/>
-      <Route path="/" element={<PrivateComp/>}>
-      
-
- <Route path="/email-verification/:email" element={<VerifyOtpPage/>}/>
-      </Route>
-      
     </Routes>
     </BrowserRouter>
+      {/* NAVBAR */}
       
-    </SocketContext.Provider>
-    </>
+      
+          </div>
+          {/* <LaundryServiceModalDemo open={true} setOpen={setjust}/> */}
+     </>
   )
 }
 

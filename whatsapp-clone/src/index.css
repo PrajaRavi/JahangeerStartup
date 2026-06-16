@@ -2,6 +2,13 @@
 .myborder{
   border: 4px solid red;
 }
+html{
+  scroll-behavior: smooth;
+
+}
+body{
+  overflow-x: hidden;
+}
 
 .hr{
   border: 2px solid black;

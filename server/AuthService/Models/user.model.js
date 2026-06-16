@@ -15,7 +15,10 @@ SocketId:{
       
   
 },
-
+IsAdmin:{
+  type:Boolean,
+  default:false,
+},
     email: {
       type: String,
       required: [true, "Email is required"],
@@ -40,12 +43,30 @@ verificationCodeExpires: {
       type: String,
       default: "",
     },
+/**
+ * 
+bio: {
+  type: String,
+  default: "",
+  maxlength: [150, "Bio cannot exceed 150 characters"],
+  },
 
-    bio: {
-      type: String,
-      default: "",
-      maxlength: [150, "Bio cannot exceed 150 characters"],
-    },
+  isOnline: {
+    type: Boolean,
+    default: false,
+  },
+  lastSeen: {
+    type: Date,
+    default: null,
+  },
+  // Privacy Layer (Who is allowed to see status fo this user)
+  // If empty, it could mean "Public" or "All Contacts" depending on your business logic
+  whoCanSee: [{ 
+  type: mongoose.Schema.Types.ObjectId, 
+  ref: 'User',
+  index: true // Indexed because friends will query this field to see their feed
+  }],
+*/
 
     phoneNumber: {
       type: String,
@@ -57,22 +78,7 @@ verificationCodeExpires: {
       default: false,
     },
 
-    isOnline: {
-      type: Boolean,
-      default: false,
-    },
 
-    lastSeen: {
-      type: Date,
-      default: null,
-    },
-    // Privacy Layer (Who is allowed to see status fo this user)
-  // If empty, it could mean "Public" or "All Contacts" depending on your business logic
-  whoCanSee: [{ 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User',
-    index: true // Indexed because friends will query this field to see their feed
-  }],
 
 
     role: {

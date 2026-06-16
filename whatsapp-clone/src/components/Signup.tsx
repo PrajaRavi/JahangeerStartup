@@ -1,172 +1,328 @@
+import axios, { AxiosError } from "axios";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import {  useNavigate } from "react-router";
 
-import { useState, ChangeEvent, FormEvent } from "react";
-import { useDispatch } from "react-redux";
-import { signupUser } from "../Redux/Thunk/Auth.thunk";
-import { useNavigate } from "react-router";
-import type { AppDispatch } from "../Redux/Stores/Store.files";
-
-
-interface SignupFormData {
+interface FormData {
   username: string;
   email: string;
-  password: string;
   phoneNumber: string;
-  bio: string;
-  profilePicture: File | null;
+  password:string;
 }
 
 export default function SignupPage() {
-  const navigation=useNavigate();
-  const dispatch=useDispatch<AppDispatch>();
-  const [formData, setFormData] = useState<SignupFormData>({
+  const [formData, setFormData] = useState<FormData>({
     username: "",
     email: "",
-    password: "",
     phoneNumber: "",
-    bio: "",
-    profilePicture: null,
+    password:"",
+
   });
 
-  const [preview, setPreview] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<
+    Partial<FormData>
+  >({});
+
+  const [loading, setLoading] =
+    useState(false);
+    const navigate=useNavigate();
+
+  const validate = () => {
+    const newErrors: Partial<FormData> = {};
+
+    // Name Validation
+    if (!formData.username.trim()) {
+      newErrors.username = "Name is required";
+    }
+
+    // Email Validation
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        formData.email
+      )
+    ) {
+      newErrors.email =
+        "Please enter a valid email";
+    }
+
+    // Contact Validation
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber =
+        "Contact number is required";
+    } else if (
+      !/^[0-9]{10}$/.test(formData.phoneNumber)
+    ) {
+      newErrors.phoneNumber =
+        "Enter a valid 10-digit mobile number";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-
-    if (file) {
-      setFormData((prev) => ({ ...prev, profilePicture: file }));
-      setPreview(URL.createObjectURL(file));
-    }
-  };
-
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (
+    e: React.FormEvent
+  ) => {
     e.preventDefault();
+
+    if (!validate()) return;
 
     try {
       setLoading(true);
 
-      const data = new FormData();
-      data.append("username", formData.username);
-      data.append("email", formData.email);
-      data.append("password", formData.password);
-      data.append("phoneNumber", formData.phoneNumber);
-      data.append("bio", formData.bio);
-
-      if (formData.profilePicture) {
-        data.append("profilePicture", formData.profilePicture);
-      }
-
-      console.log(formData)
-      let result =await dispatch(signupUser(data))
-      console.log(result)
-      if(result.payload?.success){
-          alert("sucess!!!"+result?.payload?.msg)
-          navigation(`/email-verification/${formData.email}`)
-        }
-        else {
-          alert("error!!!"+result?.payload)
-        }
-  
-
-
-
+      // API Call
       
+      let {data}=await axios.post(`http://localhost:4500/user/signup`,formData)
+      console.log(data);
+      if(data.success){
 
-    } catch (error) {
-      console.error(error);
+        
+        toast.success(data?.msg)
+        setFormData({
+        username: "",
+        email: "",
+        phoneNumber: "",
+        password:"",
+      });
+      setTimeout(() => {
+        navigate(`/verify/${formData.phoneNumber}`)
+      }, 1000);
+
+    }
+    } catch (error:any) {
+      const {data,status}=error.response
+      toast.error("signup failed!!!"+`${data?.msg}`)
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-xl bg-white shadow-lg rounded-3xl p-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Create Account</h1>
+    <div className="w-full flex items-center justify-center">
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={formData.username}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-xl outline-none"
-            required
-          />
+    <div
+      className="
+      h-full
+      mt-20
+      flex 
+      flex-col
+      items-center
+      glass
+      md:w-[70%] 
+      w-[90%]
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-xl outline-none"
-            required
-          />
+         p-4
+    "
+    >
+        <h1
+          className="
+          text-3xl
+          font-bold
+          text-center
+          text-[#023B40]
+        "
+        >
+          Create Account
+        </h1>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-xl outline-none"
-            required
-          />
+        <p
+          className="
+          text-center
+          text-gray-500
+          mt-2
+          mb-8
+        "
+        >
+          Join My Dhobi Today
+        </p>
 
-          <input
-            type="text"
-            name="phoneNumber"
-            placeholder="Phone Number"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-xl outline-none"
-          />
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5 md:w-[50%] w-[100%]"
+        >
+          {/* Name */}
+          <div>
+            <label className="block mb-2 font-medium">
+              Full Name
+            </label>
 
-          <textarea
-            name="bio"
-            placeholder="Bio"
-            value={formData.bio}
-            onChange={handleChange}
-            className="w-full border p-3 rounded-xl outline-none resize-none"
-            rows={4}
-          />
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Enter your username"
+              className="
+              w-full
+              border
+              rounded-xl
+              px-4
+              py-3
+              outline-none
+              focus:border-[#00D3F3]
+            "
+            />
 
-          <input
-            type="file"
-            accept="image/*"
-            name="profilePicture"
-            onChange={handleFileChange}
-            className="w-full"
-          />
+            {errors.username && (
+              <p className="text-red-400 text-sm mt-1">
+                {errors.username}
+              </p>
+            )}
+          </div>
 
-          {preview && (
-            <div className="flex justify-center">
-              <img
-                src={preview}
-                alt="Preview"
-                className="w-24 h-24 rounded-full object-cover"
-              />
-            </div>
-          )}
+          {/* Email */}
+          <div>
+            <label className="block mb-2 font-medium">
+              Email
+            </label>
 
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              className="
+              w-full
+              border
+              rounded-xl
+              px-4
+              py-3
+              outline-none
+              focus:border-[#00D3F3]
+            "
+            />
+            
+
+            {errors.email && (
+              <p className="text-red-400 text-sm mt-1">
+                {errors.email}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block mb-2 font-medium">
+              Password
+            </label>
+
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              className="
+              w-full
+              border
+              rounded-xl
+              px-4
+              py-3
+              outline-none
+              focus:border-[#00D3F3]
+            "
+            />
+            
+
+            {errors.email && (
+              <p className="text-red-400 text-sm mt-1">
+                {errors.password}
+              </p>
+            )}
+          </div>
+
+          {/* Contact */}
+          <div>
+            <label className="block mb-2 font-medium">
+              Contact Number
+            </label>
+
+            <input
+              type="tel"
+              name="phoneNumber"
+              maxLength={10}
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              placeholder="9876543210"
+              className="
+              w-full
+              border
+              rounded-xl
+              px-4
+              py-3
+              outline-none
+              focus:border-[#00D3F3]
+            "
+            />
+
+            {errors.phoneNumber && (
+              <p className="text-red-400 text-sm mt-1">
+                {errors.phoneNumber}
+              </p>
+            )}
+          </div>
+
+          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-black text-white py-3 rounded-xl font-medium hover:opacity-90 transition"
+            className="
+            w-full
+            bg-[#00D3F3]
+            text-white
+            py-3
+            rounded-xl
+            font-semibold
+            hover:opacity-90
+            transition
+            disabled:opacity-70
+            disabled:cursor-not-allowed
+            flex
+            justify-center
+            items-center
+            gap-2
+          "
           >
-            {loading ? "Creating Account..." : "Sign Up"}
+            {loading ? (
+              <>
+                <div
+                  className="
+                  h-5
+                  w-5
+                  border-2
+                  border-white
+                  border-t-transparent
+                  rounded-full
+                  animate-spin
+                "
+                />
+                Creating Account...
+              </>
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </form>
-      </div>
     </div>
+    </div>
+
   );
 }

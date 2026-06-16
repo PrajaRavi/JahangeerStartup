@@ -1,3 +1,4 @@
+import { nanoid } from "@reduxjs/toolkit";
 export const ApiResponseType={
   0:"pending",
   1:"fullfiled",
@@ -83,4 +84,48 @@ export const formatStatusTime = (mongoTime: string | Date): string => {
     
     return `${statusDate.toLocaleDateString('en-US', dateOptions)} at ${formattedTime}`;
   }
+};
+
+export const ProjectName="MYDHOBI"
+type PickupDay = {
+  id: string;
+  label: string;
+  date: string;
+};
+
+export const generatePickupDays = (
+  days: string[]
+): PickupDay[] => {
+  return days.map((label, index) => {
+    const date = new Date();
+
+    // Add offset days
+    date.setDate(date.getDate() + index);
+
+    return {
+      id: nanoid(),
+      label,
+      date: date.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+      }),
+    };
+  });
+};
+
+type TimeSlot = {
+  from: string;
+  to: string;
+};
+
+export const generateTimeSlots = (
+  slots: TimeSlot[]
+) => {
+  return slots.map((slot) => ({
+    id:slot._id,
+
+    label: `${slot.from} - ${slot.to}`,
+
+    disabled: false,
+  }));
 };

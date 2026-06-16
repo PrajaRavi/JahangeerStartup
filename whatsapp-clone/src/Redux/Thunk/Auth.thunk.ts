@@ -65,7 +65,7 @@ export const signupUser = createAsyncThunk<
       */
       if (axios.isAxiosError(error)) {
         return thunkAPI.rejectWithValue(
-          error.response?.data?.message ||
+          error.response?.data?.msg ||
           "Signup failed"
         );
       }

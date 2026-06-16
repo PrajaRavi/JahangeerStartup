@@ -73,3 +73,10 @@ export default defineConfig([
   },
 ])
 ```
+
+
+->Order Modal(insted of cart i will show orders and their will not be any cart option user will come selected service and place order)
+{User,OrderId,OrderStatus,Address,}
+Items:[{
+  serviceId,Items:[{id,name,price,quantity}]
+}]

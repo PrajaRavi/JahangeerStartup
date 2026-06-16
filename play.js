@@ -1,5 +1,26 @@
-let arr=[{name:"ravi",id:1},{id:2,name:"sanam"}]
-let newarr=arr.filter((item)=>{
-  return item.id==1
-})
-console.log(newarr)
+export const generatePickupDays = (
+  days
+) => {
+  return days.map((label, index) => {
+    const date = new Date();
+    
+    // Add offset days
+    date.setDate(date.getDate() + index);
+    
+    return {
+      id: label
+      .toLowerCase()
+      .replace(/\s+/g, "-"),
+      label,
+      date: date.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+      }),
+    };
+  });
+};
+      console.log(generatePickupDays([
+  "Today",
+  "Tomorrow",
+  "Day After Tomorrow",
+]))

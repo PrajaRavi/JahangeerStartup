@@ -12,11 +12,9 @@ export const signup = async (req, res) => {
       email,
       password,
       phoneNumber,
-      bio,
       
     } = req.body;
-   let  profilePicture=req.file.filename
-
+   
     // Required fields validation
     if (!username || !email || !password) {
       return res.status(400).json({
@@ -35,7 +33,7 @@ export const signup = async (req, res) => {
 
     // Check existing user
     const existingUser = await UserModel.findOne({
-      $or: [{ email }, { username }],
+      $or: [{ email }, { phoneNumber }],
     });
 
     if (existingUser) {
@@ -59,8 +57,7 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
       phoneNumber,
-      bio,
-      profilePicture,
+      profilePicture:'',
       verificationCode,
       verificationCodeExpires:Date.now() + 5 * 60 * 1000,
       isVerified: false,
@@ -70,11 +67,13 @@ export const signup = async (req, res) => {
 
     
     // Send verification email
+    /**
+     * 
     if(user._id){
-
-      await transporter.sendMail({
+      
+    await transporter.sendMail({
         from: process.env.EMAIL_USER,
-      to: email,
+        to: email,
       subject: "Verify your account",
       html: `
         <h2>Email Verification</h2>
@@ -85,10 +84,11 @@ export const signup = async (req, res) => {
       });
     }
 
+    */
     return res.status(201).json({
       success: true,
       msg:
-        "Signup successful. Verification code sent to your email.",
+      "Signup successful. Verification code sent to your email.",
     });
   } catch (error) {
     console.log(error)
@@ -130,10 +130,10 @@ export const signup = async (req, res) => {
 
 export const verifyOtp = async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const { phoneNumber, otp } = req.body;
 
     // 1. Validation Check
-    if (!email || !otp) {
+    if (!phoneNumber || !otp) {
       return res.status(400).json({ 
         success: false, 
         msg: "Email and OTP are required" 
@@ -141,7 +141,7 @@ export const verifyOtp = async (req, res) => {
     }
 
     // 2. Find user
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ phoneNumber });
 
     if (!user) {
       return res.status(404).json({ 
@@ -190,6 +190,7 @@ export const verifyOtp = async (req, res) => {
 
   } catch (error) {
     /* ---------- ERROR HANDLING ---------- */
+    console.log(error)
     return res.status(500).json({
       success: false,
       msg: error.msg || "Internal Server Error",
@@ -199,16 +200,16 @@ export const verifyOtp = async (req, res) => {
 
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { identifier, password } = req.body;
 
-    if (!email || !password) {
+    if (!identifier || !password) {
       return res.status(400).json({
         success: false,
         msg: "Email and password required",
       });
     }
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({$or:[{email:identifier},{phoneNumber:identifier}]  });
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -279,6 +280,11 @@ export const login = async (req, res, next) => {
 
 export const refreshAccessToken = async (req, res) => {
   // console.log(req.cookies)
+  console.log(req.cookies)
+  console.log("hiiii")
+  console.log("hiiii")
+  console.log("hiiii")
+  console.log("hiiii")
   const refreshToken = req.cookies.refreshToken;
   // console.log(req.cookies);
   if (!refreshToken) {
@@ -414,7 +420,7 @@ export const resendOtp = async (req, res, next) => {
     return res.send({ success: false, msg: error });
   }
 };
-export const GetAllUser = async (req, res, next) => {//implement rate limiting after
+export const GetAllUser = async (req, res, next) => {
   try {
 let data=await UserModel.find().select("-password -refreshToken -verifyotp -resetOtp -phoneNumber -isVerified -isOnline -verificationCode -role -verificationCodeExpires")    
 if(data){
@@ -430,7 +436,18 @@ if(data){
 }
 
 
-
+export const UpdateUserDP=async (req,resp)=>{
+  try {
+      let  userId=req.user.id;//This id comes from protect middleware
+    let data=await UserModel.updateOne({_id:userId},{$set:{profilePicture:req.file.filename}})  
+    if(data){
+  
+      return resp.send({success:true,msg:"updated"})
+    }
+    } catch (error) {
+      return resp.status(500).send({success:false,msg:"Internal server error"})
+    }
+}
 
 export const UpdatewhoCanSee=async(req,resp)=>{
  try {

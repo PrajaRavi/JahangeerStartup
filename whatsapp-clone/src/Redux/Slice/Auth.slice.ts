@@ -1,79 +1,58 @@
 
 
 import { createSlice } from '@reduxjs/toolkit';
-import { signupUser } from '../Thunk/Auth.thunk';
-import type { MessageStatus } from '../../components/MessageStatus';
-export type messageType={
-  _id:string,
-  content:MsgContent,
-  type:MsgType,
-  status?:MessageStatus,
-  time:string,
-  senderID:string,
-  profilePicture?:string,
-  seen:boolean,
-  reciverID:string,
-  progress?:number,
-  hiddenBy?:string[]
+import type { CurrServiceType } from '../../components/ServiceDetails';
+ 
+ 
+ 
+export type OrderProductType={
+  Address:String;
+  Items:[];
+  paymentStatus:String;
+  Time:{from:String,to:String};
+  Day:String;
+  orderStatus:String;
+  _id:String;
 
- }
- export type MsgContent={
-  text?:string,
-  mediaUrl?:string,
- }
- export type GroupOrChat=
-  |"group"
-  |"chat"
-
- export type MsgType=
-  |"text"
-  |"video"
-  |"audio"
-  |"image"
-
-  export type AttachmentsType={
-    type:MsgType,
-    file:File|null,
-    text?:string,
-  }
-
+  
+}
+type ProductPickUpType={
+  from:String;
+  to:String;
+}
 interface FileStates {
   ActiveUser: SignupFormData,//this is nothing but the right side active tab
   IsUserLogin:boolean,
   user: SignupFormData;
   loading: boolean;
-  error: string | null;
   AllUsers:SignupFormData[];
-  messages:messageType[],
-  UnseenMessages:string[],
-  ShowGroupOrChat:GroupOrChat, //This will keep track that right side page shows normal chats or a group chat
-}
+  CartItems:CurrServiceType[];
+  OrderdProducts:OrderProductType[];
+  ProductPickUpDays:string[];
+  ProductPirckUpTime:ProductPickUpType[]
+ }
+ 
 export interface SignupFormData {
   username: string;
   email: string;
   _id:string,
   phoneNumber: string;
-  bio: string;
-  profilePicture: File | null;
-  whoCanSee?:string[];
+  profilePicture: string | null;
   
 
 }
 const initialState: FileStates = {
-  ActiveUser:{username:"",email:"",_id:"",phoneNumber:"",bio:"",profilePicture:null},
+  ActiveUser:{username:"",email:"",_id:"",phoneNumber:"",profilePicture:null},
   IsUserLogin:false,
-  user:{username:"",email:"",_id:"",phoneNumber:"",bio:"",profilePicture:null},
+  user:{username:"",email:"",_id:"",phoneNumber:"",profilePicture:null},
   loading:false,
-  error:null,
+  
   AllUsers:[],
-  UnseenMessages:[],
-  ShowGroupOrChat:"chat",
+  CartItems:[],
+  OrderdProducts:[],
+  ProductPickUpDays:[],
+  ProductPirckUpTime:[],
   
-  messages:[
-    
-      
-  
-]
   };
 
 export const counterSlice = createSlice({
@@ -92,47 +71,22 @@ export const counterSlice = createSlice({
     SetAllUsers: (state, action) => {
       state.AllUsers = action.payload
     },
-    SetMessages: (state, action) => {
-      state.messages.push(action.payload)
-     },
-    UpdateMsg: (state, action) => {
-      let {msgid,status,msgMongoId}=action.payload;//msgid->local msg id,msgMongoId->message mongodb id
-      const msg=state.messages.find((item)=>item._id==msgid)
-      if(msg){
-        msg.status=status
-        if(msgMongoId) msg._id=msgMongoId
-
-      }
+    setCartItems:(state, action) => {
+      state.CartItems=[...state.CartItems,...action.payload]
     },
-    UpdateMsgProgress: (state, action) => {
-      let {msgid,progress}=action.payload;//msgid->local msg id,msgMongoId->message mongodb id
-      const msg=state.messages.find((item)=>item._id==msgid)
-      if(msg){
-        msg.progress=progress;
-        
-      }
+    ReStoreCartItems:(state, action) => {
+      state.CartItems=action.payload
     },
-    SetShowChatOrGroup:(state, action) => {
-      state.ShowGroupOrChat=action.payload;
-      
-     },
-    UpdateMsgSeen: (state, action) => {
-      let {msgid,seen}=action.payload;
-      const msg=state.messages.find((item)=>item._id==msgid)
-      if(msg){
-        msg.seen=seen
-      }
+    SetOrderdProd:(state, action) => {
+      state.OrderdProducts=action.payload;
     },
-    SetUnseenMsg:(state, action) => {
-      state.UnseenMessages.push(action.payload)
+    SetProductPickUpDay:(state, action) => {
+      state.ProductPickUpDays=action.payload;
     },
-    SetMessagesEmpty:(state) => {
-      state.messages=[]
-     },
-    UpdateMessageBySpread:(state, action) => {
-      state.messages=[...action.payload,...state.messages]
-     },
-
+    SetProductPickUpTime:(state, action) => {
+      state.ProductPirckUpTime=action.payload;
+    },
+    
 
 
 
@@ -141,54 +95,11 @@ export const counterSlice = createSlice({
       
   
   },
-   extraReducers: (builder) => {
-  builder
-
-    /*
-      Runs when signup API starts
-
-      Why:
-      - show loader
-      - clear old errors
-    */
-    .addCase(signupUser.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    })
-
-    /*
-      Runs when signup succeeds
-
-      Why:
-      - stop loading
-      - save user data
-      - mark authenticated
-    */
-    .addCase(signupUser.fulfilled, (state, action) => {
-      state.loading = false;
-      state.user = action.payload.data;
-      state.IsUserLogin = true;
-      state.error = null;
-    })
-
-    /*
-      Runs when signup fails
-
-      Why:
-      - stop loading
-      - save backend error message
-    */
-    .addCase(signupUser.rejected, (state, action) => {
-      state.loading = false;
-      state.error =
-        action.payload || "Signup failed";
-    });
-} 
     
     
 
    
 });
 
-export const { setActiveUser,SetIsUserLogin,SetUser,SetAllUsers,SetMessages,UpdateMsg,UpdateMessageBySpread,SetMessagesEmpty,UpdateMsgSeen,SetUnseenMsg,SetShowChatOrGroup,UpdateMsgProgress} = counterSlice.actions;
+export const { setActiveUser,SetIsUserLogin,SetUser,SetAllUsers,setCartItems,ReStoreCartItems,SetOrderdProd,SetProductPickUpDay,SetProductPickUpTime} = counterSlice.actions;
 export const FileReducer = counterSlice.reducer;
