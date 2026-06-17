@@ -5,8 +5,7 @@ import {
   Calendar,
   Clock,
   ChevronDown,
-  Package,
-} from "lucide-react";
+  } from "lucide-react";
 import {useSelector } from "react-redux";
 import type { OrderProductType } from "../Redux/Slice/Auth.slice";
 import { OrderStatusPlace } from "../utils/Dotenv";
@@ -16,11 +15,11 @@ import UpdateOrderFromUser from "./UpdateOrderFromUser";
 export default function OrdersPage() {
   const [expandedOrder, setExpandedOrder] =
     useState<string | null>(null);
-    let [SelectedOrderForUpdate,setSelectedOrderForUpdate]=useState<OrderProductType>({_id:"ravi",Address:"ravi",Day:"ravi",Items:[],orderStatus:"nothing",paymentStatus:"nothign",Time:{from:"no",to:"no"},User:{},AltphoneNumber:456,Amount:56,Count:5,lang:56,lat:5,phoneNumber:56})
+    let [SelectedOrderForUpdate,setSelectedOrderForUpdate]=useState<OrderProductType>()
 let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
   
 let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
-
+/*
   const orders = [
     {
       _id: "MD10001",
@@ -65,18 +64,19 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
       ],
     },
   ];
+  */
 
   return (
     <>
     {OpenOrderUpdateModal&&<div className="fixed top-0 w-full h-full overflow-y-scroll z-30 left-0">
-      <UpdateOrderFromUser OrderData={SelectedOrderForUpdate} setOpenOrderUpdateModal={setOpenOrderUpdateModal}/>
+      <UpdateOrderFromUser OrderData={SelectedOrderForUpdate as OrderProductType} setOpenOrderUpdateModal={setOpenOrderUpdateModal}/>
     </div>}
     <div
       className="
       min-h-screen
       mt-5
 
-      bg-gradient-to-br
+      bg-linear-to-br
       from-[#00D3F3]
       via-[#023B40]
       to-[#001518]
@@ -112,7 +112,7 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
 
         <div className="space-y-6">
           {OrderdProducts.map(
-            (order:OrderProductType, index) => {
+            (order:OrderProductType, index:Number) => {
               const expanded =
                 expandedOrder ===
                 order._id;
@@ -121,7 +121,7 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
                 order.Items.reduce(
                   (
                     acc,
-                    item
+                    item:any
                   ) =>
                     acc +
                     item.price *
@@ -131,7 +131,7 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
 
               return (
                 <motion.div
-                  key={order._id}
+                  key={String(order._id)}
                   initial={{
                     opacity: 0,
                     y: 40,
@@ -142,7 +142,7 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
                   }}
                   transition={{
                     delay:
-                      index * 0.1,
+                      Number(index) * 0.1,
                   }}
                   className="
                   backdrop-blur-xl
@@ -241,7 +241,7 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
                           setExpandedOrder(
                             expanded
                               ? null
-                              : order._id
+                              : String(order._id)
                           )
                         }
                         className="

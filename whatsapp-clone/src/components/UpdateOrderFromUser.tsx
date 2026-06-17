@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -11,18 +11,13 @@ import {
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import type { CurrServiceType } from "./ServiceDetails";
-import { useNavigate } from "react-router";
 import { generatePickupDays, generateTimeSlots } from "../utils/Dotenv";
 import { UpdateOrderdProductFlag, type OrderProductType } from "../Redux/Slice/Auth.slice";
 
 export default function UpdateOrderFromUser({OrderData,setOpenOrderUpdateModal}:{OrderData:OrderProductType,setOpenOrderUpdateModal:React.Dispatch<React.SetStateAction<boolean>>}) {
   const [selectedDay, setSelectedDay] =
-    useState();
-  let CartItems=useSelector((state:any)=>state.Auth.CartItems)
+    useState<string|undefined>();
   let [codinates,setcodinates]=useState({lang:0,lat:0})
-  const navigate=useNavigate();
-  const ProductPickUpDays=useSelector((state:any)=>state.Auth.ProductPickUpDays)
   let OrderdProductsFlag=useSelector((state:any)=>state.Auth.OrderdProductsFlag)
   const dispatch=useDispatch();
   
@@ -33,9 +28,9 @@ export default function UpdateOrderFromUser({OrderData,setOpenOrderUpdateModal}:
   const [selectedTime, setSelectedTime] =
     useState("11-1");
 
-    let [Address,setAddress]=useState("")
-    let [phoneNumber,setphoneNumber]=useState()
-    let [AltphoneNumber,setAltphoneNumber]=useState()
+    let [Address,setAddress]=useState<string|undefined>("")
+    let [phoneNumber,setphoneNumber]=useState<string|undefined>("")
+    let [AltphoneNumber,setAltphoneNumber]=useState<string|undefined>("")
 
   const [coupon, setCoupon] =
     useState("");
@@ -83,15 +78,6 @@ export default function UpdateOrderFromUser({OrderData,setOpenOrderUpdateModal}:
     },
   ]);
 
-  let CartSummary=useMemo(()=>{
-  let totalamount=0;
-  let totalelem=0;
-  CartItems?.forEach((product:any)=>{
-    totalamount+=product.price*product.count;
-    totalelem+=1;
-  })
-  return {totalamount,totalelem}
-  },[CartItems])
   
   async function PlaceOrder(){
     try {
@@ -122,6 +108,7 @@ export default function UpdateOrderFromUser({OrderData,setOpenOrderUpdateModal}:
     } catch (error:any) {
       let {data,status}=error.response;
       if(data?.msg){
+        console.log(status)
         return toast.error(data?.msg)
       }
       console.log(error)
@@ -186,9 +173,10 @@ try {
 }
   }
   useEffect(()=>{
-setAddress(OrderData.Address)
-setphoneNumber(OrderData.phoneNumber)
-setAltphoneNumber(OrderData.AltphoneNumber)
+// Ensure we pass primitive strings (not String objects) to state setters
+setAddress(OrderData.Address ? String(OrderData.Address) : undefined)
+setphoneNumber(OrderData.phoneNumber ? String(OrderData.phoneNumber) : undefined)
+setAltphoneNumber(OrderData.AltphoneNumber ? String(OrderData.AltphoneNumber) : undefined)
 
 
   },[])
@@ -230,7 +218,7 @@ setOpenOrderUpdateModal(false);
           border
           border-white/20
 
-          rounded-[32px]
+          rounded-4xl
           z-5
           shadow-2xl
 

@@ -1,15 +1,15 @@
-import { Menu, Moon, ShoppingBag, ShoppingCart, Sun, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { Menu, Moon, ShoppingBag, Sun, X } from 'lucide-react'
+import  { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useTheme } from '../context/theme.context';
 import logo from "../assets/logo.png"
 import logo1 from "../assets/logo1.png"
-import { LocalStorageLogedinuserId, ProfessionAdmin } from '../utils/Dotenv';
+import { LocalStorageLogedinuserId } from '../utils/Dotenv';
 import { useDispatch, useSelector } from 'react-redux';
 import ProfileModal from './ProfileModal';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { ReStoreCartItems, setCartItems, SetOrderdProd } from '../Redux/Slice/Auth.slice';
+import { SetOrderdProd } from '../Redux/Slice/Auth.slice';
 
 
 function Navbar() {
@@ -18,13 +18,13 @@ function Navbar() {
   let CartItems=useSelector((state:any)=>state.Auth.CartItems)
   let [profileOpen,setprofileOpen]=useState(false)
   const User=useSelector((state:any)=>state.Auth.ActiveUser)
-let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
+// let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
 let OrderdProductsFlag=useSelector((state:any)=>state.Auth.OrderdProductsFlag)
 
   const dispatch=useDispatch();
   const navigate=useNavigate();
     const { dark, toggleTheme } = useTheme();
-    let [MenuOptions,setMenuOptions]=useState<string[]>(["Services", "Process", "App", "Contact"])
+    let MenuOptions:string[]=["Services", "Process", "App", "Contact"]
     let [Profile,setProfile]=useState("Ravi")
   
     useEffect(()=>{

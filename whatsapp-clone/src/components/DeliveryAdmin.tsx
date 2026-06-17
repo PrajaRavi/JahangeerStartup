@@ -5,13 +5,13 @@ import {
   Calendar,
   Clock,
   ChevronDown,
-  Package,
   X,
+  
 } from "lucide-react";
 import {useDispatch, useSelector } from "react-redux";
-import { UpdateAllOrderDataFlag, UpdateOrderData, type OrderProductType } from "../Redux/Slice/Auth.slice";
+import { UpdateAllOrderDataFlag, type OrderProductType } from "../Redux/Slice/Auth.slice";
 import GlassCopyInput from "../utils/InputCopy";
-import { CANCELLED, DELIVERED, OrderStatusOut_for_Delivery, OrderStatusPlace, PaymentFailed, PaymentPaid, PaymentPending, ProfessionUser } from "../utils/Dotenv";
+import { CANCELLED, DELIVERED, OrderStatusOut_for_Delivery, OrderStatusPlace, PaymentFailed, PaymentPaid, PaymentPending} from "../utils/Dotenv";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -29,6 +29,8 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
   let [OrderStatus,setOrderStatus]=useState()
   let [PaymentStatus,setPaymentStatus]=useState()
 
+/**
+ * 
 
   const orders = [
     {
@@ -74,6 +76,8 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
       ],
     },
   ];
+ */
+
   useEffect(()=>{
     if(OrderData?.length>0){
 
@@ -101,6 +105,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
     } catch (error:any) {
       let {data,status}=error.response;
       toast.error(data?.msg)
+      console.log(status)
       console.log(error)
     }
   }
@@ -167,7 +172,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
       w-screen
       mt-5
 
-      bg-gradient-to-br
+      bg-linear-to-br
       from-[#00D3F3]
       via-[#023B40]
       to-[#001518]
@@ -217,7 +222,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                 order.Items.reduce(
                   (
                     acc,
-                    item
+                    item:any
                   ) =>
                     acc +
                     item.price *
@@ -227,7 +232,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
 
               return (
                 <motion.div
-                  key={order._id}
+                  key={String(order._id)}
                   initial={{
                     opacity: 0,
                     y: 40,
@@ -246,7 +251,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                   bg-white/10
 
                   w-full
-                  border-1
+                  border
                   
                   border-white/20
 
@@ -266,7 +271,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                           setExpandedOrder1(
                             expanded1
                               ? null
-                              : order._id
+                              : String(order._id)
                           )
                         }
                       className="absolute  top-2 right-2 p-1 border-2 rounded-md">
@@ -346,7 +351,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                           setExpandedOrder(
                             expanded
                               ? null
-                              : order._id
+                              : String(order._id)
                           )
                         }
                         className="

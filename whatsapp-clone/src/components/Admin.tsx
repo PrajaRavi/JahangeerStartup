@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { User, ShoppingBag, Mail, Trash2, Edit3, Menu, X, Users, DollarSign, Loader } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import UpdateUser from './UserUpdate';
@@ -45,7 +45,7 @@ const initialOrders = [
 ];
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState('users');
+  const [activeTab, setActiveTab] = useState<string|undefined>('users');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const UsersData=useSelector((state:any)=>state.Auth.UsersData)
   const OrderData=useSelector((state:any)=>state.Auth.OrderData)
@@ -113,13 +113,10 @@ navigate("/")
 
   return (
     <>
-    {OpenUpdateUserModal&&<UpdateUser UserData={SelectedUserForUpdate} setOpenUpdateUserModal={setOpenUpdateUserModal}/>}
+    {OpenUpdateUserModal&&<UpdateUser UserData={SelectedUserForUpdate as SignupFormData} setOpenUpdateUserModal={setOpenUpdateUserModal}/>}
     {LogedInUser.role=="admin"?<div className="min-h-screen mt-10 bg-black/30 backdrop-blur-sm text-slate-100 flex font-sans relative overflow-hidden p-0 sm:p-4 md:p-6">
       
-      {/* Decorative Blur Background Blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
-
+     
       {/* --- SIDEBAR COMPONENTS (Responsive) --- */}
       
       {/* Mobile Sidebar Overlay */}
@@ -140,10 +137,10 @@ navigate("/")
         {/* Sidebar Header Title */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <div className="h-9 w-9 rounded-xl bg-linear-to-tr from-cyan-200 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <span className="font-black text-white text-lg">Ω</span>
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-tr from-white to-slate-400">
               GlassAdmin
             </span>
           </div>
@@ -167,7 +164,7 @@ navigate("/")
                 className={`
                   w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all duration-300 group
                   ${isActive 
-                    ? 'bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 text-white shadow-inner shadow-indigo-500/10' 
+                    ? 'bg-linear-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 text-white shadow-inner shadow-indigo-500/10' 
                     : 'text-slate-400 hover:bg-white/5 hover:text-slate-200 border border-transparent'}
                 `}
               >
@@ -239,7 +236,7 @@ navigate("/")
           ) : (
             /* Unified Dynamic Responsive Table Markup Layout */
             <div className="overflow-x-auto w-full flex-1">
-              <table className="w-full text-left border-collapse min-w-[700px]">
+              <table className="w-full text-left border-collapse min-w-175">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/5 text-slate-300 text-xs font-semibold uppercase tracking-wider">
                     <th className="p-4 pl-6">ID</th>
@@ -264,8 +261,8 @@ navigate("/")
                 </thead>
                 <tbody className="divide-y divide-white/5 text-sm font-medium">
                   {activeTab === 'users' ? (
-                    users.map((row) => (
-                      <tr key={row._id} className="hover:bg-white/[0.02] transition-colors duration-150">
+                    users.map((row:any) => (
+                      <tr key={row._id} className="hover:bg-white/2 transition-colors duration-150">
                         <td className="p-4 pl-6 font-mono text-xs text-slate-400">{row._id}</td>
                         <td className="p-4 text-slate-100">{row.username}</td>
                         <td className="p-4 text-slate-300 font-normal">{row.email}</td>
@@ -273,7 +270,7 @@ navigate("/")
                         <td className="p-4 text-center pr-6">
                           <div className="flex items-center justify-center gap-2">
                             <button 
-                              onClick={() => {setSelectedUserForUpdate({_id:row._id,email:row.email,username:row.username,phoneNumber:row.phoneNumber,role:row.role})
+                              onClick={() => {setSelectedUserForUpdate({_id:row._id,email:row.email,username:row.username,phoneNumber:row.phoneNumber,role:row.role,profilePicture:""})
                               setOpenUpdateUserModal(true)
                             }}
                               disabled={updatingId === row._id}
@@ -295,7 +292,7 @@ navigate("/")
                     ))
                   ) : (
                     orders.map((row) => (
-                      <tr key={row._id} className="hover:bg-white/[0.02] transition-colors duration-150">
+                      <tr key={row._id} className="hover:bg-white/2 transition-colors duration-150">
                         <td className="p-4 pl-6 font-mono text-xs text-slate-400">{row._id}</td>
                         <td className="p-4 text-slate-100">{row.User}</td>
                         <td className="p-4 text-emerald-400 font-semibold">Rs.{row.Amount}</td>
@@ -381,7 +378,7 @@ navigate("/")
               </button>
               <button
                 onClick={handleDeleteConfirm}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-red-500 text-white font-semibold shadow-lg shadow-rose-600/20 hover:from-rose-500 hover:to-red-400 transition-all text-sm"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-linear-to-r from-rose-600 to-red-500 text-white font-semibold shadow-lg shadow-rose-600/20 hover:from-rose-500 hover:to-red-400 transition-all text-sm"
               >
                 Delete
               </button>

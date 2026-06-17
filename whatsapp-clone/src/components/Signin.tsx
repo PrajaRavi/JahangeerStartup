@@ -78,7 +78,7 @@ const navigate=useNavigate();
   };
 
   const handleSubmit = async (
-    e: React.FormEvent
+    e: any
   ) => {
     e.preventDefault();
 
@@ -108,7 +108,7 @@ const navigate=useNavigate();
     } catch (error: any) {
       let {data,status}=error.response;
       if(data){
-
+        console.log(status)
         toast.error(
           data?.msg ||
           "Something went wrong"

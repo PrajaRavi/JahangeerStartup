@@ -1,14 +1,12 @@
-import Navbar from "./Navbar"
 import Hero from "./Hero"
 import Services from "./Services";
 import Process from "./Process";
 import Stats from "./Stats";
-import AppSection from "./AppSection";
 import {motion} from "framer-motion"
 import AppImage from "../assets/app.png";
 
 import Footer from "./Footer";
-import { ThemeProvider, useTheme } from "../context/theme.context";
+import {useTheme } from "../context/theme.context";
 
 export default function Home() {
   const {dark}=useTheme();

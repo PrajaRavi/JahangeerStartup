@@ -167,10 +167,10 @@ const navigage=useNavigate();
             md:h-[85vh]
 
             w-full
-            md:w-[700px]
+            md:w-175
 
-            rounded-t-[32px]
-            md:rounded-[32px]
+            rounded-t-4xl
+            md:rounded-4xl
 
             shadow-2xl
 
@@ -372,7 +372,7 @@ const navigage=useNavigate();
                         }}
                         className="
                         font-bold
-                        min-w-[20px]
+                        min-w-5
                         text-center
                       "
                       >

@@ -16,9 +16,7 @@ export default function PhoneVerificationPage() {
     const navigate=useNavigate();
 
 
-  const [sendingOtp, setSendingOtp] =
-    useState(false);
-
+  
   const [formData, setFormData] =
     useState<FormData>({
       phoneNumber: String(phone),
@@ -116,7 +114,7 @@ export default function PhoneVerificationPage() {
       }, 1000);
     } catch(error:any) {
       let {data,status}=error.response;
-      
+      console.log(status)
         toast.error(
           "Verification failed!!! "+`${data?.msg}`
         );

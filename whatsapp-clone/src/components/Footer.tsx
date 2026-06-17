@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTheme } from '../context/theme.context'
 import logo from "../assets/logo.png"
 import logo1 from "../assets/logo1.png"

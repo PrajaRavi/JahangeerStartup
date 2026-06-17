@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import { Shirt, ShoppingBag, X } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import type { CurrServiceType, ServiceItem } from "./ServiceDetails";
+import { Shirt, ShoppingBag} from "lucide-react";
+import { useSelector } from "react-redux";
+import type { CurrServiceType } from "./ServiceDetails";
 import { useEffect, useMemo } from "react";
-import { ReStoreCartItems, setCartItems } from "../Redux/Slice/Auth.slice";
 
+/*
 interface Product {
   id: number;
   name: string;
@@ -12,10 +12,10 @@ interface Product {
   price: number;
   quantity: number;
 }
-
+*/
 export default function OrderSummaryPage() {
-  const serviceName = "Ironing";
   let CartItems=useSelector((state:any)=>state.Auth.CartItems)
+  /*
 const dispatch=useDispatch();
   const products: Product[] = [
     {
@@ -40,18 +40,8 @@ const dispatch=useDispatch();
       quantity: 1,
     },
   ];
-
-  const totalItems = products.reduce(
-    (acc, item) => acc + item.quantity,
-    0
-  );
-
-  const totalAmount = products.reduce(
-    (acc, item) =>
-      acc + item.price * item.quantity,
-    0
-  );
-
+*/
+  
   useEffect(()=>{
 console.log(CartItems)
 if(CartItems?.length>0){
@@ -71,8 +61,9 @@ totalelem+=Number(item.count)
 return {totalamount,totalelem}
 },[CartItems])
 
+/*
 async function HandleProdDelete(serviceLabel:string,ProdID:string){
-  // let FilterData=CartItems.
+  let FilterData=CartItems.
   console.log(serviceLabel,ProdID)
   if(serviceLabel!="" && ProdID!=""){
  let FilterData=CartItems.map((service:CurrServiceType)=>{
@@ -88,10 +79,11 @@ async function HandleProdDelete(serviceLabel:string,ProdID:string){
  dispatch(ReStoreCartItems(FilterData))
 }
 }
+*/
   
   return (
     <div className="min-h-screen  bg-transparent p-4 md:p-8">
-      {CartItems.map((products:CurrServiceType,idx:Number)=>{
+      {CartItems.map((products:CurrServiceType)=>{
 
 
       return <div className="max-w-3xl mt-2 mx-auto">
@@ -121,7 +113,7 @@ async function HandleProdDelete(serviceLabel:string,ProdID:string){
         {/* Product List */}
 
         <div className="space-y-4">
-          {products?.Items?.map((product, index) => (
+          {products?.Items?.map((product:any, index:Number) => (
             
             <motion.div
               key={product.count}
@@ -134,7 +126,7 @@ async function HandleProdDelete(serviceLabel:string,ProdID:string){
                 y: 0,
               }}
               transition={{
-                delay: index * 0.1,
+                delay: Number(index) * 0.1,
               }}
               className="
               bg-white

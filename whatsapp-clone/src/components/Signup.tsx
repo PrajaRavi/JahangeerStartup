@@ -1,8 +1,7 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import {  useNavigate } from "react-router";
-import { ProfessionAdmin, ProfessionDeliveryBoy, ProfessionUser } from "../utils/Dotenv";
 
 interface FormData {
   username: string;
@@ -111,6 +110,7 @@ export default function SignupPage() {
     }
     } catch (error:any) {
       const {data,status}=error.response
+      console.log(status)
       toast.error("signup failed!!!"+`${data?.msg}`)
     } finally {
       setLoading(false);
@@ -158,7 +158,7 @@ export default function SignupPage() {
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-5 md:w-[50%] w-[100%]"
+          className="space-y-5 md:w-[50%] w-full"
         >
           {/* Name */}
           <div>

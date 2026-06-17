@@ -10,17 +10,15 @@ import {
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import type { CurrServiceType } from "./ServiceDetails";
 import { useNavigate } from "react-router";
 import { generatePickupDays, generateTimeSlots } from "../utils/Dotenv";
 
 export default function SchedulePickupPage() {
-  const [selectedDay, setSelectedDay] =
-    useState();
+  const [selectedDay, setSelectedDay] = useState<string|undefined>();
   let CartItems=useSelector((state:any)=>state.Auth.CartItems)
   let [codinates,setcodinates]=useState({lang:0,lat:0})
   const navigate=useNavigate();
-  const ProductPickUpDays=useSelector((state:any)=>state.Auth.ProductPickUpDays)
+  // const ProductPickUpDays=useSelector((state:any)=>state.Auth.ProductPickUpDays)
   const  ProductPirckUpTime=useSelector((state:any)=>state.Auth.ProductPirckUpTime)
   const User=useSelector((state:any)=>state.Auth.ActiveUser)
 
@@ -28,9 +26,9 @@ export default function SchedulePickupPage() {
   const [selectedTime, setSelectedTime] =
     useState("11-1");
 
-    let [Address,setAddress]=useState("")
-    let [phoneNumber,setphoneNumber]=useState()
-    let [AltphoneNumber,setAltphoneNumber]=useState()
+    let [Address,setAddress]=useState<string|undefined>("")
+    let [phoneNumber,setphoneNumber]=useState<string|undefined>()
+    let [AltphoneNumber,setAltphoneNumber]=useState<string|undefined>()
 
   const [coupon, setCoupon] =
     useState("");
@@ -180,7 +178,7 @@ try {
     <div
       className="
       min-h-screen
-      bg-gradient-to-br
+      bg-linear-to-br
       from-[#00D3F3]
       via-[#023B40]
       to-[#001C20]
@@ -212,7 +210,7 @@ try {
           border
           border-white/20
 
-          rounded-[32px]
+          rounded-4xl
           z-5
           shadow-2xl
 
@@ -377,9 +375,7 @@ try {
                       day.id
                     }
                     onChange={() =>
-                      setSelectedDay(
-                        day.id
-                      )
+                      setSelectedDay(day.id)
                     }
                   />
 

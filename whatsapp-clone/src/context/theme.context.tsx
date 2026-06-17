@@ -9,6 +9,7 @@ import {
 type ThemeContextType = {
   dark: boolean;
   toggleTheme: () => void;
+  setDark:(val:boolean)=>void;
 };
 
 const ThemeContext =
@@ -31,6 +32,7 @@ export const ThemeProvider = ({
       value={{
         dark,
         toggleTheme,
+        setDark
       }}
     >
       {children}

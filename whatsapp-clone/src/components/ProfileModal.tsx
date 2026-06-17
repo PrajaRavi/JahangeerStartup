@@ -1,6 +1,6 @@
 import axios from "axios";
 import { X, Mail, Phone, Camera } from "lucide-react";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 interface ProfileModalProps {
@@ -29,7 +29,7 @@ export default function ProfileModal({
   setProfile,
 }: ProfileModalProps) {
   if (!open) return null;
-  const User=useSelector((state:any)=>state.Auth.ActiveUser)
+  // const User=useSelector((state:any)=>state.Auth.ActiveUser)
   async function UpdateDP(file:any){
     try {
       let formdata=new FormData();

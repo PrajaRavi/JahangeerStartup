@@ -1,9 +1,9 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import {  useNavigate } from "react-router";
+// import {  useNavigate } from "react-router";
 import { ProfessionAdmin, ProfessionDeliveryBoy, ProfessionUser } from "../utils/Dotenv";
-import { User, X } from "lucide-react";
+import { X } from "lucide-react";
 import type { SignupFormData } from "../Redux/Slice/Auth.slice";
 
 interface FormData {
@@ -32,7 +32,7 @@ export default function UpdateUser({setOpenUpdateUserModal,UserData}:{setOpenUpd
 
   const [loading, setLoading] =
     useState(false);
-    const navigate=useNavigate();
+    // const navigate=useNavigate();
 
   const validate = () => {
     const newErrors: Partial<FormData> = {};
@@ -71,7 +71,7 @@ export default function UpdateUser({setOpenUpdateUserModal,UserData}:{setOpenUpd
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: any
   ) => {
     const { name, value } = e.target;
 
@@ -113,6 +113,7 @@ export default function UpdateUser({setOpenUpdateUserModal,UserData}:{setOpenUpd
     }
     } catch (error:any) {
       const {data,status}=error.response
+      console.log(status)
       toast.error("signup failed!!!"+`${data?.msg}`)
     } finally {
       setLoading(false);
@@ -171,7 +172,7 @@ setFormData({email:UserData.email,username:UserData.username,phoneNumber:UserDat
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-5 md:w-[50%] w-[100%]"
+          className="space-y-5 md:w-[50%] w-full"
         >
           {/* Name */}
           <div>

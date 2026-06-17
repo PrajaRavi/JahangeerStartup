@@ -1,7 +1,7 @@
 import {motion} from "framer-motion"
 import { useTheme } from "../context/theme.context";
 import { useState } from "react";
-import LaundryServiceModalDemo from "./ServiceDetails";
+import LaundryServiceModalDemo, { type CurrServiceType } from "./ServiceDetails";
 const services = [
   {label:"Wash & Fold",id:"serv1",icon:"../src/assets/clean-clothes.png",Items:[
   { id: 1, name: "Shirt", price: 15 },
@@ -60,7 +60,7 @@ const services = [
 ];
 
 export default function Services() {
-      const { dark, toggleTheme } = useTheme();
+      const { dark } = useTheme();
       let [OpenService,setOpenService]=useState(false)
       let [SelectedService,setSelectedService]=useState<{label:string,icon:string}>()
   
@@ -68,7 +68,7 @@ export default function Services() {
     <>
     <div className="text-black fixed top-0 left-0">
 
-          {OpenService&&<LaundryServiceModalDemo CurrService={SelectedService} open={OpenService} setOpen={setOpenService}/>}
+          {OpenService&&<LaundryServiceModalDemo CurrService={SelectedService as CurrServiceType} open={OpenService} setOpen={setOpenService}/>}
     </div>
 
     <section id="Services" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
