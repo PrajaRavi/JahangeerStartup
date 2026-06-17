@@ -2,7 +2,7 @@ import {motion} from "framer-motion"
 import { useTheme } from "../context/theme.context";
 import { useState } from "react";
 import Icon1 from "../assets/clean-clothes.png"
-import Icon2 from "../assets/iron.png"
+// import Icon2 from "../assets/iron.png"
 import Icon3 from "../assets/clothing-hanger.png"
 import Icon4 from "../assets/t-shirt.png"
 import Icon5 from "../assets/sport-shoe.png"
