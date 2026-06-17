@@ -9,7 +9,10 @@ import { ThemeProvider } from './context/theme.context.tsx'
 createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
 <ThemeProvider>
+    <StrictMode>
     <App />
+
+    </StrictMode>
 <ToastContainer
 position="top-right"
 autoClose={5000}
