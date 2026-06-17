@@ -68,19 +68,24 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
 
   return (
     <>
-    {OpenOrderUpdateModal&&<div className="fixed top-0 w-full h-full overflow-y-scroll z-30 left-0">
+    {OpenOrderUpdateModal&&<div className="fixed top-0 w-full h-screen overflow-y-scroll z-30 left-0">
       <UpdateOrderFromUser OrderData={SelectedOrderForUpdate as OrderProductType} setOpenOrderUpdateModal={setOpenOrderUpdateModal}/>
     </div>}
     <div
-      className="mt-10 w-full min-h-screen
-
-      
-      p-4
-      md:p-8
-    "
+      className="
+      min-h-screen
+      pt-20
+      w-full 
+      transition-all duration-500
+        
+       p-4
+       md:p-8
+        bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white"
+    
     >
       <div
         className="
+        min-h-screen
         max-w-5xl
         mx-auto
       "

@@ -14,10 +14,13 @@ import GlassCopyInput from "../utils/InputCopy";
 import { CANCELLED, DELIVERED, OrderStatusOut_for_Delivery, OrderStatusPlace, PaymentFailed, PaymentPaid, PaymentPending} from "../utils/Dotenv";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useTheme } from "../context/theme.context";
 
 export default function DeliverAdmin() {
   const [expandedOrder, setExpandedOrder] =
     useState<string | null>(null);
+    const { dark } = useTheme();
+
   const [expandedOrder1, setExpandedOrder1] =
     useState<string | null>(null);
     const dispatch=useDispatch();
@@ -111,7 +114,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
   }
   return (
     <>
-    {OpenOrderUpdateModal&&<div className="w-full h-full fixed top-0 left-0 z-32 bg-transparent glass flex items-center justify-center">
+    {OpenOrderUpdateModal&&<div className={`w-screen   top-0 left-0 h-screen flex items-center justify-center  `}>
       <button onClick={()=>setOpenOrderUpdateModal(false)} className="absolute right-5 top-5"><X size={20}/></button>
       <form onSubmit={(e)=>{
         HandleSubmit(e);
@@ -167,15 +170,11 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
       </form>
     </div>}
     <div
-      className="
-      min-h-screen
-      w-screen
-      mt-5
-
-      
-      p-4
-      md:p-8
-    "
+      className={`min-h-screen  pt-20  w-full  transition-all duration-500 ${
+        dark
+        ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] "
+        : "bg-slate-50 text-slate-900"
+        }`}
     >
       <div
         className="
@@ -196,7 +195,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
           md:text-2xl
           text-xl
           font-bold
-          text-white
+          
           mb-8
         "
         >
@@ -309,7 +308,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                           md:text-xl
                           text-xs
                           md:font-semibold
-                          text-white
+                          
                         "
                         >
                           Order #
@@ -417,11 +416,11 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                         />
 
                         <div>
-                          <p className="text-white/60 md:text-sm text-xs">
+                          <p className="/60 md:text-sm text-xs">
                             Address
                           </p>
 
-                          <p className="text-white md:text-sm text-xs">
+                          <p className=" md:text-sm text-xs">
                             {
                                 order.Address
                             }
@@ -441,11 +440,11 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                         />
 
                         <div>
-                          <p className="text-white/60 md:text-sm text-xs">
+                          <p className="/60 md:text-sm text-xs">
                             Delivery Day
                           </p>
 
-                          <p className="text-white md:text-sm text-xs">
+                          <p className=" md:text-sm text-xs">
                             {
                               order.Day
                             }
@@ -465,11 +464,11 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                         />
 
                         <div>
-                          <p className="text-white/60 md:text-sm text-xs">
+                          <p className="/60 md:text-sm text-xs">
                             Time Slot
                           </p>
 
-                          <p className="text-white md:text-sm text-xs">
+                          <p className=" md:text-sm text-xs">
                             {
                               `${order.Time.from}-${order.Time.to}`
                             }
@@ -544,13 +543,13 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                                     </div>
 
                                     <div>
-                                      <h4 className="text-white font-semibold">
+                                      <h4 className=" font-semibold">
                                         {
                                           item.name
                                         }
                                       </h4>
 
-                                      <p className="text-white/60">
+                                      <p className="/60">
                                         ₹
                                         {
                                           item.price
@@ -587,7 +586,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
 
                             text-xl
                             font-bold
-                            text-white
+                            
                           "
                           >
                             <span>

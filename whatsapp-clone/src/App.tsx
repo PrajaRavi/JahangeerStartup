@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router"
 import Home from "./components/Home"
 import Signup from "./components/Signup"
-import { useTheme } from "./context/theme.context";
+// import { useTheme } from "./context/theme.context";
 import Navbar from "./components/Navbar";
 import Signin from "./components/Signin";
 import PhoneVerificationPage from "./components/Verification";
@@ -17,8 +17,8 @@ import AdminPanel from "./components/Admin";
 import { toast } from "react-toastify";
 
 function App() {
-    const { dark } = useTheme();
-  // const OrderData=useSelector((state:any)=>state.Auth.OrderData)
+    // const { dark } = useTheme();
+  const IsUserLogin=useSelector((state:any)=>state.Auth.IsUserLogin)
   const GetAllOrdersFlag=useSelector((state:any)=>state.Auth.GetAllOrdersFlag)
 
 
@@ -39,7 +39,7 @@ function App() {
 if(localStorage.getItem(LocalStorageLogedinuserId)){
   GetLogedInUser();
 }
-    },[])
+    },[IsUserLogin])
 
     async function RefreshToken(){
       try {
@@ -53,6 +53,7 @@ if(localStorage.getItem(LocalStorageLogedinuserId)){
       }
     }
     useEffect(()=>{
+      
       GetProductPickUpDays();
       GetProductPickUpTime();
       RefreshToken();
@@ -62,7 +63,7 @@ if(localStorage.getItem(LocalStorageLogedinuserId)){
       return ()=>{
         clearInterval(interval)
       }
-    },[])
+    },[IsUserLogin])
     useEffect(()=>{
       console.log("cal kiya")
       GetAllOrders();
@@ -123,14 +124,17 @@ async  function GetProductPickUpDays(){
 }
   return (
     <>
-    <div
-      className={`min-h-screen overflow-hidden w-125 sm:w-full transition-all duration-500 ${
+    {/* <div
+      className={`min-h-screen  w-125 sm:w-full transition-all duration-500 ${
         dark
         ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white"
         : "bg-slate-50 text-slate-900"
         }`}
-    >
+    > */}
     
+      {/* NAVBAR */}
+      
+      
     <BrowserRouter>
         <Navbar />
     <Routes>
@@ -145,10 +149,7 @@ async  function GetProductPickUpDays(){
 
     </Routes>
     </BrowserRouter>
-      {/* NAVBAR */}
-      
-      
-          </div>
+          {/* </div> */}
           {/* <LaundryServiceModalDemo open={true} setOpen={setjust}/> */}
      </>
   )

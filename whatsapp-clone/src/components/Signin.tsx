@@ -6,6 +6,7 @@ import axios from "axios";
 import { LocalStorageLogedinuserId } from "../utils/Dotenv";
 import { useDispatch } from "react-redux";
 import { SetIsUserLogin } from "../Redux/Slice/Auth.slice";
+import { useTheme } from "../context/theme.context";
 
 interface LoginForm {
   identifier: string; // Email or Phone
@@ -15,6 +16,7 @@ interface LoginForm {
 export default function SignInPage() {
   const {phone}=useParams();
   const dispatch=useDispatch();
+  const {dark}=useTheme()
   const [formData, setFormData] =
     useState<LoginForm>({
       identifier: String(phone),
@@ -92,7 +94,7 @@ const navigate=useNavigate();
         toast.success(
           "Login Successful"
         );
-        
+        dispatch(SetIsUserLogin(true))
       }
       else{
         toast.error("signin failed!!!!")
@@ -121,21 +123,14 @@ const navigate=useNavigate();
   };
 
   return (
-    <div className="w-full flex items-center justify-center">
+    <div className={`w-screen  fixed top-0 left-0 h-screen flex items-center justify-center  ${
+        dark
+        ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white"
+        : "bg-slate-50 text-slate-900"
+        } `}>
 
     <div
-      className="
-      h-full
-      mt-20
-      flex 
-      flex-col
-      items-center
-      glass
-      md:w-[70%] 
-      w-[90%]
-
-         p-4
-    "
+      className={`h-[60%] w-[80%] flex items-center justify-center flex-col`}
     >
      
         {/* Header */}

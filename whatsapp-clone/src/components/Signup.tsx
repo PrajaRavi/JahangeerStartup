@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import {  useNavigate } from "react-router";
+import { useTheme } from "../context/theme.context";
 
 interface FormData {
   username: string;
@@ -25,6 +26,7 @@ export default function SignupPage() {
 
   const [loading, setLoading] =
     useState(false);
+    const {dark}=useTheme()
     const navigate=useNavigate();
 
   const validate = () => {
@@ -118,21 +120,14 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="w-full flex items-center justify-center">
+    <div className={`w-screen  fixed top-0 left-0 h-screen flex items-center justify-center  ${
+        dark
+        ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white"
+        : "bg-slate-50 text-slate-900"
+        } `}>
 
     <div
-      className="
-      h-full
-      mt-20
-      flex 
-      flex-col
-      items-center
-      glass
-      md:w-[70%] 
-      w-[90%]
-
-         p-4
-    "
+      className={`h-[60%] w-[80%] flex items-center justify-center flex-col`}
     >
         <h1
           className="

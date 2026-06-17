@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ProfileModal from './ProfileModal';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { setActiveUser, SetOrderdProd } from '../Redux/Slice/Auth.slice';
+import { setActiveUser, SetIsUserLogin, SetOrderdProd } from '../Redux/Slice/Auth.slice';
 
 
 function Navbar() {
@@ -45,6 +45,7 @@ else{
         setprofileOpen(false)
         setTimeout(() => {
           dispatch(setActiveUser([]))
+          dispatch(SetIsUserLogin(false))
           navigate("/")
         }, 1000);
       }
@@ -77,7 +78,9 @@ GetAllOrders();
     <ProfileModal
   open={profileOpen}
   onClose={() => setprofileOpen(false)}
-  onUpdate={() => navigate("/profile")}
+  onUpdate={() => {
+    // navigate("/profile")
+  }}
   onLogout={logout}
   profile={Profile}
   setProfile={setProfile}
@@ -87,7 +90,7 @@ GetAllOrders();
     phone: User.phoneNumber,
   }}
 />
-    <section className="fixed z-30 top-0 left-0 justify-center items-center w-full">
+    <section className="fixed z-10 top-0 left-0 justify-center items-center w-full">
 
       <nav className="sticky top-0 z-50 backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -114,12 +117,12 @@ GetAllOrders();
             </button>
 
              {localStorage.getItem(LocalStorageLogedinuserId)?
-             <div className='hidden md:block w-12 border-4 border-cyan-200  h-12 rounded-full'>
+             <div className='w-12 border-4 border-cyan-200  h-12 rounded-full'>
               
 <img src={Profile} alt="profile" onClick={()=>{
   setprofileOpen(true)
 }} className='w-full h-full rounded-full' />
-             </div>:<button className="hidden md:block px-5 py-3 rounded-xl bg-cyan-400 text-black font-semibold">
+             </div>:<button className=" px-5 py-3 rounded-xl bg-cyan-400 text-black font-semibold">
              <Link to={"/signin/1234123123"}>signin</Link>
             </button>}
 
@@ -155,6 +158,7 @@ GetAllOrders();
             {["Services", "Process", "App", "Contact"].map((item) => (
               <a key={item} onClick={()=>setMobileOpen(false)} href={`#${item}`}>{item}</a>
             ))}
+        
           </div>
         )}
       </nav>

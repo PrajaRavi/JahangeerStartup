@@ -12,7 +12,11 @@ export default function Home() {
   const {dark}=useTheme();
   return (
     <main
-      className={dark?"min-h-screen text-white  bg-transparent overflow-hidden":"min-h-screen text-black bg-transparent overflow-hidden"}
+      className={`min-h-screen  w-125 sm:w-full transition-all duration-500 ${
+        dark
+        ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white"
+        : "bg-slate-50 text-slate-900"
+        }`}
     >
      
       {/* FLOATING BUBBLES */}

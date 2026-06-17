@@ -5,6 +5,7 @@ import UpdateUser from './UserUpdate';
 import type { SignupFormData } from '../Redux/Slice/Auth.slice';
 import { useNavigate } from 'react-router';
 import DeliverAdmin from './DeliveryAdmin';
+import { useTheme } from '../context/theme.context';
 
 // Datasets provided
 const initialUsers = [
@@ -57,6 +58,8 @@ export default function AdminPanel() {
   let [SelectedUserForUpdate,setSelectedUserForUpdate]=useState<SignupFormData>()
   const navigate=useNavigate();
   
+    const { dark } = useTheme();
+
   // Modal State
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, type: null, id: null });
   const [updatingId, setUpdatingId] = useState(null);
@@ -114,7 +117,11 @@ navigate("/")
   return (
     <>
     {OpenUpdateUserModal&&<UpdateUser UserData={SelectedUserForUpdate as SignupFormData} setOpenUpdateUserModal={setOpenUpdateUserModal}/>}
-    {LogedInUser.role=="admin"?<div className="min-h-screen mt-10 bg-black/30 backdrop-blur-sm text-slate-100 flex font-sans relative overflow-hidden p-0 sm:p-4 md:p-6">
+    {LogedInUser.role=="admin"?<div className={`min-h-screen pt-20 flex  w-125 sm:w-full transition-all duration-500 ${
+        dark
+        ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white"
+        : "bg-slate-50 text-slate-900"
+        }`}>
       
      
       {/* --- SIDEBAR COMPONENTS (Responsive) --- */}
@@ -135,7 +142,7 @@ navigate("/")
         ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Sidebar Header Title */}
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
+        <div className="flex items-center  justify-between mb-8 pb-4 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-linear-to-tr from-cyan-200 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <span className="font-black text-white text-lg">Ω</span>
@@ -191,7 +198,7 @@ navigate("/")
       <main className="flex-1 max-h-screen  flex flex-col min-w-0 lg:ml-6 mt-14 lg:mt-0">
         
         {/* Mobile Sticky Navbar Controller */}
-        <header className="fixed top-0 inset-x-0 h-14 bg-slate-950/40 backdrop-blur-md border-b border-white/5 px-4 flex items-center justify-between lg:hidden z-30">
+        <header className="fixed top-15 inset-x-0 h-14 bg-slate-950/40 backdrop-blur-md border-b border-white/5 px-4 flex items-center justify-between lg:hidden z-30">
           <div className="flex items-center gap-3">
             <div className="h-7 w-7 rounded-lg bg-indigo-500 flex items-center justify-center text-sm font-bold">G</div>
             <span className="font-bold text-sm">GlassAdmin</span>

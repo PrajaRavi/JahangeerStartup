@@ -12,6 +12,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { generatePickupDays, generateTimeSlots } from "../utils/Dotenv";
+import { useTheme } from "../context/theme.context";
 
 export default function SchedulePickupPage() {
   const [selectedDay, setSelectedDay] = useState<string|undefined>();
@@ -21,7 +22,7 @@ export default function SchedulePickupPage() {
   // const ProductPickUpDays=useSelector((state:any)=>state.Auth.ProductPickUpDays)
   const  ProductPirckUpTime=useSelector((state:any)=>state.Auth.ProductPirckUpTime)
   const User=useSelector((state:any)=>state.Auth.ActiveUser)
-
+const {dark}=useTheme()
 
   const [selectedTime, setSelectedTime] =
     useState("11-1");
@@ -88,6 +89,9 @@ export default function SchedulePickupPage() {
   
   async function PlaceOrder(){
     try {
+      if(!User._id || User._id==""){
+return toast.warn("You are not logedin")
+      }
       let time=timeSlots.filter((item)=>{
         return item.id==selectedTime
       })
@@ -176,15 +180,11 @@ try {
   }
   return (
     <div
-      className="
-      min-h-screen
-      bg-linear-to-br
-      from-[#00D3F3]
-      via-[#023B40]
-      to-[#001C20]
-      p-4
-      md:p-8
-    "
+      className={`min-h-screen  w-125 sm:w-full transition-all duration-500 ${
+        dark
+        ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white"
+        : "bg-slate-50 text-slate-900"
+        }`}
     >
       <div
         className="
