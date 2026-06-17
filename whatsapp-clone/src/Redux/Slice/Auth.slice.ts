@@ -7,7 +7,14 @@ import type { CurrServiceType } from '../../components/ServiceDetails';
  
 export type OrderProductType={
   Address:String;
+  phoneNumber?:Number;
+  AltphoneNumber?:Number;
+  lat?:Number|string|undefined;
+  lang?:Number|string|undefined;
   Items:[];
+  User:SignupFormData
+  Amount?:Number
+  Count?:Number
   paymentStatus:String;
   Time:{from:String,to:String};
   Day:String;
@@ -27,15 +34,22 @@ interface FileStates {
   loading: boolean;
   AllUsers:SignupFormData[];
   CartItems:CurrServiceType[];
-  OrderdProducts:OrderProductType[];
   ProductPickUpDays:string[];
-  ProductPirckUpTime:ProductPickUpType[]
+  ProductPirckUpTime:ProductPickUpType[];
+  UsersData:SignupFormData[];
+  OrderdProducts:OrderProductType[];//This contains Orders data of the logedin user
+  OrderData:OrderProductType[]; //This contains all the orders data
+  GetAllOrdersFlag:boolean;
+  OrderdProductsFlag:boolean;
+
+  
  }
  
 export interface SignupFormData {
   username: string;
   email: string;
   _id:string,
+  role?:string,
   phoneNumber: string;
   profilePicture: string | null;
   
@@ -52,6 +66,10 @@ const initialState: FileStates = {
   OrderdProducts:[],
   ProductPickUpDays:[],
   ProductPirckUpTime:[],
+  UsersData:[],
+  OrderData:[],
+  GetAllOrdersFlag:true,
+  OrderdProductsFlag:true,
   
   };
 
@@ -83,8 +101,21 @@ export const counterSlice = createSlice({
     SetProductPickUpDay:(state, action) => {
       state.ProductPickUpDays=action.payload;
     },
+
     SetProductPickUpTime:(state, action) => {
       state.ProductPirckUpTime=action.payload;
+    },
+    UpdateUsersData:(state, action) => {
+      state.UsersData=action.payload;
+    },
+    UpdateOrderData:(state, action) => {
+      state.OrderData=action.payload;
+    },
+    UpdateAllOrderDataFlag:(state, action) => {
+      state.GetAllOrdersFlag=action.payload;
+    },
+    UpdateOrderdProductFlag:(state, action) => {
+      state.OrderdProductsFlag=action.payload;
     },
     
 
@@ -101,5 +132,5 @@ export const counterSlice = createSlice({
    
 });
 
-export const { setActiveUser,SetIsUserLogin,SetUser,SetAllUsers,setCartItems,ReStoreCartItems,SetOrderdProd,SetProductPickUpDay,SetProductPickUpTime} = counterSlice.actions;
+export const { setActiveUser,SetIsUserLogin,SetUser,SetAllUsers,setCartItems,ReStoreCartItems,SetOrderdProd,SetProductPickUpDay,SetProductPickUpTime,UpdateUsersData,UpdateOrderData,UpdateAllOrderDataFlag,UpdateOrderdProductFlag} = counterSlice.actions;
 export const FileReducer = counterSlice.reducer;

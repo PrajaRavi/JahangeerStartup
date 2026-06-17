@@ -18,6 +18,25 @@ const OrderSchema = new mongoose.Schema(
       type:Number,
       default:0
     },
+Amount:{
+  type:Number,
+  default:0
+},
+Count:{
+type:Number,
+  default:0
+  
+},
+phoneNumber: {
+      type: String,
+      default: "",
+    },
+AltphoneNumber: {
+      type: String,
+      default: "",
+    },
+
+
 
     Items:[{
         id:String,
@@ -49,9 +68,6 @@ type:String,
       type: String,
       enum: [
         "PLACED",
-        "PICKUP_ASSIGNED",
-        "PICKED_UP",
-        "PROCESSING",
         "OUT_FOR_DELIVERY",
         "DELIVERED",
         "CANCELLED",

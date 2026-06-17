@@ -14,7 +14,7 @@ export default function Home() {
   const {dark}=useTheme();
   return (
     <main
-      className={dark?"min-h-screen text-white bg-transparent overflow-hidden":"min-h-screen text-black bg-transparent overflow-hidden"}
+      className={dark?"min-h-screen text-white  bg-transparent overflow-hidden":"min-h-screen text-black bg-transparent overflow-hidden"}
     >
      
       {/* FLOATING BUBBLES */}

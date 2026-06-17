@@ -83,7 +83,7 @@ bio: {
 
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin","DeliveryBoy"],
       default: "user",
     },
 

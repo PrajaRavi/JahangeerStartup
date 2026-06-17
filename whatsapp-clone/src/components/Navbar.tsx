@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router'
 import { useTheme } from '../context/theme.context';
 import logo from "../assets/logo.png"
 import logo1 from "../assets/logo1.png"
-import { LocalStorageLogedinuserId } from '../utils/Dotenv';
+import { LocalStorageLogedinuserId, ProfessionAdmin } from '../utils/Dotenv';
 import { useDispatch, useSelector } from 'react-redux';
 import ProfileModal from './ProfileModal';
 import axios from 'axios';
@@ -19,12 +19,13 @@ function Navbar() {
   let [profileOpen,setprofileOpen]=useState(false)
   const User=useSelector((state:any)=>state.Auth.ActiveUser)
 let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
+let OrderdProductsFlag=useSelector((state:any)=>state.Auth.OrderdProductsFlag)
 
   const dispatch=useDispatch();
   const navigate=useNavigate();
     const { dark, toggleTheme } = useTheme();
     let [MenuOptions,setMenuOptions]=useState<string[]>(["Services", "Process", "App", "Contact"])
-    let [Profile,setProfile]=useState("")
+    let [Profile,setProfile]=useState("Ravi")
   
     useEffect(()=>{
 if(User?.profilePicture){
@@ -52,21 +53,25 @@ else{
       console.log("error in logout")
     }
   }
+
+  //! This function fetch all the orders of the logedin user only
   async function GetAllOrders(){
     try {
-      let {data}=await axios.get(`http://localhost:5000/order/get-all-order`,{withCredentials:true})
+      let {data}=await axios.get(`http://localhost:5000/order/get-order-by-id`,{withCredentials:true})
+      console.log(data)
       if(data.success){
 
         dispatch(SetOrderdProd(data?.msg))
       }
     } catch (error) {
       console.log(error)
+      if(localStorage.getItem(LocalStorageLogedinuserId))
       toast.error("Internal server error")
     }
   }
   useEffect(()=>{
 GetAllOrders();
-  },[])
+  },[OrderdProductsFlag])
   return (
     <>
     <ProfileModal
@@ -81,7 +86,7 @@ GetAllOrders();
     email:User.email,
     phone: User.phoneNumber,
   }}
-/>;
+/>
     <section className="fixed z-30 top-0 left-0 justify-center items-center w-full">
 
       <nav className="sticky top-0 z-50 backdrop-blur-lg">
@@ -90,7 +95,7 @@ GetAllOrders();
 
           <div className="hidden lg:flex gap-8">
             <Link to={"/"}>Home</Link>
-            {User?.IsAdmin&&<Link to={"/admin"}>Admin</Link>}
+            {User.role&&<Link to={"/admin"}>Admin</Link>}
             {MenuOptions.map((item) => (
               <a key={item} href={`#${item}`} className="font-medium">
                 {item}
@@ -144,8 +149,11 @@ GetAllOrders();
 
         {mobileOpen && (
           <div className="lg:hidden px-6 pb-6 flex flex-col gap-4">
+            <Link to={"/"}>Home</Link>
+            {User.role&&<Link to={"/admin"}>Admin</Link>}
+            
             {["Services", "Process", "App", "Contact"].map((item) => (
-              <a key={item}>{item}</a>
+              <a key={item} onClick={()=>setMobileOpen(false)} href={`#${item}`}>{item}</a>
             ))}
           </div>
         )}

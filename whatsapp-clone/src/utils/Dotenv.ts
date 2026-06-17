@@ -129,3 +129,17 @@ export const generateTimeSlots = (
     disabled: false,
   }));
 };
+
+export const ProfessionUser="user"
+export const ProfessionDeliveryBoy="DeliveryBoy"
+export const ProfessionAdmin="admin"
+
+export const PaymentFailed="FAILED"
+export const PaymentPending="PENDING"
+export const PaymentPaid="PAID"
+
+export const OrderStatusOut_for_Delivery="OUT_FOR_DELIVERY"
+export const OrderStatusPlace="PLACED"
+export const DELIVERED="DELIVERED"
+export const CANCELLED="CANCELLED"
+

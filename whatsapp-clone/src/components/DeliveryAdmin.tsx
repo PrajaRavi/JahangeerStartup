@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin,
@@ -6,20 +6,29 @@ import {
   Clock,
   ChevronDown,
   Package,
+  X,
 } from "lucide-react";
-import {useSelector } from "react-redux";
-import type { OrderProductType } from "../Redux/Slice/Auth.slice";
-import { OrderStatusPlace } from "../utils/Dotenv";
+import {useDispatch, useSelector } from "react-redux";
+import { UpdateAllOrderDataFlag, UpdateOrderData, type OrderProductType } from "../Redux/Slice/Auth.slice";
+import GlassCopyInput from "../utils/InputCopy";
+import { CANCELLED, DELIVERED, OrderStatusOut_for_Delivery, OrderStatusPlace, PaymentFailed, PaymentPaid, PaymentPending, ProfessionUser } from "../utils/Dotenv";
 import { toast } from "react-toastify";
-import UpdateOrderFromUser from "./UpdateOrderFromUser";
+import axios from "axios";
 
-export default function OrdersPage() {
+export default function DeliverAdmin() {
   const [expandedOrder, setExpandedOrder] =
     useState<string | null>(null);
-    let [SelectedOrderForUpdate,setSelectedOrderForUpdate]=useState<OrderProductType>({_id:"ravi",Address:"ravi",Day:"ravi",Items:[],orderStatus:"nothing",paymentStatus:"nothign",Time:{from:"no",to:"no"},User:{},AltphoneNumber:456,Amount:56,Count:5,lang:56,lat:5,phoneNumber:56})
+  const [expandedOrder1, setExpandedOrder1] =
+    useState<string | null>(null);
+    const dispatch=useDispatch();
+  const OrderData=useSelector((state:any)=>state.Auth.OrderData)
+  let [LocalOrderData,setLocalOrderData]=useState<OrderProductType[]>([{_id:"ravi",Address:"ravi",Day:"ravi",Items:[],orderStatus:"ravi",paymentStatus:"ravi",Time:{from:"ravi",to:"ravi"},User:{_id:"ravi",email:'ravi',phoneNumber:"456",profilePicture:'ravi',username:"ravi"},AltphoneNumber:56,Amount:678,Count:5,lang:565,lat:56,phoneNumber:56}])
+  let [SelectedOrderForUpdate,setSelectedOrderForUpdate]=useState<OrderProductType>()
 let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
-  
-let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
+  const GetAllOrdersFlag=useSelector((state:any)=>state.Auth.GetAllOrdersFlag)
+  let [OrderStatus,setOrderStatus]=useState()
+  let [PaymentStatus,setPaymentStatus]=useState()
+
 
   const orders = [
     {
@@ -65,15 +74,97 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
       ],
     },
   ];
+  useEffect(()=>{
+    if(OrderData?.length>0){
 
+      setLocalOrderData(OrderData)
+    }
+    else{
+      setLocalOrderData([{_id:"ravi",Address:"ravi",Day:"ravi",Items:[],orderStatus:"ravi",paymentStatus:"ravi",Time:{from:"ravi",to:"ravi"},User:{_id:"ravi",email:'ravi',phoneNumber:"456",profilePicture:'ravi',username:"ravi"},AltphoneNumber:56,Amount:678,Count:5,lang:565,lat:56,phoneNumber:56}])
+    }
+  },[OrderData,GetAllOrdersFlag])
+
+  async function HandleSubmit(e:React.FormEvent
+){
+    e.preventDefault();
+    try {
+      let {data}=await axios.put(`http://localhost:5000/order/update-order-status`,{id:SelectedOrderForUpdate?._id,orderStatus:OrderStatus,paymentStatus:PaymentStatus},{withCredentials:true})
+      if(data.success){
+        toast.success("Updated")
+        setOpenOrderUpdateModal(false)
+        dispatch(UpdateAllOrderDataFlag(!GetAllOrdersFlag))
+        
+      }
+      else{
+        toast.error(data?.msg)
+      }
+    } catch (error:any) {
+      let {data,status}=error.response;
+      toast.error(data?.msg)
+      console.log(error)
+    }
+  }
   return (
     <>
-    {OpenOrderUpdateModal&&<div className="fixed top-0 w-full h-full overflow-y-scroll z-30 left-0">
-      <UpdateOrderFromUser OrderData={SelectedOrderForUpdate} setOpenOrderUpdateModal={setOpenOrderUpdateModal}/>
+    {OpenOrderUpdateModal&&<div className="w-full h-full fixed top-0 left-0 z-32 bg-transparent glass flex items-center justify-center">
+      <button onClick={()=>setOpenOrderUpdateModal(false)} className="absolute right-5 top-5"><X size={20}/></button>
+      <form onSubmit={(e)=>{
+        HandleSubmit(e);
+      }} className="flex flex-col rounded-md gap-4 md:w-[60%] w-[90%]" action="">
+        <p>OrderId:{SelectedOrderForUpdate?._id}</p>
+        <div>
+                    <label className="block mb-2 font-medium">
+                      OrderStatus
+                    </label>
+        
+                    <select onChange={(e:any)=>{
+                      setOrderStatus(e.target.value)
+                    }}  className="w-full
+                      border
+                      rounded-xl
+                      px-4
+                      
+                      py-3
+                      outline-none
+                      focus:border-[#00D3F3]" name="role" id="role">
+                      <option selected={SelectedOrderForUpdate?.orderStatus==OrderStatusPlace} className="bg-black" value={OrderStatusPlace}>{OrderStatusPlace}</option>
+                      <option selected={SelectedOrderForUpdate?.orderStatus==OrderStatusOut_for_Delivery} className="bg-black" value={OrderStatusOut_for_Delivery}>{OrderStatusOut_for_Delivery}</option>
+                      <option selected={SelectedOrderForUpdate?.orderStatus==DELIVERED} className="bg-black" value={DELIVERED}>{DELIVERED}</option>
+                      <option selected={SelectedOrderForUpdate?.orderStatus==CANCELLED} className="bg-black" value={CANCELLED}>{CANCELLED}</option>
+                    </select>
+        
+                    
+                  </div>
+        <div>
+                    <label className="block mb-2 font-medium">
+                      PaymentStatus
+                    </label>
+        
+                    <select onChange={(e:any)=>{
+                      setPaymentStatus(e.target.value)
+                    }}  className="w-full
+                      border
+                      rounded-xl
+                      px-4
+                      
+                      py-3
+                      outline-none
+                      focus:border-[#00D3F3]" name="role" id="role">
+                      <option selected={SelectedOrderForUpdate?.paymentStatus==PaymentFailed} className="bg-black" value={PaymentFailed}>{PaymentFailed}</option>
+                      <option selected={SelectedOrderForUpdate?.paymentStatus==PaymentPaid} className="bg-black" value={PaymentPaid}>{PaymentPaid}</option>
+                      <option selected={SelectedOrderForUpdate?.paymentStatus==PaymentPending} className="bg-black" value={PaymentPending}>{PaymentPending}</option>
+                    </select>
+        
+                    
+                  </div>
+                  <button className="w-full border-2 rounded-md p-3">submit</button>
+        
+      </form>
     </div>}
     <div
       className="
       min-h-screen
+      w-screen
       mt-5
 
       bg-gradient-to-br
@@ -101,7 +192,8 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
             y: 0,
           }}
           className="
-          text-4xl
+          md:text-2xl
+          text-xl
           font-bold
           text-white
           mb-8
@@ -111,10 +203,14 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
         </motion.h1>
 
         <div className="space-y-6">
-          {OrderdProducts.map(
+          {LocalOrderData.map(
             (order:OrderProductType, index) => {
               const expanded =
                 expandedOrder ===
+                order._id;
+
+              const expanded1 =
+                expandedOrder1 ===
                 order._id;
 
               const total =
@@ -149,29 +245,49 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
 
                   bg-white/10
 
-                  border
+                  w-full
+                  border-1
+                  
                   border-white/20
 
-                  rounded-3xl
+                  md:rounded-3xl
+                  rounded-md
 
-                  overflow-hidden
-                "
+                  "
+                  // overflow-hidden
                 >
                   {/* CARD */}
 
-                  <div className="p-6 relative">
-                    {/* TOP */}
-                    <button onClick={()=>{
-                      if(order.orderStatus==OrderStatusPlace){
-                        setOpenOrderUpdateModal(true)
-                        setSelectedOrderForUpdate(order)
-                      }
-                      else{
-                        toast.info("You can't edit once the product is out for delivery")
-                      }
+                  <div className="p-1 md:p-3 relative">
+                          
+                    {/* <button  className="absolute top-2 right-2 p-1 border-2 rounded-md"><ChevronDown /></button> */}
+                    <button
+                    onClick={() =>
+                          setExpandedOrder1(
+                            expanded1
+                              ? null
+                              : order._id
+                          )
+                        }
+                      className="absolute  top-2 right-2 p-1 border-2 rounded-md">
 
-                    }} className="absolute bottom-2 right-2 p-1 border-2 rounded-md">update</button>
+                    <motion.div
                     
+                    animate={{
+                            rotate:
+                            expanded1
+                                ? 180
+                                : 0,
+                              }}
+                              >
+                          <ChevronDown />
+                        </motion.div>
+                          </button>
+                    <button onClick={()=>{
+                      setOpenOrderUpdateModal(true)
+                      setSelectedOrderForUpdate(order)
+                    }} className="absolute bottom-2 right-2 p-1 border-2 rounded-md">update</button>
+                    {/* TOP */}
 
                     <div
                       className="
@@ -182,42 +298,31 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
                       md:items-center
                       md:justify-between
 
-                      gap-4
+                      md:gap-4
+                      gap-1
                     "
                     >
                       <div>
                         <h2
                           className="
-                          text-xl
-                          font-bold
+                          md:text-xl
+                          text-xs
+                          md:font-semibold
                           text-white
                         "
                         >
                           Order #
-                          {order._id}
+                          {`${order._id} [${order.orderStatus}]`}
                         </h2>
+                        <div className="flex flex-wrap flex-row gap-2">
+                          <GlassCopyInput value={String(order.phoneNumber)} label="phoneNumber"/>
+                          <GlassCopyInput value={String(order.AltphoneNumber)} label="AltphoneNumber"/>
+                          <GlassCopyInput value={String(order.lang)} label="lang"/>
+                          <GlassCopyInput value={String(order.lat)} label="lat"/>
 
-                        <div
-                          className="
-                          mt-2
-                          inline-flex
-                          px-3
-                          py-1
-
-                          rounded-full
-
-                          text-sm
-
-                          bg-cyan-500/20
-
-                          text-cyan-300
-                        "
-                        >
-                          {
-                            order.orderStatus
-                          }
                         </div>
-                      </div>
+                        
+                        </div>
                           {/* <button className="flex
                         items-center
                         gap-2
@@ -247,12 +352,19 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
                         className="
                         flex
                         items-center
-                        gap-2
+                        md:gap-2
+                        md:w-full
+                        w-[80%]
 
-                        px-5
-                        py-3
+                        md:px-5
+                        px-2
+                        md:py-3
+                        py-1
+                        md:text-sm
+                        text-xs
 
-                        rounded-xl
+                        md:rounded-xl
+                        rounded-sm
 
                         bg-[#00D3F3]
 
@@ -278,33 +390,37 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
 
                     {/* DETAILS */}
 
-                    <div
+                    {expanded1&&<div
+                      // mt-6
                       className="
-                      mt-6
 
                       grid
 
                       md:grid-cols-3
 
-                      gap-4
+                      md:gap-4
+                      gap-1
                     "
                     >
                       <div
                         className="
                         flex
-                        gap-3
+                        md:gap-3
+                        gap-1
+                        text-[4px]
                       "
                       >
                         <MapPin
-                          className="text-cyan-300"
+                        
+                          className="text-cyan-300 md:text-sm"
                         />
 
                         <div>
-                          <p className="text-white/60">
+                          <p className="text-white/60 md:text-sm text-xs">
                             Address
                           </p>
 
-                          <p className="text-white">
+                          <p className="text-white md:text-sm text-xs">
                             {
                                 order.Address
                             }
@@ -316,6 +432,7 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
                         className="
                         flex
                         gap-3
+                        md:text-sm text-xs
                       "
                       >
                         <Calendar
@@ -323,11 +440,11 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
                         />
 
                         <div>
-                          <p className="text-white/60">
+                          <p className="text-white/60 md:text-sm text-xs">
                             Delivery Day
                           </p>
 
-                          <p className="text-white">
+                          <p className="text-white md:text-sm text-xs">
                             {
                               order.Day
                             }
@@ -339,6 +456,7 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
                         className="
                         flex
                         gap-3
+                        md:text-sm text-xs
                       "
                       >
                         <Clock
@@ -346,18 +464,18 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
                         />
 
                         <div>
-                          <p className="text-white/60">
+                          <p className="text-white/60 md:text-sm text-xs">
                             Time Slot
                           </p>
 
-                          <p className="text-white">
+                          <p className="text-white md:text-sm text-xs">
                             {
                               `${order.Time.from}-${order.Time.to}`
                             }
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </div>}
                   </div>
 
                   {/* PRODUCTS */}

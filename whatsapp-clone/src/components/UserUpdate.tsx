@@ -1,23 +1,29 @@
 import axios, { AxiosError } from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {  useNavigate } from "react-router";
 import { ProfessionAdmin, ProfessionDeliveryBoy, ProfessionUser } from "../utils/Dotenv";
+import { User, X } from "lucide-react";
+import type { SignupFormData } from "../Redux/Slice/Auth.slice";
 
 interface FormData {
   username: string;
   email: string;
   phoneNumber: string;
-  password:string;
+  role?:string,
+  id?:string,
+  
+  
 }
 
-export default function SignupPage() {
+export default function UpdateUser({setOpenUpdateUserModal,UserData}:{setOpenUpdateUserModal:React.Dispatch<React.SetStateAction<boolean>>,UserData:SignupFormData}) {
   const [formData, setFormData] = useState<FormData>({
     username: "",
     email: "",
     phoneNumber: "",
-    password:"",
-
+    role:"",
+  id:""
+  
   });
 
   const [errors, setErrors] = useState<
@@ -91,23 +97,19 @@ export default function SignupPage() {
       setLoading(true);
 
       // API Call
-      
-      let {data}=await axios.post(`http://localhost:4500/user/signup`,formData)
+      setFormData({...formData,id:UserData._id})
+      let {data}=await axios.put(`http://localhost:4500/user/update-user-by-Id`,formData,{withCredentials:true})
       console.log(data);
+      
+      
       if(data.success){
-
-        
         toast.success(data?.msg)
         setFormData({
         username: "",
         email: "",
         phoneNumber: "",
-        password:"",
       });
-      setTimeout(() => {
-        navigate(`/verify/${formData.phoneNumber}`)
-      }, 1000);
-
+      setOpenUpdateUserModal(false)
     }
     } catch (error:any) {
       const {data,status}=error.response
@@ -117,9 +119,20 @@ export default function SignupPage() {
     }
   };
 
+  
+  useEffect(()=>{
+setFormData({email:UserData.email,username:UserData.username,phoneNumber:UserData.phoneNumber,role:UserData.role})
+  },[UserData])
   return (
-    <div className="w-full flex items-center justify-center">
+    <div className="fixed top-0 left-0 w-full h-full z-30">
 
+    <div className="w-full 
+      backdrop-blur-sm
+      relative
+       flex items-center justify-center">
+<button onClick={()=>{
+  setOpenUpdateUserModal(false)
+}} className="absolute top-5 right-5"><X color="white" size={30}/></button>
     <div
       className="
       h-full
@@ -153,7 +166,7 @@ export default function SignupPage() {
           mb-8
         "
         >
-          Join My Dhobi Today
+          Update Profile
         </p>
 
         <form
@@ -222,34 +235,29 @@ export default function SignupPage() {
           </div>
           <div>
             <label className="block mb-2 font-medium">
-              Password
+              Profession
             </label>
 
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter your password"
-              className="
-              w-full
+            <select onChange={handleChange} className="w-full
               border
               rounded-xl
               px-4
+              
               py-3
               outline-none
-              focus:border-[#00D3F3]
-            "
-            />
-            
+              focus:border-[#00D3F3]" name="role" id="role">
+              <option selected={UserData.role==ProfessionUser} className="bg-black" value={ProfessionUser}>{ProfessionUser}</option>
+              <option selected={UserData.role==ProfessionDeliveryBoy} className="bg-black" value={ProfessionDeliveryBoy}>{ProfessionDeliveryBoy}</option>
+              <option selected={UserData.role==ProfessionAdmin} className="bg-black" value={ProfessionAdmin}>{ProfessionAdmin}</option>
+            </select>
 
             {errors.email && (
               <p className="text-red-400 text-sm mt-1">
-                {errors.password}
+                {errors.email}
               </p>
             )}
           </div>
-          
+
           {/* Contact */}
           <div>
             <label className="block mb-2 font-medium">
@@ -283,6 +291,7 @@ export default function SignupPage() {
 
           {/* Submit */}
           <button
+          
             type="submit"
             disabled={loading}
             className="
@@ -315,15 +324,17 @@ export default function SignupPage() {
                   animate-spin
                 "
                 />
-                Creating Account...
+                Updating Account...
               </>
             ) : (
-              "Sign Up"
+              "Update"
             )}
           </button>
         </form>
     </div>
     </div>
+    </div>
+
 
   );
 }

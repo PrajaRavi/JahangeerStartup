@@ -1,18 +1,15 @@
 import { BrowserRouter, Route, Routes } from "react-router"
 import Home from "./components/Home"
-import LandingPage from "./components/LandingPage"
 import Signup from "./components/Signup"
 import { useTheme } from "./context/theme.context";
 import Navbar from "./components/Navbar";
 import Signin from "./components/Signin";
 import PhoneVerificationPage from "./components/Verification";
-import { useDispatch } from "react-redux";
-import { GetAllUser, GetLogedInUser } from "./Redux/Thunk/Auth.thunk";
+import { useDispatch, useSelector } from "react-redux";
 import { LocalStorageLogedinuserId } from "./utils/Dotenv";
 import axios from "axios";
-import { setActiveUser, SetProductPickUpDay, SetProductPickUpTime } from "./Redux/Slice/Auth.slice";
+import { setActiveUser, SetProductPickUpDay, SetProductPickUpTime, UpdateOrderData, UpdateUsersData } from "./Redux/Slice/Auth.slice";
 import { useEffect, useState } from "react";
-import LaundryServiceModalDemo from "./components/ServiceDetails";
 import SchedulePickupPage from "./components/DeliveryDate";
 import OrderSummaryPage from "./components/CartPage";
 import OrdersPage from "./components/ShowOrder";
@@ -21,6 +18,10 @@ import { toast } from "react-toastify";
 
 function App() {
     const { dark, toggleTheme } = useTheme();
+  const OrderData=useSelector((state:any)=>state.Auth.OrderData)
+  const GetAllOrdersFlag=useSelector((state:any)=>state.Auth.GetAllOrdersFlag)
+
+
     const dispatch=useDispatch();
   let [just,setjust]=useState()
     async function GetLogedInUser(){
@@ -56,12 +57,18 @@ if(localStorage.getItem(LocalStorageLogedinuserId)){
       GetProductPickUpDays();
       GetProductPickUpTime();
       RefreshToken();
-let interval=setInterval(RefreshToken,10000)
-
-return ()=>{
-  clearInterval(interval)
-}
+      GetAllUsers();
+      let interval=setInterval(RefreshToken,10000)
+      
+      return ()=>{
+        clearInterval(interval)
+      }
     },[])
+    useEffect(()=>{
+      console.log("cal kiya")
+      GetAllOrders();
+    },[GetAllOrdersFlag])
+
 
 async  function GetProductPickUpTime(){
   try {
@@ -70,8 +77,37 @@ async  function GetProductPickUpTime(){
       dispatch(SetProductPickUpTime(data?.msg))
     }
   } catch (error) {
+    if(localStorage.getItem(LocalStorageLogedinuserId))
+    toast.error("erro in GetProductPickUpDays")  
   console.log(error)
-  toast.error("erro in GetProductPickUpDays")  
+  }
+}
+
+async function GetAllUsers(){
+  try {
+    let {data}=await axios.get(`http://localhost:4500/user/all-users?page=1&limit=9`,{withCredentials:true})
+    console.log(data)
+    if(data.success){
+      dispatch(UpdateUsersData(data?.msg))
+    }
+  } catch (error) {
+    
+    console.log(error)
+  }
+}
+
+
+// getting all orders
+async function GetAllOrders(){
+  try {
+    let {data}=await axios.get(`http://localhost:5000/order/get-all-order?page=1&limit=9`,{withCredentials:true})
+    console.log(data)
+    if(data.success){
+      dispatch(UpdateOrderData(data?.msg))
+    }
+  } catch (error) {
+    
+    console.log(error)
   }
 }
 async  function GetProductPickUpDays(){
@@ -82,13 +118,14 @@ async  function GetProductPickUpDays(){
     }
   } catch (error) {
   console.log(error)
+  if(localStorage.getItem(LocalStorageLogedinuserId))
   toast.error("erro in GetProductPickUpDays")  
   }
 }
   return (
     <>
     <div
-      className={`min-h-screen overflow-hidden w-full transition-all duration-500 ${
+      className={`min-h-screen overflow-hidden w-[500px] sm:w-full transition-all duration-500 ${
         dark
         ? "bg-gradient-to-br  from-[#023B40] to-[#01BCBC] text-white"
         : "bg-slate-50 text-slate-900"

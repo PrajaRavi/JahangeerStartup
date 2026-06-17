@@ -6,21 +6,26 @@ import {
   MapPin,
   Pencil,
   Ticket,
+  X,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { CurrServiceType } from "./ServiceDetails";
 import { useNavigate } from "react-router";
 import { generatePickupDays, generateTimeSlots } from "../utils/Dotenv";
+import { UpdateOrderdProductFlag, type OrderProductType } from "../Redux/Slice/Auth.slice";
 
-export default function SchedulePickupPage() {
+export default function UpdateOrderFromUser({OrderData,setOpenOrderUpdateModal}:{OrderData:OrderProductType,setOpenOrderUpdateModal:React.Dispatch<React.SetStateAction<boolean>>}) {
   const [selectedDay, setSelectedDay] =
     useState();
   let CartItems=useSelector((state:any)=>state.Auth.CartItems)
   let [codinates,setcodinates]=useState({lang:0,lat:0})
   const navigate=useNavigate();
   const ProductPickUpDays=useSelector((state:any)=>state.Auth.ProductPickUpDays)
+  let OrderdProductsFlag=useSelector((state:any)=>state.Auth.OrderdProductsFlag)
+  const dispatch=useDispatch();
+  
   const  ProductPirckUpTime=useSelector((state:any)=>state.Auth.ProductPirckUpTime)
   const User=useSelector((state:any)=>state.Auth.ActiveUser)
 
@@ -93,7 +98,6 @@ export default function SchedulePickupPage() {
       let time=timeSlots.filter((item)=>{
         return item.id==selectedTime
       })
-      console.log(Address,phoneNumber,AltphoneNumber)
       if(Address=="" || !phoneNumber ||!AltphoneNumber){
         return toast.error("All feilds are required")
       }
@@ -101,22 +105,25 @@ export default function SchedulePickupPage() {
         return toast.error("Invalid phone number")
       
       
-      if(CartItems.length==0){
-        return toast.error("nothing")
-      }
+      
       let Day=pickupDays.filter((Day:any)=>{
         return Day.id==selectedDay;
       })
-      let {data}=await axios.post(`http://localhost:5000/order/create-order`,{Address,Amount:CartSummary.totalamount,Count:CartSummary.totalelem,Items:CartItems,phoneNumber,AltphoneNumber,cordinates:codinates,Day:Day[0].date,Time:{from:time[0].label.split("-")[0].trim(),to:time[0].label.split("-")[1].trim(),}},{withCredentials:true})
+      let {data}=await axios.put(`http://localhost:5000/order/update-order`,{id:OrderData._id,Address,phoneNumber,AltphoneNumber,cordinates:codinates,Day:Day[0].date,Time:{from:time[0].label.split("-")[0].trim(),to:time[0].label.split("-")[1].trim(),}},{withCredentials:true})
       if(data.success){
         toast.success("order placed successfully")
-        navigate("/")
+        setOpenOrderUpdateModal(false);
+        dispatch(UpdateOrderdProductFlag(!OrderdProductsFlag))
         
       }
       else{
         toast.error(data?.msg)
       }
-    } catch (error) {
+    } catch (error:any) {
+      let {data,status}=error.response;
+      if(data?.msg){
+        return toast.error(data?.msg)
+      }
       console.log(error)
       toast.error("internal server error")
     }
@@ -128,6 +135,7 @@ export default function SchedulePickupPage() {
   "Tomorrow",
   "Day After Tomorrow",
 ]);
+console.log(data)
     setpickupDays(data)
 
     if(ProductPirckUpTime?.length>0){
@@ -171,23 +179,33 @@ try {
   if(data.success){
     toast.success("Updated successfully refresh the page")
     
+    
   }
 } catch (error) {
   console.log(error)
 }
   }
+  useEffect(()=>{
+setAddress(OrderData.Address)
+setphoneNumber(OrderData.phoneNumber)
+setAltphoneNumber(OrderData.AltphoneNumber)
+
+
+  },[])
   return (
     <div
       className="
       min-h-screen
-      bg-gradient-to-br
-      from-[#00D3F3]
-      via-[#023B40]
-      to-[#001C20]
-      p-4
-      md:p-8
-    "
+      w-full
+      bg-transparent
+      backdrop-blur-sm
+      relative
+
+      "
     >
+      <button className="absolute top-5 right-5" onClick={()=>{
+setOpenOrderUpdateModal(false);
+      }}><X size={20}/></button>
       <div
         className="
         max-w-3xl
@@ -693,7 +711,7 @@ try {
             disabled:opacity-50
           "
           >
-            Place Order
+            Update Order
           </motion.button>
         </motion.div>
       </div>

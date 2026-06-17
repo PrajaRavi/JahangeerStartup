@@ -36,12 +36,18 @@ app.use(
 
 app.post("/ravi",async(req,resp)=>{
   try {
-    
-  let data=await OrderModel.find({User:req.user.id})
-  if(data.length>0){
-    return resp.send({success:true,msg:data})
-    
-  }
+    let {Address,Day,Time,cordinates,phoneNumber,AltphoneNumber,id}=req.body;
+      if(!Address ||!cordinates||!Day||!Time||!Day||!phoneNumber||!AltphoneNumber) 
+        return resp.status(200).send({success:false,msg:"all feilds are requir"})
+      let data=await OrderModel.updateOne({_id:id},{$set:{Address,lang:cordinates?.lang,lat:cordinates.lat,Day,Time,phoneNumber,AltphoneNumber}})
+      if(data){
+        return resp.status(200).send({success:true,msg:"Updated successfully"})
+      }
+      else{
+        return resp.status(200).send({success:false,msg:"kuch to galat hua hai"})
+
+      }
+
   } catch (error) {
     return resp.status(500).send({success:false,msg:"Internal server error"})
   }
