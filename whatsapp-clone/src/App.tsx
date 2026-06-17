@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { LocalStorageLogedinuserId } from "./utils/Dotenv";
 import axios from "axios";
 import { setActiveUser, SetProductPickUpDay, SetProductPickUpTime, UpdateOrderData, UpdateUsersData } from "./Redux/Slice/Auth.slice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import SchedulePickupPage from "./components/DeliveryDate";
 import OrderSummaryPage from "./components/CartPage";
 import OrdersPage from "./components/ShowOrder";
@@ -17,13 +17,12 @@ import AdminPanel from "./components/Admin";
 import { toast } from "react-toastify";
 
 function App() {
-    const { dark, toggleTheme } = useTheme();
-  const OrderData=useSelector((state:any)=>state.Auth.OrderData)
+    const { dark } = useTheme();
+  // const OrderData=useSelector((state:any)=>state.Auth.OrderData)
   const GetAllOrdersFlag=useSelector((state:any)=>state.Auth.GetAllOrdersFlag)
 
 
     const dispatch=useDispatch();
-  let [just,setjust]=useState()
     async function GetLogedInUser(){
       try {
         let {data}=await axios.get(`http://localhost:4500/user/loged-in-user`,{withCredentials:true})
@@ -125,9 +124,9 @@ async  function GetProductPickUpDays(){
   return (
     <>
     <div
-      className={`min-h-screen overflow-hidden w-[500px] sm:w-full transition-all duration-500 ${
+      className={`min-h-screen overflow-hidden w-125 sm:w-full transition-all duration-500 ${
         dark
-        ? "bg-gradient-to-br  from-[#023B40] to-[#01BCBC] text-white"
+        ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white"
         : "bg-slate-50 text-slate-900"
         }`}
     >
