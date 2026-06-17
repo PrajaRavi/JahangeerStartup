@@ -28,7 +28,7 @@ export default function GlassCopyInput({
   };
 
   return (
-    <div className="w-full md:max-w-[200px] max-w-[100px]">
+    <div className="w-full md:max-w-50 max-w-25">
       {label && (
         <label
           className="

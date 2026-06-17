@@ -121,7 +121,7 @@ type TimeSlot = {
 export const generateTimeSlots = (
   slots: TimeSlot[]
 ) => {
-  return slots.map((slot) => ({
+  return slots.map((slot:any) => ({
     id:slot._id,
 
     label: `${slot.from} - ${slot.to}`,

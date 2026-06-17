@@ -1,4 +1,3 @@
-import { useState } from "react"
 export type position =
   | "fixed"
   | "relative"
@@ -9,8 +8,7 @@ export type Options={
 
 }
 function Modal({top,right,options,position,left}:{top:string,right:string,options:Options[],position:position,left:string}) {
-  let [SelectedOptions,setSelectedOptions]=useState<string>("")
-
+  
   return (
     <>
     <div style={{top,right,left}} className={`${position}  z-30 bg-green-300 rounded-md p-4`}>
