@@ -172,11 +172,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
       w-screen
       mt-5
 
-      bg-linear-to-br
-      from-[#00D3F3]
-      via-[#023B40]
-      to-[#001518]
-
+      
       p-4
       md:p-8
     "

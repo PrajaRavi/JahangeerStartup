@@ -39,7 +39,7 @@ function Footer() {
           </div>
         </div>
         <div className='text-center flex items-center justify-center gap-1 pb-5'>
-          <CopyrightIcon/> MyDhobi.com All rights reserved
+          <CopyrightIcon/> 2026 MyDhobi.com All rights reserved
         </div>
       </footer>
   )

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ProfileModal from './ProfileModal';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { SetOrderdProd } from '../Redux/Slice/Auth.slice';
+import { setActiveUser, SetOrderdProd } from '../Redux/Slice/Auth.slice';
 
 
 function Navbar() {
@@ -44,7 +44,7 @@ else{
         localStorage.removeItem(LocalStorageLogedinuserId)
         setprofileOpen(false)
         setTimeout(() => {
-          
+          dispatch(setActiveUser([]))
           navigate("/")
         }, 1000);
       }
@@ -91,7 +91,7 @@ GetAllOrders();
 
       <nav className="sticky top-0 z-50 backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <img src={dark?logo1:logo} className="md:h-25 h-15" />
+          <img src={dark?logo1:logo} className="md:h-25 h-20" />
 
           <div className="hidden lg:flex gap-8">
             <Link to={"/"}>Home</Link>

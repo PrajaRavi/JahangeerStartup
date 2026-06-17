@@ -1,9 +1,14 @@
 import {motion} from "framer-motion"
 import { useTheme } from "../context/theme.context";
 import { useState } from "react";
+import Icon1 from "../assets/clean-clothes.png"
+import Icon2 from "../assets/iron.png"
+import Icon3 from "../assets/clothing-hanger.png"
+import Icon4 from "../assets/t-shirt.png"
+import Icon5 from "../assets/sport-shoe.png"
 import LaundryServiceModalDemo, { type CurrServiceType } from "./ServiceDetails";
 const services = [
-  {label:"Wash & Fold",id:"serv1",icon:"../src/assets/clean-clothes.png",Items:[
+  {label:"Wash & Fold",id:"serv1",icon:Icon1,Items:[
   { id: 1, name: "Shirt", price: 15 },
   { id: 2, name: "T-Shirt", price: 12 },
   { id: 3, name: "Trouser", price: 20 },
@@ -12,7 +17,7 @@ const services = [
   { id: 6, name: "Blazer", price: 50 },
   { id: 7, name: "Kurta", price: 30 },
 ]},
-  {label:"Dry Cleaning",id:"serv2",icon:"../src/assets/iron.png",Items:[
+  {label:"Dry Cleaning",id:"serv2",icon:Icon2,Items:[
   { id: 1, name: "Shirt", price: 15 },
   { id: 2, name: "T-Shirt", price: 12 },
   { id: 3, name: "Trouser", price: 20 },
@@ -21,7 +26,7 @@ const services = [
   { id: 6, name: "Blazer", price: 50 },
   { id: 7, name: "Kurta", price: 30 },
 ]},
-  {label:"Wash & Iron",id:"serv3",icon:"../src/assets/clothing-hanger.png",Items:[
+  {label:"Wash & Iron",id:"serv3",icon:Icon3,Items:[
   { id: 1, name: "Shirt", price: 15 },
   { id: 2, name: "T-Shirt", price: 12 },
   { id: 3, name: "Trouser", price: 20 },
@@ -30,7 +35,7 @@ const services = [
   { id: 6, name: "Blazer", price: 50 },
   { id: 7, name: "Kurta", price: 30 },
 ]},
-  {label:"Heavy Wash service",id:"serv4",icon:"../src/assets/t-shirt.png",Items:[
+  {label:"Heavy Wash service",id:"serv4",icon:Icon4,Items:[
   { id: 1, name: "Shirt", price: 15 },
   { id: 2, name: "T-Shirt", price: 12 },
   { id: 3, name: "Trouser", price: 20 },
@@ -39,7 +44,7 @@ const services = [
   { id: 6, name: "Blazer", price: 50 },
   { id: 7, name: "Kurta", price: 30 },
 ]},
-  {label:"Bag cleaning",id:"serv5",icon:"../src/assets/sport-shoe.png",Items:[
+  {label:"Bag cleaning",id:"serv5",icon:Icon5,Items:[
   { id: 1, name: "Shirt", price: 15 },
   { id: 2, name: "T-Shirt", price: 12 },
   { id: 3, name: "Trouser", price: 20 },

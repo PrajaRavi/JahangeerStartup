@@ -72,15 +72,9 @@ let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
       <UpdateOrderFromUser OrderData={SelectedOrderForUpdate as OrderProductType} setOpenOrderUpdateModal={setOpenOrderUpdateModal}/>
     </div>}
     <div
-      className="
-      min-h-screen
-      mt-5
+      className="mt-10 w-full min-h-screen
 
-      bg-linear-to-br
-      from-[#00D3F3]
-      via-[#023B40]
-      to-[#001518]
-
+      
       p-4
       md:p-8
     "
