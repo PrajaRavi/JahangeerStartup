@@ -1,4 +1,4 @@
-import { Menu, Moon, ShoppingBag, Sun, X } from 'lucide-react'
+import { Menu ,ShoppingBag, X } from 'lucide-react'
 import  { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useTheme } from '../context/theme.context';
@@ -15,7 +15,7 @@ import { setActiveUser, SetIsUserLogin, SetOrderdProd } from '../Redux/Slice/Aut
 function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const IsUserLogin =useSelector((state:any)=>state.Auth.IsUserLogin)
-  let CartItems=useSelector((state:any)=>state.Auth.CartItems)
+  // let CartItems=useSelector((state:any)=>state.Auth.CartItems)
   let [profileOpen,setprofileOpen]=useState(false)
   const User=useSelector((state:any)=>state.Auth.ActiveUser)
 // let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
@@ -23,7 +23,7 @@ let OrderdProductsFlag=useSelector((state:any)=>state.Auth.OrderdProductsFlag)
 
   const dispatch=useDispatch();
   const navigate=useNavigate();
-    const { dark, toggleTheme } = useTheme();
+    const { dark } = useTheme();
     let MenuOptions:string[]=["Services", "Process", "App", "Contact"]
     let [Profile,setProfile]=useState("Ravi")
   
@@ -47,7 +47,7 @@ else{
           dispatch(setActiveUser([]))
           dispatch(SetIsUserLogin(false))
           navigate("/")
-        }, 1000);
+        }, 100);
       }
     } catch (error) {
       console.log(error)
@@ -58,7 +58,7 @@ else{
   //! This function fetch all the orders of the logedin user only
   async function GetAllOrders(){
     try {
-      let {data}=await axios.get(`http://localhost:5000/order/get-order-by-id`,{withCredentials:true})
+      let {data}=await axios.get(`http://localhost:4500/order/get-order-by-id`,{withCredentials:true})
       console.log(data)
       if(data.success){
 
@@ -98,7 +98,7 @@ GetAllOrders();
 
           <div className="hidden lg:flex gap-8">
             <Link to={"/"}>Home</Link>
-            {User.role&&<Link to={"/admin"}>Admin</Link>}
+            {User?.role!=="user" && localStorage.getItem(LocalStorageLogedinuserId)?<Link to={"/admin"}>Admin</Link>:null}
             {MenuOptions.map((item) => (
               <a key={item} href={`#${item}`} className="font-medium">
                 {item}
@@ -107,6 +107,7 @@ GetAllOrders();
           </div>
 
           <div className="flex items-center gap-3">
+{/*           
             <button
               onClick={()=>{
                 console.log(CartItems)
@@ -114,7 +115,7 @@ GetAllOrders();
               className="p-3 rounded-full bg-white/20"
             >
               {dark ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
+            </button> */}
 
              {localStorage.getItem(LocalStorageLogedinuserId)?
              <div className='w-12 border-4 border-cyan-200  h-12 rounded-full'>
@@ -153,7 +154,7 @@ GetAllOrders();
         {mobileOpen && (
           <div className="lg:hidden px-6 pb-6 flex flex-col gap-4">
             <Link to={"/"}>Home</Link>
-            {User.role&&<Link to={"/admin"}>Admin</Link>}
+            {User?.role!=="user" && localStorage.getItem(LocalStorageLogedinuserId)}
             
             {["Services", "Process", "App", "Contact"].map((item) => (
               <a key={item} onClick={()=>setMobileOpen(false)} href={`#${item}`}>{item}</a>

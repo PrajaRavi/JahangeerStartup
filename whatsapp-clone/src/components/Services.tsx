@@ -38,14 +38,14 @@ const services = [
 // ]},
 
   {label:"Heavy Wash service",id:"serv4",icon:Icon4,Items:[
-  { id: 8, name: "Curtain", price: 25 },
-  { id: 9, name: "Bad sheet", price: 20 },
-  { id: 10, name: "Pillow covers", price: 12 },
+  { id: 1, name: "Curtain", price: 25 },
+  { id: 2, name: "Bad sheet", price: 20 },
+  { id: 3, name: "Pillow covers", price: 12 },
   ]},
 
   {label:"Bag cleaning",id:"serv5",icon:Icon3,Items:[
-  { id: 20, name: "Sch. Bag/Office Bag", price: 80 },
-  { id: 21, name: "Travel Bag", price: 100 },
+  { id: 1, name: "Sch. Bag/Office Bag", price: 80 },
+  { id: 2, name: "Travel Bag", price: 100 },
   // { id: 22, name: "Trouser", price: 20 },
   // { id: 4, name: "Jeans", price: 25 },
   // { id: 5, name: "Saree", price: 60 },

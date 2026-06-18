@@ -1,20 +1,52 @@
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router"
-import Home from "./components/Home"
-import Signup from "./components/Signup"
-// import { useTheme } from "./context/theme.context";
 import Navbar from "./components/Navbar";
-import Signin from "./components/Signin";
-import PhoneVerificationPage from "./components/Verification";
+
+// import Home from "./components/Home"
+// import Signup from "./components/Signup"
+// import { useTheme } from "./context/theme.context";
+// import Signin from "./components/Signin";
+// import PhoneVerificationPage from "./components/Verification";
+
 import { useDispatch, useSelector } from "react-redux";
 import { LocalStorageLogedinuserId } from "./utils/Dotenv";
 import axios from "axios";
 import { setActiveUser, SetProductPickUpDay, SetProductPickUpTime, UpdateOrderData, UpdateUsersData } from "./Redux/Slice/Auth.slice";
-import { useEffect } from "react";
-import SchedulePickupPage from "./components/DeliveryDate";
-import OrderSummaryPage from "./components/CartPage";
-import OrdersPage from "./components/ShowOrder";
-import AdminPanel from "./components/Admin";
+
+// import SchedulePickupPage from "./components/DeliveryDate";
+// import OrderSummaryPage from "./components/CartPage";
+// import OrdersPage from "./components/ShowOrder";
+// import AdminPanel from "./components/Admin";
+// import ForgotPass from "./components/ForgotPass";
+
 import { toast } from "react-toastify";
+const ForgotPass=lazy(()=>import("./components/ForgotPass"))
+const AdminPanel=lazy(()=>import("./components/Admin"))
+const OrdersPage=lazy(()=>import("./components/ShowOrder"))
+const OrderSummaryPage=lazy(()=>import("./components/CartPage"))
+const SchedulePickupPage=lazy(()=>import("./components/DeliveryDate"))
+const PhoneVerificationPage=lazy(()=>import("./components/Verification"))
+const Signin=lazy(()=>import("./components/Signin"))
+const Signup=lazy(()=>import("./components/Signup"))
+const Home=lazy(()=>import("./components/Home"))
+
+const LoadingPage=()=>{
+  return(
+
+    <div className={`w-screen  fixed top-0 left-0 h-screen flex items-center justify-center  
+        
+         bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white
+         `}>
+
+    <div
+      className={`h-[60%] w-[80%] text-2xl flex items-center justify-center flex-col`}
+      
+    >
+      <h1>Content is loading......</h1>
+      </div>
+      </div>
+  )
+}
 
 function App() {
     // const { dark } = useTheme();
@@ -24,16 +56,19 @@ function App() {
 
     const dispatch=useDispatch();
     async function GetLogedInUser(){
-      try {
-        let {data}=await axios.get(`http://localhost:4500/user/loged-in-user`,{withCredentials:true})
-        if(data.success){
-          console.log(data)
+      if(localStorage.getItem(LocalStorageLogedinuserId)){
+
+        try {
+          let {data}=await axios.get(`http://localhost:4500/user/loged-in-user`,{withCredentials:true})
+          if(data.success){
+            console.log(data)
           dispatch(setActiveUser(data?.data))
         }
       } catch (error) {
         console.log(error)
         console.log("error in  GetLogedInUser ")
       }
+    }
     }
     useEffect(()=>{
 if(localStorage.getItem(LocalStorageLogedinuserId)){
@@ -100,7 +135,7 @@ async function GetAllUsers(){
 // getting all orders
 async function GetAllOrders(){
   try {
-    let {data}=await axios.get(`http://localhost:5000/order/get-all-order?page=1&limit=9`,{withCredentials:true})
+    let {data}=await axios.get(`http://localhost:4500/order/get-all-order?page=1&limit=9`,{withCredentials:true})
     console.log(data)
     if(data.success){
       dispatch(UpdateOrderData(data?.msg))
@@ -137,17 +172,22 @@ async  function GetProductPickUpDays(){
       
     <BrowserRouter>
         <Navbar />
+        <Suspense fallback={<LoadingPage/>}>
+
     <Routes>
+      <Route path="/" element={<Home/>}/>
+
       <Route path="/signup" element={<Signup/>}/>
       <Route path="/signin/:phone" element={<Signin/>}/>
       <Route path="/verify/:phone" element={<PhoneVerificationPage/>}/>
-      <Route path="/" element={<Home/>}/>
       <Route path="/DeliveryDate" element={<SchedulePickupPage/>}/>
       <Route path="/cart" element={<OrderSummaryPage/>}/>
       <Route path="/show-orders" element={<OrdersPage/>}/>
       <Route path="/admin" element={<AdminPanel/>}/>
+      <Route path="/forgotpass/:phone" element={<ForgotPass/>}/>
 
     </Routes>
+        </Suspense>
     </BrowserRouter>
           {/* </div> */}
           {/* <LaundryServiceModalDemo open={true} setOpen={setjust}/> */}

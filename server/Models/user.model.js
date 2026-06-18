@@ -12,9 +12,14 @@ const userSchema = new mongoose.Schema(
 SocketId:{
   type:String,
   trim: true,
+},
+
+LoginOtp:{
+type:String,
+expires:300//automatically delete after 5 minute
+},
       
   
-},
 IsAdmin:{
   type:Boolean,
   default:false,
@@ -78,7 +83,14 @@ bio: {
       default: false,
     },
 
-
+ resetOtpExpiresAt: {
+      type: Number,
+      default: 0,
+    },
+ resetOtp: {
+      type:String,
+      default: "",
+    },
 
 
     role: {

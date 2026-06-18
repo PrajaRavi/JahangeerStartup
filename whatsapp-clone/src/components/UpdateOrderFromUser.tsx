@@ -95,7 +95,7 @@ export default function UpdateOrderFromUser({OrderData,setOpenOrderUpdateModal}:
       let Day=pickupDays.filter((Day:any)=>{
         return Day.id==selectedDay;
       })
-      let {data}=await axios.put(`http://localhost:5000/order/update-order`,{id:OrderData._id,Address,phoneNumber,AltphoneNumber,cordinates:codinates,Day:Day[0].date,Time:{from:time[0].label.split("-")[0].trim(),to:time[0].label.split("-")[1].trim(),}},{withCredentials:true})
+      let {data}=await axios.put(`http://localhost:4500/order/update-order`,{id:OrderData._id,Address,phoneNumber,AltphoneNumber,cordinates:codinates,Day:Day[0].date,Time:{from:time[0].label.split("-")[0].trim(),to:time[0].label.split("-")[1].trim(),}},{withCredentials:true})
       if(data.success){
         toast.success("order placed successfully")
         setOpenOrderUpdateModal(false);

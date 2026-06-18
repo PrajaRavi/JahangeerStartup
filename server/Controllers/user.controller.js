@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 import dotenv from "dotenv";
 import { TryCatchHandler } from "../utilities/TryCatchHandler.utility.js";
 import {transporter} from "../utilities/nodemailer.js"
+import { sendOTP } from "../index.js";
 
 export const signup = async (req, res) => {
   try {
@@ -51,6 +52,15 @@ export const signup = async (req, res) => {
       100000 + Math.random() * 900000
     ).toString();
 
+    // Send verification email
+    let phone="+91"+String(phoneNumber)
+    let msgbody=`You otp for verification is ${verificationCode}.Remember it is valid only for 5 minutes`
+    let data=await sendOTP("+919769479166",msgbody);
+    
+    
+    
+    
+    if(data){
     // Create user
     const user = await UserModel.create({
       username,
@@ -62,34 +72,15 @@ export const signup = async (req, res) => {
       verificationCodeExpires:Date.now() + 5 * 60 * 1000,
       isVerified: false,
     });
-      
-      
-
     
-    // Send verification email
-    /**
-     * 
-    if(user._id){
-      
-    await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-      subject: "Verify your account",
-      html: `
-        <h2>Email Verification</h2>
-        <p>Your verification code is:</p>
-        <h1>${verificationCode}</h1>
-        <p>This code will be used to verify your account.</p>
-        `,
+    
+
+     return res.status(201).json({
+       success: true,
+       msg:
+       "Signup successful. Verification code sent to your email.",
       });
     }
-
-    */
-    return res.status(201).json({
-      success: true,
-      msg:
-      "Signup successful. Verification code sent to your email.",
-    });
   } catch (error) {
     console.log(error)
   
@@ -281,10 +272,6 @@ export const login = async (req, res, next) => {
 export const refreshAccessToken = async (req, res) => {
   // console.log(req.cookies)
   console.log(req.cookies)
-  console.log("hiiii")
-  console.log("hiiii")
-  console.log("hiiii")
-  console.log("hiiii")
   const refreshToken = req.cookies.refreshToken;
   // console.log(req.cookies);
   if (!refreshToken) {
@@ -301,6 +288,7 @@ export const refreshAccessToken = async (req, res) => {
     );
 
     const user = await UserModel.findById(decoded.id);
+    console.log(user)
     if (!user || user.refreshToken !== refreshToken) {
       return res.status(403).json({
         success: false,
@@ -332,17 +320,13 @@ export const refreshAccessToken = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
-
-  if (refreshToken) {
-    await UserModel.updateOne({ refreshToken }, { $set: { refreshToken: "" } });
-  }
-
   res.clearCookie("accessToken").clearCookie("refreshToken").json({
     success: true,
     msg: "Logged out successfully",
   });
 };
+  
+
 
 export const getLoggedInUser = async (req, res, next) => {
   // console.log("getlogedinuser")
@@ -468,32 +452,6 @@ export const UpdateUserDP=async (req,resp)=>{
     }
 }
 
-export const UpdatewhoCanSee=async(req,resp)=>{
- try {
-  let {whoCanSee}=req.body;
-  if(!whoCanSee ||whoCanSee?.length==0) return resp.status(200).send({success:false,msg:"nothing kuch aya hi nahi!!!"})
-  whoCanSee=JSON.parse(whoCanSee); 
-  let data=await UserModel.updateOne({_id:req.user.id},{$set:{whoCanSee}});
-  if(data) return resp.status(200).send({success:true,msg:"updated successfully!!!"})
-    
-  } catch (error) {
-    console.log(error)
-    return resp.status(500).send({success:false,msg:"Internal server error"})
-  }
-} 
-
-export const GetAllWhoCanSeeUsers=async(req,resp)=>{
-  try {
-    let data=await UserModel.find({_id:req.user.id}).populate({path:"whoCanSee"})
-    console.log(data)
-    if(data[0].whoCanSee.length>0) return resp.status(200).send({success:true,msg:data[0].whoCanSee})
-      return resp.status(200).send({success:false,msg:[]})
-  } catch (error) {
-    console.log(error)
-    return resp.status(500).send({success:false,msg:"Internal server error"})
-    
-  }
-}
 export const UpdateUser=async(req,resp)=>{
   try {
   const {
@@ -523,4 +481,318 @@ if(data){
 }
 }
 
- 
+ export async function SendResetPasswordOTP(req, resp) {
+  const { phoneNumber } = req.body;
+
+  if (!phoneNumber) {
+    return resp.status(400).send({ success: false, msg: "Please provide phoneNumber" });
+  }
+
+  try {
+    const user = await UserModel.findOne({ phoneNumber }); // Use lowercase for consistency
+
+    // Security Note: You might want to return 'success: true' even if user doesn't exist 
+    // to prevent email enumeration, but 404/403 is standard for many apps.
+    if (!user) {
+      return resp.status(404).send({ success: false, msg: "No account found with this email" });
+    }
+
+    // Generate a secure 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Set Expiry (5 minutes)
+    const otpExpiresAt = Date.now() + 5 * 60 * 1000;
+
+    // Save OTP to User document
+    await UserModel.updateOne(
+      { phoneNumber },
+      {
+        $set: {
+          resetOtp: otp,
+          resetOtpExpiresAt: otpExpiresAt,
+        },
+      }
+    );
+
+   
+    // Send OTP
+    let phone="+91"+String(phoneNumber)
+    let msgbody=`You otp for reset password is ${otp}.Remember it is valid only for 5 minutes`
+    let data=await sendOTP("+919769479166",msgbody);
+    if(data){
+
+      
+      // Return a CLEAN success response
+      return resp.status(200).send({ 
+        success: true, 
+        msg: "OTP sent successfully to your Phone" 
+      });
+    }
+    else{
+      console.log("error in sending forgot pass otp")
+    }
+
+  } catch (error) {
+    console.error("Forgot Password Error:", error);
+    return resp.status(500).send({ 
+      success: false, 
+      msg: "An internal server error occurred. Please try again later." 
+    });
+  }
+}
+
+export async function ResetUserPassword(req, resp) {
+  const { phoneNumber, NewPassword, otp } = req.body;
+
+  // 1. Validation check (400 Bad Request)
+  if (!phoneNumber || !NewPassword || !otp) {
+    return resp.status(400).send({ 
+      success: false, 
+      msg: "All fields (phoneNumber, new password, and OTP) are required" 
+    });
+  }
+
+  try {
+    const user = await UserModel.findOne({ phoneNumber });
+
+    // 2. User Existence check (404 Not Found)
+    if (!user) {
+      return resp.status(404).send({ success: false, msg: "User not found" });
+    }
+
+    // 3. OTP Presence & Validity check (400 Bad Request)
+    // We check if resetOtp exists in DB to prevent reset logic if no OTP was requested
+    if (!user.resetOtp || user.resetOtp !== String(otp)) {
+      return resp.status(400).send({ success: false, msg: "Invalid OTP" });
+    }
+
+    // 4. Expiry check (410 Gone or 400)
+    if (user.resetOtpExpiresAt < Date.now()) {
+      return resp.status(400).send({ success: false, msg: "OTP has expired" });
+    }
+
+    // 5. Hashing & Updating (Use Async for better performance)
+    const saltRounds = 10;
+    const hashedPass = await bcrypt.hash(NewPassword, saltRounds);
+
+    await UserModel.updateOne(
+      { phoneNumber },
+      {
+        $set: {
+          password: hashedPass,
+          resetOtp: "",           // Clear the OTP so it can't be reused
+          resetOtpExpiresAt: 0,   // Reset the timer
+        },
+      }
+    );
+
+    // 6. Success Response (200 OK)
+    return resp.status(200).send({
+      success: true,
+      msg: "Password reset successfully. You can now login with your new password.",
+    });
+
+  } catch (error) {
+    console.error("Reset Password Error:", error);
+    return resp.status(500).send({ 
+      success: false, 
+      msg: "Internal server error during password reset" 
+    });
+  }
+}
+
+export const resendOtpforForgotPass=async(req,res,next)=>{
+ try {
+    const { phoneNumber } = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).json({ success: false, msg: "phoneNumber required" });
+    }
+
+    const user = await UserModel.findOne({ phoneNumber });
+    if (!user) {
+      return res.status(404).json({ success: false, msg: "User not found" });
+    }
+
+    
+    // 🔑 Generate new OTP
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+    // 🔒 Hash OTP
+    // const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex"); bad me dekh lunga
+
+    // ✅ Save OTP + expiry in DB
+    user.resetOtp = otp;
+    user.resetOtpExpiresAt = Date.now() + 5 * 60 * 1000; // 5 min
+    await user.save();
+
+    // ✉️ Send OTP via email
+    
+    let phone="+91"+String(phoneNumber)
+    let msgbody=`You otp for reset password is ${otp}.Remember it is valid only for 5 minutes`
+    let data=await sendOTP("+919769479166",msgbody);
+    
+    if(data){
+
+      
+      res.status(200).json({
+        success: true,
+        msg: "OTP resent successfully. Please check your phone.",
+      });
+    }
+    else{
+      console.log("error in resendotpforgotpass SMS twilio service")
+    }
+  } catch (error) {
+    console.log(error)
+    return res.send({ success: false, msg:"error in  resendOtpforForgotPass "});
+  }
+}
+
+export const resendOtpforverification = async (req, res, next) => {
+  try {
+    const { phoneNumber} = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).json({ success: false, msg: "phone required" });
+    }
+
+    const user = await UserModel.findOne({ phoneNumber });
+    if (!user) {
+      return res.status(404).json({ success: false, msg: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "User already verified" });
+    }
+
+    // 🔑 Generate new OTP
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+    // 🔒 Hash OTP
+    // const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
+
+    // ✅ Save OTP + expiry in DB
+    user.verificationCode = otp;
+    user.verificationCodeExpires = Date.now() + 10 * 60 * 1000; // 10 min
+    await user.save();
+
+    // ✉️ Send OTP via email
+    let phone="+91"+String(phoneNumber)
+    let msgbody=`You otp for verification is ${otp}.Remember it is valid only for 5 minutes`
+    let data=await sendOTP("+919769479166",msgbody);
+    
+    if(data){
+
+      
+      res.status(200).json({
+        success: true,
+        msg: "OTP resent successfully. Please check your phone.",
+      });
+    }
+  } catch (error) {
+    return res.send({ success: false, msg: error });
+  }
+};
+
+export const SendLoginOtp=async (req, resp, next) => {
+        try {
+let {phoneNumber}=req.body;
+if(!phoneNumber){
+    return resp.status(200).send({ success: false, msg: "Phone Number is required" });
+  }
+  const user=await UserModel.find({phoneNumber})
+  if(user.length==0){
+    return resp.status(200).send({ success: false, msg: "User does not exist with this phone Number" });
+    
+  }
+  const LoginOtp = Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
+  
+  // Send verification email
+  let phone="+91"+String(phoneNumber)
+  let msgbody=`You otp for login is ${LoginOtp}.Remember it is valid only for 5 minutes`
+  let data=await sendOTP("+919769479166",msgbody);
+  
+  if(data){
+    let result=await UserModel.updateOne({phoneNumber},{$set:{LoginOtp}})
+    if(result)
+      return resp.status(200).send({ success: true, msg: "Successfull" });
+      
+    }
+    
+
+
+} catch (error) {
+  console.log(error)
+  return resp.status(500).send({success:false,msg:"Internal server error"})
+}
+}
+
+export const LoginUserWithLoginOtp=async (req, resp, next) => {
+try {
+   let {phoneNumber,LoginOtp}=req.body;
+   let user=await  UserModel.find({phoneNumber});
+   if(!user[0]?.LoginOtp){
+              return resp.status(200).send({ success: false, msg: "Invalid OTP" });
+            }
+
+            if(user[0]?.LoginOtp==LoginOtp){
+              // 🔑 Short-lived access token
+    const accessToken = jwt.sign(
+      { id: user[0]._id },
+      process.env.JWT_ACCESS_SECRET_KEY,
+      {
+        expiresIn: "15m",
+      },
+    );
+
+    // 🔄 Long-lived refresh token
+    const refreshToken = jwt.sign(
+      { id: user[0]._id },
+      process.env.JWT_REFRESH_SECRET_KEY,
+      { expiresIn: "7d" },
+    );
+
+    // Store refresh token (optional but recommended)
+    let updateuser=await UserModel.updateOne({phoneNumber},{$set:{refreshToken:refreshToken}})
+    // 🍪 Send tokens in cookies
+    resp
+      .cookie("accessToken", accessToken, {
+        // httpOnly: true,
+        // secure: true, if it is in production
+        sameSite: "strict",
+        maxAge: 15 * 60 * 1000,
+      })
+      .cookie("refreshToken", refreshToken, {
+        // httpOnly: true,
+        // secure: true, if it is in production
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .json({
+        success: true,
+        msg: "Login successful",
+        email: user[0].email,
+        accessToken,
+      });
+
+            }        
+            else{
+              return resp.status(200).send({ success: false, msg: "Invalid otp" });
+
+            }
+              
+
+
+
+
+} catch (error) {
+  console.log(error)
+  return resp.status(500).send({success:false,msg:"Internal server error"})
+}
+
+}

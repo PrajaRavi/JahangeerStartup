@@ -1,12 +1,27 @@
+import { lazy, Suspense } from "react";
+import {motion} from "framer-motion"
+import AppImage from "../assets/app.png";
 import Hero from "./Hero"
+import {useTheme } from "../context/theme.context";
+/**
+ * 
 import Services from "./Services";
 import Process from "./Process";
 import Stats from "./Stats";
-import {motion} from "framer-motion"
-import AppImage from "../assets/app.png";
-
 import Footer from "./Footer";
-import {useTheme } from "../context/theme.context";
+
+*/
+const Services=lazy(()=>import("./Services"))
+const Stats=lazy(()=>import("./Stats"))
+const Footer=lazy(()=>import("./Footer"))
+const Process=lazy(()=>import("./Process"))
+const LoadingComp=()=>{
+  return (
+    <div className="w-full font-bold text-xl text-center">
+<h1>Loading your component....</h1>
+    </div>
+  )
+}
 
 export default function Home() {
   const {dark}=useTheme();
@@ -37,13 +52,26 @@ export default function Home() {
 
       {/* HERO */}
       <Hero />
+
+
+      {/* heavy component */}
+
+      <Suspense fallback={<LoadingComp/>}>
       {/* SERVICES */}
       <Services />
+      </Suspense>
+      <Suspense fallback={<LoadingComp/>} >
+
       {/* PROCESS */}
       <Process />
+      </Suspense >
       {/* STATS */}
+      <Suspense fallback={<LoadingComp/>}>
+
       <Stats />
+      </Suspense>
       {/* APP SECTION */}
+
       <section
         id="App"
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20"
@@ -85,9 +113,11 @@ export default function Home() {
           </button>
         </div>
       </section>
-
+<Suspense fallback={<LoadingComp/>}>
       {/* FOOTER */}
       <Footer />
+</Suspense>
+
 
       </main>
   );

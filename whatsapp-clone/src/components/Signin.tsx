@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import {toast} from "react-toastify"
 import { Link, useNavigate, useParams } from "react-router";
 import axios from "axios";
@@ -17,6 +17,8 @@ export default function SignInPage() {
   const {phone}=useParams();
   const dispatch=useDispatch();
   const {dark}=useTheme()
+  let [OpenPopModal,setOpenPopModal]=useState<boolean>(false)
+  let [LoginOtp,setLoginOtp]=useState<string>("")
   const [formData, setFormData] =
     useState<LoginForm>({
       identifier: String(phone),
@@ -79,6 +81,71 @@ const navigate=useNavigate();
     }));
   };
 
+  async function HandleSendOtp(){
+    try {
+      if(formData.identifier==""){
+
+        return toast.error("phone number required")
+      }
+      if(formData.identifier.length!=10){
+        return toast.error("Invalid phone number")
+      }
+      let {data}=await axios.post(`http://localhost:4500/user/send-login-otp`,{phoneNumber:formData.identifier})
+      if(data.success){
+        toast.success("An otp is send to your phone")
+setOpenPopModal(true)
+      }
+      else{
+        toast.error(data?.msg)
+      }
+    } catch (error:any) {
+      let {data,status}=error.response;
+      if(data){
+        console.log(status)
+        toast.error(
+          data?.msg ||
+          "Something went wrong"
+        );
+      }
+      console.log(error)
+   
+    }
+  }
+
+  async function HandleLoginWithOtp(e:any){
+    e.preventDefault();
+    try {
+      if(LoginOtp==""){
+        return toast.warn("otp is required")
+      }
+  let  {data}=await axios.post(`http://localhost:4500/user/login-user-with-login-otp`,{phoneNumber:formData.identifier,LoginOtp},{withCredentials:true})
+      if(data.success){
+setOpenPopModal(false)
+toast.success("Login Successful");
+        dispatch(SetIsUserLogin(true))
+  
+        // Navigate Here
+        localStorage.setItem(LocalStorageLogedinuserId,data?.email)
+        navigate("/");
+        dispatch(SetIsUserLogin(true))
+     
+      }
+      else{
+        toast.error(data?.msg)
+      }
+      
+    } catch (error:any) {
+      let {data,status}=error.response;
+      if(data){
+        console.log(status)
+        toast.error(
+          data?.msg ||
+          "Something went wrong"
+        );
+      }
+      console.log(error)
+    }
+  }
   const handleSubmit = async (
     e: any
   ) => {
@@ -91,9 +158,12 @@ const navigate=useNavigate();
 
       let {data}=await axios.post(`http://localhost:4500/user/signin`,formData,{withCredentials:true})
       if (data.success) {
-        toast.success(
-          "Login Successful"
-        );
+        toast.success("Login Successful");
+        dispatch(SetIsUserLogin(true))
+  
+        // Navigate Here
+        localStorage.setItem(LocalStorageLogedinuserId,data?.email)
+        navigate("/");
         dispatch(SetIsUserLogin(true))
       }
       else{
@@ -102,11 +172,6 @@ const navigate=useNavigate();
 
       
       console.log(data);
-      dispatch(SetIsUserLogin(true))
-
-      // Navigate Here
-      localStorage.setItem(LocalStorageLogedinuserId,data?.email)
-      navigate("/");
     } catch (error: any) {
       let {data,status}=error.response;
       if(data){
@@ -128,6 +193,95 @@ const navigate=useNavigate();
         ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white"
         : "bg-slate-50 text-slate-900"
         } `}>
+
+          {/* creating a pop up for entering the login otp */}
+          {OpenPopModal&&<div className="w-full z-10 flex items-center justify-center fixed  bg-white/10
+        backdrop-blur-xl
+ top-0 left-0 text-white h-full  ">
+            <button onClick={()=>{
+setOpenPopModal(false)
+            }} className="absolute top-5 right-5"><X/></button>
+            <form action="" onSubmit={HandleLoginWithOtp} className="md:w-[60%] w-[80%]">
+              <h1>Login with OTP</h1>
+                <div>
+            <label
+              className="
+              block
+              text-sm
+              text-slate-300
+              mb-2
+            "
+            >
+              OTP
+            </label>
+
+            <input
+              type="number"
+              name="LoginOtp"
+              value={
+                LoginOtp
+              }
+              onChange={(e)=>{
+                setLoginOtp(e.target.value)
+              }}
+              placeholder="Enter OTP"
+              className="
+              w-full
+              border
+              rounded-xl
+              px-4
+              py-3
+              outline-none
+              focus:border-[#00D3F3]
+            "
+            />
+
+            
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="
+            w-full
+            bg-[#00D3F3]
+            text-black
+            py-3
+            mt-3
+            rounded-xl
+            font-semibold
+            flex
+            items-center
+            justify-center
+            gap-3
+            disabled:opacity-70
+          "
+          >
+            {loading ? (
+              <>
+                <div
+                  className="
+                  h-5
+                  w-5
+                  border-2
+                  border-black
+                  border-t-transparent
+                  rounded-full
+                  animate-spin
+                "
+                />
+
+                Signing In...
+              </>
+            ) : (
+              "Sign In"
+            )}
+          </button>
+
+
+
+            </form>
+
+          </div>}
 
     <div
       className={`h-[60%] w-[80%] flex items-center justify-center flex-col`}
@@ -282,6 +436,41 @@ const navigate=useNavigate();
           {/* Forgot Password */}
           <div className="flex justify-end">
             <button
+            onClick={async ()=>{
+              if(formData.identifier==""){
+              return  toast.info("Enter PhoneNumber  first")
+              }
+              if(formData.identifier.length!=10)
+                return toast.info("Invalid PhoneNumber")
+              // implement forgot password functionality
+              try {
+                let {data}=await  axios.put(`http://localhost:4500/user/send-forgot-pass-otp`,{phoneNumber:formData.identifier},{withCredentials:true})
+                if(data.success){
+                  console.log(data)
+                  toast.success(data?.msg)
+                  
+    
+                  // then navigate the user
+                  navigate(`/forgotpass/${formData.identifier}`)
+                  setTimeout(() => {
+                    toast.success("An otp is send to your number.It is valid only for 5 minutes")
+                  }, 1000);
+                }
+                else{
+                  toast.warn(data?.msg)
+                }
+                
+              } catch (error:any) {
+                let {data,status}=error.response;
+                if(data){
+                  console.log(status)
+                  toast.error(data?.msg)
+                }
+              }
+
+
+
+            }}
               type="button"
               className="
               text-cyan-400
@@ -331,7 +520,33 @@ const navigate=useNavigate();
               "Sign In"
             )}
           </button>
+
         </form>
+          <button
+          onClick={()=>{
+            HandleSendOtp()
+          }}
+            className="
+            
+            bg-[#00D3F3]
+            text-black
+            cursor-pointer
+            md:w-[60%] w-[90%]
+            mt-3
+            py-3
+            rounded-xl
+            font-semibold
+            flex
+            items-center
+            justify-center
+            gap-3
+            disabled:opacity-70
+          "
+          >
+            
+              Sign In with otp
+          
+          </button>
 
         {/* Divider */}
         <div

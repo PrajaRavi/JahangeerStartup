@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import WashingMachine from "../assets/washing_machine.png"
+import { toast } from "react-toastify";
 
 export default function Hero() {
   return (
@@ -39,7 +40,9 @@ export default function Hero() {
             </p>
 
             <div className="flex flex-wrap gap-4 mt-8">
-              <button className="px-8 py-4 rounded-2xl bg-cyan-400 text-black font-bold">
+              <button onClick={()=>{
+                toast.success("from our services")
+              }} className="px-8 py-4 rounded-2xl bg-cyan-400 text-black font-bold">
                 Book Now
               </button>
 

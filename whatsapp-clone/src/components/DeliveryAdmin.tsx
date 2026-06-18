@@ -15,11 +15,14 @@ import { CANCELLED, DELIVERED, OrderStatusOut_for_Delivery, OrderStatusPlace, Pa
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useTheme } from "../context/theme.context";
+import { useNavigate } from "react-router";
 
 export default function DeliverAdmin() {
   const [expandedOrder, setExpandedOrder] =
     useState<string | null>(null);
     const { dark } = useTheme();
+  const User=useSelector((state:any)=>state.Auth.ActiveUser)
+  const navigate=useNavigate();
 
   const [expandedOrder1, setExpandedOrder1] =
     useState<string | null>(null);
@@ -82,6 +85,10 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
  */
 
   useEffect(()=>{
+    if(User.role=="user"){
+      navigate("/")
+      
+    }
     if(OrderData?.length>0){
 
       setLocalOrderData(OrderData)
@@ -95,7 +102,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
 ){
     e.preventDefault();
     try {
-      let {data}=await axios.put(`http://localhost:5000/order/update-order-status`,{id:SelectedOrderForUpdate?._id,orderStatus:OrderStatus,paymentStatus:PaymentStatus},{withCredentials:true})
+      let {data}=await axios.put(`http://localhost:4500/order/update-order-status`,{id:SelectedOrderForUpdate?._id,orderStatus:OrderStatus,paymentStatus:PaymentStatus},{withCredentials:true})
       if(data.success){
         toast.success("Updated")
         setOpenOrderUpdateModal(false)
@@ -173,13 +180,14 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
       className={`min-h-screen  pt-20  w-full  transition-all duration-500 ${
         dark
         ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] "
-        : "bg-slate-50 text-slate-900"
+        : "bg-slate-50 text-white"
         }`}
     >
       <div
         className="
         max-w-5xl
         mx-auto
+        text-white
       "
       >
         <motion.h1
@@ -308,6 +316,7 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                           md:text-xl
                           text-xs
                           md:font-semibold
+                          text-white
                           
                         "
                         >
@@ -415,8 +424,8 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                           className="text-cyan-300 md:text-sm"
                         />
 
-                        <div>
-                          <p className="/60 md:text-sm text-xs">
+                        <div  className="text-white">
+                          <p className=" md:text-sm  text-xs">
                             Address
                           </p>
 
@@ -440,11 +449,11 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                         />
 
                         <div>
-                          <p className="/60 md:text-sm text-xs">
+                          <p className=" md:text-sm text-white text-xs">
                             Delivery Day
                           </p>
 
-                          <p className=" md:text-sm text-xs">
+                          <p className=" md:text-sm text-white text-xs">
                             {
                               order.Day
                             }
@@ -464,11 +473,11 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
                         />
 
                         <div>
-                          <p className="/60 md:text-sm text-xs">
+                          <p className="/60 md:text-sm text-white text-xs">
                             Time Slot
                           </p>
 
-                          <p className=" md:text-sm text-xs">
+                          <p className=" md:text-sm text-white text-xs">
                             {
                               `${order.Time.from}-${order.Time.to}`
                             }

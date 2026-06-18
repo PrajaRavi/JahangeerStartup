@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import { useNavigate, useParams } from "react-router";
+import { OtpTimer } from "../utils/OtpTimer";
 
 interface FormData {
   phoneNumber: string;
@@ -46,6 +47,33 @@ export default function PhoneVerificationPage() {
     }));
   };
 
+  async function HandleResend(){
+    try {
+      let {data}=await axios.put(`http://localhost:4500/user/resend-verify-otp`,{phoneNumber:formData.phoneNumber})
+      if(data.success){
+        toast.success(data?.msg)
+      }
+      else{
+        toast.error(data?.msg)
+      }
+    } catch (error:any) {
+      console.log(error.response)
+      let {data,status}=error.response;
+      if(data?.msg){
+        toast.error(data?.msg)
+        console.log(status)
+      }
+      else{
+
+        console.log(error)
+        toast.error("Internal server error")
+      }
+    }
+
+  }
+  function HandleTimeEnd(){
+return false;
+  }
   const validate = () => {
     const newErrors = {
       phoneNumber: "",
@@ -126,29 +154,12 @@ export default function PhoneVerificationPage() {
   };
 
   return (
+    <div className={`w-screen  fixed top-0 left-0 h-screen flex items-center justify-center bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white
+           `}>
+
     <div
-      className="
-      w-full
-      min-h-screen
-      flex
-      items-center
-      justify-center
-      px-4
-      py-10
-    "
+      className={`h-[60%] w-[80%] flex items-center justify-center flex-col`}
     >
-      <div
-        className="
-        w-full
-        max-w-md
-        border
-        border-slate-200
-        dark:border-slate-700
-        rounded-3xl
-        p-6
-        sm:p-8
-      "
-      >
         {/* Header */}
         <div className="text-center">
           <h1
@@ -172,7 +183,7 @@ export default function PhoneVerificationPage() {
 
         <form
           onSubmit={handleSubmit}
-          className="mt-8 space-y-5"
+          className="mt-8 space-y-5 md:w-[60%] w-[80%]"
         >
           {/* Phone Number */}
           <div>
@@ -316,6 +327,7 @@ export default function PhoneVerificationPage() {
             )}
           </button>
         </form>
+        <OtpTimer minutes={1} onResendClick={HandleResend} onTimerEnd={HandleTimeEnd}/>
       </div>
     </div>
   );
