@@ -121,7 +121,8 @@ let [OpenOrderUpdateModal,setOpenOrderUpdateModal]=useState(false)
   }
   return (
     <>
-    {OpenOrderUpdateModal&&<div className={`w-screen   top-0 left-0 h-screen flex items-center justify-center  `}>
+    {OpenOrderUpdateModal&&<div className={`w-screen z-30 text-white  bg-black/30
+      backdrop-blur-sm fixed top-0 left-0 h-screen flex items-center justify-center  `}>
       <button onClick={()=>setOpenOrderUpdateModal(false)} className="absolute right-5 top-5"><X size={20}/></button>
       <form onSubmit={(e)=>{
         HandleSubmit(e);

@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { User, ShoppingBag, Mail, Trash2, Edit3, Menu, X, Users, DollarSign, Loader } from 'lucide-react';
-import { useSelector } from 'react-redux';
+import { ShoppingBag, Mail, Trash2, Edit3, Menu, X, Users, DollarSign, Loader } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
 import UpdateUser from './UserUpdate';
-import type { SignupFormData } from '../Redux/Slice/Auth.slice';
+import { UpdateAllOrderDataFlag, UpdateGetAllUsersFlag, type SignupFormData } from '../Redux/Slice/Auth.slice';
 import { useNavigate } from 'react-router';
 import DeliverAdmin from './DeliveryAdmin';
 import { useTheme } from '../context/theme.context';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import { BackendUrl } from '../utils/Dotenv';
 
 // Datasets provided
 const initialUsers = [
@@ -50,6 +53,8 @@ export default function AdminPanel() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const UsersData=useSelector((state:any)=>state.Auth.UsersData)
   const OrderData=useSelector((state:any)=>state.Auth.OrderData)
+  const User=useSelector((state:any)=>state.Auth.ActiveUser)
+
   // State Management for Data Manipulation
   const LogedInUser=useSelector((state:any)=>state.Auth.ActiveUser)
   const [users, setUsers] = useState(initialUsers);
@@ -57,6 +62,11 @@ export default function AdminPanel() {
   let [OpenUpdateUserModal,setOpenUpdateUserModal]=useState(false)
   let [SelectedUserForUpdate,setSelectedUserForUpdate]=useState<SignupFormData>()
   const navigate=useNavigate();
+  const GetAllUserFlag=useSelector((state:any)=>state.Auth.GetAllUserFlag)
+  const GetAllOrdersFlag=useSelector((state:any)=>state.Auth.GetAllOrdersFlag)
+
+  const dispatch=useDispatch();
+
   
     const { dark } = useTheme();
 
@@ -80,11 +90,59 @@ export default function AdminPanel() {
     setDeleteModal({ isOpen: false, type: null, id: null });
   };
 
+  async function HandleUserDelete(userid:string){
+    if(userid==User._id){
+     return toast.warn("You can't delete yourself")
+    }
+    try {
+      let {data}=await axios.delete(`${BackendUrl}/user/user-by-id?userid=${userid}`,{withCredentials:true})
+      if(data?.success){
+toast.success(data?.msg)
+dispatch(UpdateGetAllUsersFlag(!GetAllUserFlag))
+
+      }
+      else{
+        toast.warning(data?.msg)
+      }
+    } catch (error:any) {
+      let {data,status}=error.response;
+      if(data?.msg){
+        toast.error(data?.msg)
+        console.log(status)
+      }
+    }
+
+  }
+  async function HandleOrderDelete(orderid:string){
+    
+    try {
+      let {data}=await axios.delete(`${BackendUrl}/order/delete-order?orderid=${orderid}`,{withCredentials:true})
+      if(data?.success){
+toast.success(data?.msg)
+dispatch(UpdateAllOrderDataFlag(!GetAllOrdersFlag))
+
+      }
+      else{
+        toast.warning(data?.msg)
+      }
+    } catch (error:any) {
+      let {data,status}=error.response;
+      if(data?.msg){
+        toast.error(data?.msg)
+        console.log(status)
+      }
+    }
+
+  }
   const handleDeleteConfirm = () => {
     const { type, id } = deleteModal;
     if (type === 'users') {
+      HandleUserDelete(String(id));
       setUsers(users.filter(u => u._id !== id));
+      
+
     } else if (type === 'orders') {
+      HandleOrderDelete(String(id))
       setOrders(orders.filter(o => o._id !== id));
     }
     closeDeleteModal();
@@ -159,7 +217,7 @@ navigate("/")
         {/* Action Menu Links */}
         <nav className="space-y-2 flex-1">
           {navigationItems.map((item) => {
-            const IconComponent = item.icon;
+            // const IconComponent = item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
@@ -175,7 +233,7 @@ navigate("/")
                     : 'text-slate-400 hover:bg-white/5 hover:text-slate-200 border border-transparent'}
                 `}
               >
-                <IconComponent size={18} className={`transition-transform duration-300 ${isActive ? 'text-indigo-400 scale-110' : 'group-hover:scale-110'}`} />
+                {/* <IconComponent size={18} className={`transition-transform duration-300 ${isActive ? 'text-indigo-400 scale-110' : 'group-hover:scale-110'}`} /> */}
                 {item.label}
               </button>
             );

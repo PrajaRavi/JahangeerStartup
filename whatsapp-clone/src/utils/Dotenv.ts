@@ -142,4 +142,5 @@ export const OrderStatusOut_for_Delivery="OUT_FOR_DELIVERY"
 export const OrderStatusPlace="PLACED"
 export const DELIVERED="DELIVERED"
 export const CANCELLED="CANCELLED"
+export const BackendUrl="http://localhost:4500"
 

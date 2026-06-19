@@ -27,15 +27,17 @@ const services = [
 //   { id: 7, name: "Kurta", price: 30 },
 // ]},
 
-//   {label:"Wash & Iron",id:"serv3",icon:Icon3,Items:[
-//   { id: 1, name: "Shirt", price: 15 },
-//   { id: 2, name: "T-Shirt", price: 12 },
-//   { id: 3, name: "Trouser", price: 20 },
-//   { id: 4, name: "Jeans", price: 25 },
-//   { id: 5, name: "Saree", price: 60 },
-//   { id: 6, name: "Blazer", price: 50 },
-//   { id: 7, name: "Kurta", price: 30 },
-// ]},
+  {label:"Wash & Iron",id:"serv3",icon:Icon3,Items:[
+  { id: 1, name: "Shirt", price: 15 },
+  // { id: 2, name: "T-Shirt", price: 12 },
+  { id: 30, name: "Trouser", price: 15 },
+  { id: 31, name: "scl uniform", price: 30 },
+  { id: 32, name: "kurti", price: 15 },
+  { id: 33, name: "plazzo", price: 15 },
+  { id: 34, name: "saree", price: 40 },
+  { id: 35, name: "saree(Etc)", price: 130 },
+  { id: 36, name: "Dress material", price: 25 },
+]},
 
   {label:"Heavy Wash service",id:"serv4",icon:Icon4,Items:[
   { id: 1, name: "Curtain", price: 25 },

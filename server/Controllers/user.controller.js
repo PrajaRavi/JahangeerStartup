@@ -4,7 +4,9 @@ import jwt from "jsonwebtoken"
 import dotenv from "dotenv";
 import { TryCatchHandler } from "../utilities/TryCatchHandler.utility.js";
 import {transporter} from "../utilities/nodemailer.js"
-import { sendOTP } from "../index.js";
+import { sendOTP, sendotpfast } from "../index.js";
+import path from "path"
+import fs from "fs/promises"
 
 export const signup = async (req, res) => {
   try {
@@ -55,7 +57,9 @@ export const signup = async (req, res) => {
     // Send verification email
     let phone="+91"+String(phoneNumber)
     let msgbody=`You otp for verification is ${verificationCode}.Remember it is valid only for 5 minutes`
-    let data=await sendOTP("+919769479166",msgbody);
+    // let data=await sendOTP("+919769479166",msgbody);
+  let data=await sendotpfast(phoneNumber,verificationCode)
+
     
     
     
@@ -398,7 +402,7 @@ export const resendOtp = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      msg: "OTP resent successfully. Please check your email.",
+      msg: "OTP resent successfully. Please check your phone.",
     });
   } catch (error) {
     return res.send({ success: false, msg: error });
@@ -442,12 +446,34 @@ if(data.length>0){
 export const UpdateUserDP=async (req,resp)=>{
   try {
       let  userId=req.user.id;//This id comes from protect middleware
+    let IFAlreadyProfilePhotoSelectedOrNot=await UserModel.find({_id:userId})
+    console.log("Hiiii")
+    console.log("Hiiii")
+    console.log("Hiiii")
+    if(IFAlreadyProfilePhotoSelectedOrNot[0].profilePicture!=""){
+      console.log("ook")
+      const oldFilePath = path.join(
+        (process.cwd()+"/Images/Profile"),
+        IFAlreadyProfilePhotoSelectedOrNot[0].profilePicture
+      );
+      
+      try {
+        await fs.unlink(oldFilePath);
+      } catch (error) {
+        console.log(error)
+        console.log(
+          "Old photo not found"
+        );
+      }
+    }
     let data=await UserModel.updateOne({_id:userId},{$set:{profilePicture:req.file.filename}})  
+    
     if(data){
   
       return resp.send({success:true,msg:"updated"})
     }
     } catch (error) {
+      console.log(error)
       return resp.status(500).send({success:false,msg:"Internal server error"})
     }
 }
@@ -494,7 +520,7 @@ if(data){
     // Security Note: You might want to return 'success: true' even if user doesn't exist 
     // to prevent email enumeration, but 404/403 is standard for many apps.
     if (!user) {
-      return resp.status(404).send({ success: false, msg: "No account found with this email" });
+      return resp.status(404).send({ success: false, msg: "No account found with this phone" });
     }
 
     // Generate a secure 6-digit OTP
@@ -518,7 +544,9 @@ if(data){
     // Send OTP
     let phone="+91"+String(phoneNumber)
     let msgbody=`You otp for reset password is ${otp}.Remember it is valid only for 5 minutes`
-    let data=await sendOTP("+919769479166",msgbody);
+    // let data=await sendOTP("+919769479166",msgbody);
+  let data=await sendotpfast(phoneNumber,otp)
+
     if(data){
 
       
@@ -630,7 +658,9 @@ export const resendOtpforForgotPass=async(req,res,next)=>{
     
     let phone="+91"+String(phoneNumber)
     let msgbody=`You otp for reset password is ${otp}.Remember it is valid only for 5 minutes`
-    let data=await sendOTP("+919769479166",msgbody);
+    // let data=await sendOTP("+919769479166",msgbody);
+  let data=await sendotpfast(phoneNumber,otp)
+
     
     if(data){
 
@@ -682,7 +712,9 @@ export const resendOtpforverification = async (req, res, next) => {
     // ✉️ Send OTP via email
     let phone="+91"+String(phoneNumber)
     let msgbody=`You otp for verification is ${otp}.Remember it is valid only for 5 minutes`
-    let data=await sendOTP("+919769479166",msgbody);
+    // let data=await sendOTP("+919769479166",msgbody);
+  let data=await sendotpfast(phoneNumber,otp)
+
     
     if(data){
 
@@ -715,7 +747,8 @@ if(!phoneNumber){
   // Send verification email
   let phone="+91"+String(phoneNumber)
   let msgbody=`You otp for login is ${LoginOtp}.Remember it is valid only for 5 minutes`
-  let data=await sendOTP("+919769479166",msgbody);
+  // let data=await sendOTP("+919769479166",msgbody);
+  let data=await sendotpfast(phoneNumber,LoginOtp)
   
   if(data){
     let result=await UserModel.updateOne({phoneNumber},{$set:{LoginOtp}})
@@ -795,4 +828,24 @@ try {
   return resp.status(500).send({success:false,msg:"Internal server error"})
 }
 
+}
+
+export const DeleteUserById=async (req, resp, next) => {
+try {
+  let {userid}=req.query;
+  if(!userid){
+    return resp.status(200).send({success:false,msg:"Userid required"})
+
+  }
+  let data=await UserModel.deleteOne({_id:userid})
+  if(data){
+
+    return resp.status(200).send({success:true,msg:"Successfully deleted"})
+  }
+
+
+
+} catch (error) {
+  return resp.status(500).send({success:false,msg:"Internal server error"})
+}
 }

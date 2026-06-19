@@ -106,3 +106,14 @@ export const GetOrders=async (req,resp,next)=>{
           return resp.status(500).send({success:false,msg:"Internal server error"})
         }
     }
+    export const DeleteOrder=async(req,resp)=>{
+      try {
+  let {orderid}=req.query;
+  let data=await OrderModel.deleteOne({_id:orderid})
+  if(data){
+    return resp.status(200).send({success:true,msg:"Successfully deleted"})
+  }
+} catch (error) {
+  return resp.status(500).send({success:false,msg:"Internal server error"})
+}
+    }

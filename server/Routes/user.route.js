@@ -1,5 +1,5 @@
 import express from "express"
-import {GetAllUser, getLoggedInUser, login, LoginUserWithLoginOtp, logout, refreshAccessToken, resendOtpforForgotPass, resendOtpforverification, ResetUserPassword, SendLoginOtp, SendResetPasswordOTP, signup, UpdateUser, UpdateUserDP, verifyOtp} from "../Controllers/user.controller.js"
+import {DeleteUserById, GetAllUser, getLoggedInUser, login, LoginUserWithLoginOtp, logout, refreshAccessToken, resendOtpforForgotPass, resendOtpforverification, ResetUserPassword, SendLoginOtp, SendResetPasswordOTP, signup, UpdateUser, UpdateUserDP, verifyOtp} from "../Controllers/user.controller.js"
 import { upload } from "../utilities/user.multer.js";
 import { protect } from "../Middlewares/AuthMiddleware.js";
 export const UserRouter=express.Router();
@@ -17,6 +17,7 @@ UserRouter.put("/resend-verify-otp",resendOtpforverification)
 UserRouter.put("/resend-forgotpass-otp",resendOtpforForgotPass)
 UserRouter.post("/send-login-otp",SendLoginOtp)
 UserRouter.post("/login-user-with-login-otp",LoginUserWithLoginOtp)
+UserRouter.delete("/user-by-id",protect,DeleteUserById)
 
 
 

@@ -52,6 +52,7 @@ function App() {
     // const { dark } = useTheme();
   const IsUserLogin=useSelector((state:any)=>state.Auth.IsUserLogin)
   const GetAllOrdersFlag=useSelector((state:any)=>state.Auth.GetAllOrdersFlag)
+  const GetAllUserFlag=useSelector((state:any)=>state.Auth.GetAllUserFlag)
 
 
     const dispatch=useDispatch();
@@ -92,13 +93,17 @@ if(localStorage.getItem(LocalStorageLogedinuserId)){
       GetProductPickUpDays();
       GetProductPickUpTime();
       RefreshToken();
-      GetAllUsers();
       let interval=setInterval(RefreshToken,10000)
       
       return ()=>{
         clearInterval(interval)
       }
     },[IsUserLogin])
+
+    useEffect(()=>{
+GetAllUsers();
+    },[GetAllUserFlag,IsUserLogin])
+    
     useEffect(()=>{
       console.log("cal kiya")
       GetAllOrders();

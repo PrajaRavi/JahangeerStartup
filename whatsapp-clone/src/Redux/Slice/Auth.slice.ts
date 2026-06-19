@@ -41,6 +41,7 @@ interface FileStates {
   OrderData:OrderProductType[]; //This contains all the orders data
   GetAllOrdersFlag:boolean;
   OrderdProductsFlag:boolean;
+  GetAllUserFlag:boolean;
 
   
  }
@@ -70,6 +71,7 @@ const initialState: FileStates = {
   OrderData:[],
   GetAllOrdersFlag:true,
   OrderdProductsFlag:true,
+  GetAllUserFlag:true,
   
   };
 
@@ -117,6 +119,9 @@ export const counterSlice = createSlice({
     UpdateOrderdProductFlag:(state, action) => {
       state.OrderdProductsFlag=action.payload;
     },
+    UpdateGetAllUsersFlag:(state, action) => {
+      state.GetAllUserFlag=action.payload;
+    },
     
 
 
@@ -132,5 +137,5 @@ export const counterSlice = createSlice({
    
 });
 
-export const { setActiveUser,SetIsUserLogin,SetUser,SetAllUsers,setCartItems,ReStoreCartItems,SetOrderdProd,SetProductPickUpDay,SetProductPickUpTime,UpdateUsersData,UpdateOrderData,UpdateAllOrderDataFlag,UpdateOrderdProductFlag} = counterSlice.actions;
+export const { setActiveUser,SetIsUserLogin,SetUser,SetAllUsers,setCartItems,ReStoreCartItems,SetOrderdProd,SetProductPickUpDay,SetProductPickUpTime,UpdateUsersData,UpdateOrderData,UpdateAllOrderDataFlag,UpdateOrderdProductFlag,UpdateGetAllUsersFlag} = counterSlice.actions;
 export const FileReducer = counterSlice.reducer;

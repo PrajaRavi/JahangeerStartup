@@ -126,7 +126,10 @@ export default function ProfileModal({
 {/* <label htmlFor=""></label> */}
             <label htmlFor="profile" className="absolute bottom-0 right-0"><Camera/>
             <input  onChange={(e:any)=>{
-const file = e.target.files?.[0] || null;
+              const file = e.target.files?.[0] || null;
+              if(file.size/(1024)>100){
+                return toast.warn("file size should be less than 100kb")
+              }
 
     if (file) {
       setProfile(URL.createObjectURL(file));

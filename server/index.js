@@ -83,8 +83,12 @@ import { UserModel } from './Models/user.model.js';
 import { DateTimeRouter } from './Routes/DateTime.route.js';
 import { DaySettModel, TimeSettModel } from './Models/DateTime.model.js';
 import { OrderRouter } from './Routes/order.route.js';
+import { OrderModel } from './Models/order.model.js';
+import axios from 'axios';
+
 const app=express();
 const PORT=process.env.PORT||2000;
+
 DBConnect();
 app.use(cors({
   origin:['http://localhost:5173','http://localhost:5173/'],
@@ -110,91 +114,52 @@ app.use(
   )
 );
 
+
+export async function sendotpfast(phone,otp){
+  try {
+    let {data}=await axios.get(`https://api.hanuotp.in/sms-otp.php?number=${phone}&OTP=${otp}&apikey=${process.env.HANU_OTP}`)
+console.log(data)
+return data.return
+  } catch (error) {
+    console.log(error)
+  }
+}
+// export async function sendotpfast(phone,otp){
+//   try {
+    
+//     const url=`https://www.fast2sms.com/dev/bulkV2?authorization=${process.env.FAST2_SM}&route=otp&variables_values=${otp}&numbers=${phone}`
+    
+//     let {data}=await axios.get(url);
+//     if (data.return === true) {
+//       console.log(`✅ OTP successfully sent to ${userMobile}`);
+//       return { success: true, data: response.data };
+//     } else {
+//       console.error('❌ Fast2SMS failed to dispatch:', response.data.message);
+//       return { success: false, error: response.data.message };
+//     }
+//   } catch (error) {
+//     console.log(error)
+//     // console.error('💥 Internal SMS Network Error:', error.message);
+//     return { success: false, error: error.message };
+//   }
+
+// }
 app.get("/ravi",async(req,resp)=>{
-  /**
-   * 
-  let Daydata=await DaySettModel.create({Day:["Today","Tomorrow ","Day After Tomorrow "]})
-  let Timedata=await TimeSettModel.create({Time:[{from:"10 Am",to:"10 PM"},{from:"10 Am",to:"10 PM"},{from:"10 Am",to:"10 PM"}]})
-  return resp.send({success:true,msg:"yess"})
   
-  let page = parseInt(req.query.page) || 1;
-  let limit = parseInt(req.query.limit) || 9;
-  if(!page || !limit)
-  return resp.status(200).send({ success: false, msg: "All feilds are required" });
-  
-  let totaldoc=null;
-  if (page == 1) {
-    totaldoc = await UserModel.find().countDocuments();
-    }
-    
-    
-    let data=await UserModel.find().select("-password -refreshToken -verifyotp -resetOtp -phoneNumber -isVerified -isOnline -verificationCode -role -verificationCodeExpires")
-    .limit(limit)
-    .skip((page - 1)*limit)
-    .sort({ createdAt: -1 });    
-    if(data.length>0){
-      return resp.status(200).send({ success: true, msg: data });
-      }
-      else{
-        return resp.status(200).send({ success: true, msg: [] });
-      
-    }
-    const {
-      username,
-      email,
-      phoneNumber,
-      role,
-      id,
-      } = req.body;
-      let userid=id?id:req.user.id;
-      if(!userid||!username || !email || !password||!role){
-        return resp.status(200).send({ success: true, msg: "All feilds are required" });
-        }
-        
-        let data=await UserModel.updateOne({_id:userid},{$set:{username,email,phoneNumber,role}})
-        if(data){
-          return resp.status(200).send({ success: true, msg: "successfully updated" });
-          }
-          else{
-            return resp.status(400).send({ success: true, msg: "something went wrong" });
-          
-        }
-        let phoneNumber=req.body;
-        if(!phoneNumber){
-          return resp.status(200).send({ success: false, msg: "Phone Number is required" });
-          }
-          const LoginOtp = Math.floor(
-            100000 + Math.random() * 900000
-            ).toString();
-            
-            // Send verification email
-            let phone="+91"+String(phoneNumber)
-            let msgbody=`You otp for login is ${LoginOtp}.Remember it is valid only for 5 minutes`
-            let data=await sendOTP("+919769479166",msgbody);
-            
-            if(data){
-              return resp.status(200).send({ success: true, msg: "Successfull" });
-              
-              }
-              */
    try {
-   let {phoneNumber,LoginOtp}=req.body;
-   let data=await  UserModel.find({phoneNumber});
-   if(!data[0]?.LoginOtp){
-              return resp.status(200).send({ success: false, msg: "Invalid OTP" });
-            }
-            if(data[0]?.LoginOtp==LoginOtp){
-              return resp.status(200).send({ success: true, msg: "successfully logedin" });
-              
-    }        
-
-
-
-
+  let {orderid}=req.query;
+  let data=await OrderModel.deleteOne({_id:orderid})
+  if(data){
+    return resp.status(200).send({success:true,msg:"Successfully deleted"})
+  }
 } catch (error) {
   return resp.status(500).send({success:false,msg:"Internal server error"})
 }
 })
+
+
+
+
    
 
 

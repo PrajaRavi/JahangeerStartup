@@ -19,6 +19,7 @@ if (!fs.existsSync(uploadPath)) {
 /*
   Configure storage location + filename
 */
+
 const storage = multer.diskStorage({
   /*
     Where file should be stored
