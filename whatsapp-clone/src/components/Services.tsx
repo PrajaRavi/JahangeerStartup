@@ -6,6 +6,7 @@ import Icon1 from "../assets/clean-clothes.png"
 import Icon3 from "../assets/clothing-hanger.png"
 import Icon4 from "../assets/t-shirt.png"
 import Icon5 from "../assets/sport-shoe.png"
+import Bag from "../assets/backpack.png"
 import LaundryServiceModalDemo, { type CurrServiceType } from "./ServiceDetails";
 const services = [
   {label:"Wash & Fold",id:"serv1",icon:Icon1,Items:[
@@ -45,7 +46,7 @@ const services = [
   { id: 3, name: "Pillow covers", price: 12 },
   ]},
 
-  {label:"Bag cleaning",id:"serv5",icon:Icon3,Items:[
+  {label:"Bag cleaning",id:"serv5",icon:Bag,Items:[
   { id: 1, name: "Sch. Bag/Office Bag", price: 80 },
   { id: 2, name: "Travel Bag", price: 100 },
   // { id: 22, name: "Trouser", price: 20 },
