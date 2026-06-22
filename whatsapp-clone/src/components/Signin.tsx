@@ -81,36 +81,36 @@ const navigate=useNavigate();
     }));
   };
 
-  async function HandleSendOtp(){
-    try {
-      if(formData.identifier==""){
+//   async function HandleSendOtp(){
+//     try {
+//       if(formData.identifier==""){
 
-        return toast.error("phone number required")
-      }
-      if(formData.identifier.length!=10){
-        return toast.error("Invalid phone number")
-      }
-      let {data}=await axios.post(`http://localhost:4500/user/send-login-otp`,{phoneNumber:formData.identifier})
-      if(data.success){
-        toast.success("An otp is send to your phone")
-setOpenPopModal(true)
-      }
-      else{
-        toast.error(data?.msg)
-      }
-    } catch (error:any) {
-      let {data,status}=error.response;
-      if(data){
-        console.log(status)
-        toast.error(
-          data?.msg ||
-          "Something went wrong"
-        );
-      }
-      console.log(error)
+//         return toast.error("phone number required")
+//       }
+//       if(formData.identifier.length!=10){
+//         return toast.error("Invalid phone number")
+//       }
+//       let {data}=await axios.post(`http://localhost:4500/user/send-login-otp`,{phoneNumber:formData.identifier})
+//       if(data.success){
+//         toast.success("An otp is send to your phone")
+// setOpenPopModal(true)
+//       }
+//       else{
+//         toast.error(data?.msg)
+//       }
+//     } catch (error:any) {
+//       let {data,status}=error.response;
+//       if(data){
+//         console.log(status)
+//         toast.error(
+//           data?.msg ||
+//           "Something went wrong"
+//         );
+//       }
+//       console.log(error)
    
-    }
-  }
+//     }
+//   }
 
   async function HandleLoginWithOtp(e:any){
     e.preventDefault();
