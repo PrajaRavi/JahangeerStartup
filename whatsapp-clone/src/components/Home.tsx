@@ -3,6 +3,8 @@ import {motion} from "framer-motion"
 import AppImage from "../assets/app.png";
 import Hero from "./Hero"
 import {useTheme } from "../context/theme.context";
+import PosterSlider from "../utils/Poster";
+import poster from "../assets/poster/poster1.png"
 /**
  * 
 import Services from "./Services";
@@ -11,6 +13,7 @@ import Stats from "./Stats";
 import Footer from "./Footer";
 
 */
+const posters=[poster,poster,poster]
 const Services=lazy(()=>import("./Services"))
 const Stats=lazy(()=>import("./Stats"))
 const Footer=lazy(()=>import("./Footer"))
@@ -54,8 +57,16 @@ export default function Home() {
       <Hero />
 
 
+
       {/* heavy component */}
 
+      <Suspense fallback={<LoadingComp/>}>
+      {/* SERVICES */}
+      <div className="w-full flex justify-center bg-transparent">
+
+      <PosterSlider duration={1} posters={posters} />
+      </div>
+      </Suspense>
       <Suspense fallback={<LoadingComp/>}>
       {/* SERVICES */}
       <Services />

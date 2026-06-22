@@ -9,10 +9,12 @@ const userSchema = new mongoose.Schema(
       maxlength: [30, "Username cannot exceed 30 characters"],
     },
 
-SocketId:{
+Address:{
   type:String,
   trim: true,
+  default:""
 },
+
 
 LoginOtp:{
 type:String,

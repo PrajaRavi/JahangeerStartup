@@ -9,6 +9,7 @@ interface FormData {
   email: string;
   phoneNumber: string;
   password:string;
+  Address:string;
 }
 
 export default function SignupPage() {
@@ -17,6 +18,7 @@ export default function SignupPage() {
     email: "",
     phoneNumber: "",
     password:"",
+    Address:""
 
   });
 
@@ -104,6 +106,7 @@ export default function SignupPage() {
         email: "",
         phoneNumber: "",
         password:"",
+        Address:""
       });
       setTimeout(() => {
         navigate(`/verify/${formData.phoneNumber}`)
@@ -120,14 +123,14 @@ export default function SignupPage() {
   };
 
   return (
-    <div className={`w-screen  fixed top-0 left-0 h-screen flex items-center justify-center  ${
+    <div className={`w-screen  absolute top-0 left-0 min-h-screen pt-20 pb-10 overflow-y-scroll flex items-center justify-center  ${
         dark
         ? "bg-linear-to-br  from-[#023B40] to-[#01BCBC] text-white"
         : "bg-slate-50 text-slate-900"
         } `}>
 
     <div
-      className={`h-[60%] w-[80%] flex items-center justify-center flex-col`}
+      className={` w-[80%] flex items-center justify-center flex-col`}
     >
         <h1
           className="
@@ -245,6 +248,32 @@ export default function SignupPage() {
             )}
           </div>
           
+          <div>
+            <label className="block mb-2 font-medium">
+              Address
+            </label>
+
+            <input
+              type="text"
+              name="Address"
+              value={formData.Address}
+              onChange={handleChange}
+              placeholder="Enter your Address"
+              className="
+              w-full
+              border
+              rounded-xl
+              px-4
+              py-3
+              outline-none
+              focus:border-[#00D3F3]
+            "
+            required
+            />
+
+            
+          </div>
+
           {/* Contact */}
           <div>
             <label className="block mb-2 font-medium">

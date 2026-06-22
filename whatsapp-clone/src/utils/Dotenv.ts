@@ -143,4 +143,5 @@ export const OrderStatusPlace="PLACED"
 export const DELIVERED="DELIVERED"
 export const CANCELLED="CANCELLED"
 export const BackendUrl="http://localhost:4500"
+export const CouponCode="FIRSTWASH20"
 

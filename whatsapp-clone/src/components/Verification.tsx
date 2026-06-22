@@ -327,7 +327,7 @@ return false;
             )}
           </button>
         </form>
-        <OtpTimer minutes={1} onResendClick={HandleResend} onTimerEnd={HandleTimeEnd}/>
+        <OtpTimer minutes={5} onResendClick={HandleResend} onTimerEnd={HandleTimeEnd}/>
       </div>
     </div>
   );

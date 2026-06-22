@@ -522,7 +522,8 @@ setOpenPopModal(false)
           </button>
 
         </form>
-          <button
+        
+          {/* <button
           onClick={()=>{
             HandleSendOtp()
           }}
@@ -546,7 +547,7 @@ setOpenPopModal(false)
             
               Sign In with otp
           
-          </button>
+          </button> */}
 
         {/* Divider */}
         <div

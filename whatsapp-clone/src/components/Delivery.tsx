@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { generatePickupDays, generateTimeSlots } from "../utils/Dotenv";
+import { CouponCode, generatePickupDays, generateTimeSlots, LocalStorageLogedinuserId } from "../utils/Dotenv";
 import { useTheme } from "../context/theme.context";
 
 export default function SchedulePickupPage() {
@@ -22,6 +22,7 @@ export default function SchedulePickupPage() {
   // const ProductPickUpDays=useSelector((state:any)=>state.Auth.ProductPickUpDays)
   const  ProductPirckUpTime=useSelector((state:any)=>state.Auth.ProductPirckUpTime)
   const User=useSelector((state:any)=>state.Auth.ActiveUser)
+  let [FinalAmount,setFinalAmount]=useState<number>(0)
 const {dark}=useTheme()
 
   const [selectedTime, setSelectedTime] =
@@ -84,6 +85,7 @@ const {dark}=useTheme()
     totalamount+=product.price*product.count;
     totalelem+=1;
   })
+  setFinalAmount(totalamount)
   return {totalamount,totalelem}
   },[CartItems])
   
@@ -92,6 +94,7 @@ const {dark}=useTheme()
       if(!User?._id || User?._id==""){
 return toast.warn("You are not logedin")
       }
+
       let time=timeSlots.filter((item)=>{
         return item.id==selectedTime
       })
@@ -109,7 +112,7 @@ return toast.warn("You are not logedin")
       let Day=pickupDays.filter((Day:any)=>{
         return Day.id==selectedDay;
       })
-      let {data}=await axios.post(`http://localhost:4500/order/create-order`,{Address,Amount:CartSummary.totalamount,Count:CartSummary.totalelem,Items:CartItems,phoneNumber,AltphoneNumber,cordinates:codinates,Day:Day[0].date,Time:{from:time[0].label.split("-")[0].trim(),to:time[0].label.split("-")[1].trim(),}},{withCredentials:true})
+      let {data}=await axios.post(`http://localhost:4500/order/create-order`,{Address,Amount:FinalAmount,Count:CartSummary.totalelem,Items:CartItems,phoneNumber,AltphoneNumber,cordinates:codinates,Day:Day[0].date,Time:{from:time[0].label.split("-")[0].trim(),to:time[0].label.split("-")[1].trim(),}},{withCredentials:true})
       if(data.success){
         toast.success("order placed successfully")
         navigate("/")
@@ -452,7 +455,7 @@ try {
                   />
 
                   {slot.label}
-                 {User.IsAdmin&& <button className="
+                 {User?.role!=="user" && localStorage.getItem(LocalStorageLogedinuserId)&& <button className="
                 h-10
                 w-10
                 absolute
@@ -626,6 +629,15 @@ try {
               placeholder:text-white/40
             "
             />
+            <button onClick={()=>{
+if(coupon!==CouponCode){
+       return toast.error("Invalid couponcode")
+      }
+      toast.success("Woow!!! you saved 20% on your first order")
+      let DiscountedAmount=Number(CartSummary.totalamount)-Number(CartSummary.totalamount*20/100)
+      setFinalAmount(DiscountedAmount)
+      
+            }} className="bg-cyan-400 px-3 py-1 rounded-md mt-2">apply</button>
           </div>
 
           {/* TERMS */}
@@ -689,7 +701,7 @@ try {
             disabled:opacity-50
           "
           >
-            Place Order
+            Place Order {`Rs.${FinalAmount}`}
           </motion.button>
         </motion.div>
       </div>

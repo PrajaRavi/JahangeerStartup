@@ -15,11 +15,12 @@ export const signup = async (req, res) => {
       email,
       password,
       phoneNumber,
+      Address,
       
     } = req.body;
    
     // Required fields validation
-    if (!username || !email || !password) {
+    if (!username || !email || !password||!Address) {
       return res.status(400).json({
         success: false,
         msg: "Username, email and password are required",
@@ -42,7 +43,7 @@ export const signup = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({
         success: false,
-        msg: "User already exists with email or username",
+        msg: "User already exists with this email or phone ",
       });
     }
 
@@ -58,7 +59,8 @@ export const signup = async (req, res) => {
     let phone="+91"+String(phoneNumber)
     let msgbody=`You otp for verification is ${verificationCode}.Remember it is valid only for 5 minutes`
     // let data=await sendOTP("+919769479166",msgbody);
-  let data=await sendotpfast(phoneNumber,verificationCode)
+  // let data=await sendotpfast(phoneNumber,verificationCode)
+  let data=true;
 
     
     
@@ -73,6 +75,7 @@ export const signup = async (req, res) => {
       phoneNumber,
       profilePicture:'',
       verificationCode,
+      Address,
       verificationCodeExpires:Date.now() + 5 * 60 * 1000,
       isVerified: false,
     });

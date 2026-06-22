@@ -27,15 +27,15 @@ export type CurrServiceType={
   id?:string;
   Items:ServiceItem[];
 }
-const SERVICE_ITEMS: ServiceItem[] = [
-  { id: 1, name: "Shirt", price: 15 },
-  { id: 2, name: "T-Shirt", price: 12 },
-  { id: 3, name: "Trouser", price: 20 },
-  { id: 4, name: "Jeans", price: 25 },
-  { id: 5, name: "Saree", price: 60 },
-  { id: 6, name: "Blazer", price: 50 },
-  { id: 7, name: "Kurta", price: 30 },
-];
+// const SERVICE_ITEMS: ServiceItem[] = [
+//   { id: 1, name: "Shirt", price: 15 },
+//   { id: 2, name: "T-Shirt", price: 12 },
+//   { id: 3, name: "Trouser", price: 20 },
+//   { id: 4, name: "Jeans", price: 25 },
+//   { id: 5, name: "Saree", price: 60 },
+//   { id: 6, name: "Blazer", price: 50 },
+//   { id: 7, name: "Kurta", price: 30 },
+// ];
 
 export default function LaundryServiceModalDemo({open,setOpen,CurrService}:{open:boolean,setOpen:React.Dispatch<React.SetStateAction<boolean>>,CurrService:CurrServiceType}) {
   // const [open, setOpen] = useState(false);
@@ -95,7 +95,7 @@ const navigage=useNavigate();
   };
 
   const total = useMemo(() => {
-    return SERVICE_ITEMS.reduce(
+    return CurrService.Items.reduce(
       (acc, item) =>
         acc +
         item.price *
