@@ -8,7 +8,7 @@ interface PosterSliderProps {
 
 export default function PosterSlider({
   posters,
-  duration = 3000,
+  duration = 1000,
 }: PosterSliderProps) {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -34,7 +34,7 @@ export default function PosterSlider({
   };
 
   return (
-    <section className="w-[80%]">
+    <section className="md:w-[80%] w-[98%]">
       <div
         className="relative w-full overflow-hidden rounded-3xl bg-transparent"
         onMouseEnter={() => setPaused(true)}
