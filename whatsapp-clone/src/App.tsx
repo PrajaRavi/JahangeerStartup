@@ -20,6 +20,7 @@ import { setActiveUser, SetProductPickUpDay, SetProductPickUpTime, UpdateOrderDa
 // import ForgotPass from "./components/ForgotPass";
 
 import { toast } from "react-toastify";
+import LanguageSelector from "./components/LanguageSwitch";
 const ForgotPass=lazy(()=>import("./components/ForgotPass"))
 const AdminPanel=lazy(()=>import("./components/Admin"))
 const OrdersPage=lazy(()=>import("./components/ShowOrder"))
@@ -189,6 +190,7 @@ async  function GetProductPickUpDays(){
       <Route path="/cart" element={<OrderSummaryPage/>}/>
       <Route path="/show-orders" element={<OrdersPage/>}/>
       <Route path="/admin" element={<AdminPanel/>}/>
+      <Route path="/lang" element={<LanguageSelector/>}/>
       <Route path="/forgotpass/:phone" element={<ForgotPass/>}/>
 
     </Routes>

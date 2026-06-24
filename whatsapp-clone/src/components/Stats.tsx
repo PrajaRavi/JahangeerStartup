@@ -1,13 +1,17 @@
+import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/theme.context";
 
-const stats = [
-  { value: "10K+", label: "Customers" },
-  { value: "50K+", label: "Orders" },
-  { value: "99%", label: "Satisfaction" },
-  { value: "24Hr", label: "Delivery" },
-];
 export default function Stats() {
-const {dark}=useTheme()
+  const {dark}=useTheme()
+  const { t } =
+  useTranslation();
+  const stats = [
+    { value: "10K+", label: t("customers") },
+    { value: "50K+", label: t("orders") },
+    { value: "99%", label: t("satisfaction") },
+    { value: "24Hr", label: t("delivery") },
+  ];
+
   return (
      <section id="Stats" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div

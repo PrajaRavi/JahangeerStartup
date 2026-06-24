@@ -12,6 +12,7 @@ import {
 import { useDispatch } from "react-redux";
 import { setCartItems } from "../Redux/Slice/Auth.slice";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 export type ServiceItem = {
   id: number;
@@ -39,6 +40,7 @@ export type CurrServiceType={
 
 export default function LaundryServiceModalDemo({open,setOpen,CurrService}:{open:boolean,setOpen:React.Dispatch<React.SetStateAction<boolean>>,CurrService:CurrServiceType}) {
   // const [open, setOpen] = useState(false);
+  
 
   return (
     <div className="min-h-screen flex z-10 items-center justify-center bg-slate-100 p-5">
@@ -76,6 +78,9 @@ function ServiceModal({
     Record<number, number>
   >({});
   const dispatch=useDispatch();
+  const { t } =
+      useTranslation();
+  
 const navigage=useNavigate();
   const increase = (id: number) => {
     setCart((prev) => ({
@@ -417,7 +422,7 @@ const navigage=useNavigate();
             >
               <div>
                 <p className="text-slate-500  text-xs">
-                  ESTIMATED TOTAL
+                  {t("estimated_total")}
                 </p>
 
                 <motion.h2

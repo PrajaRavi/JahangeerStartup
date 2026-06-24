@@ -10,6 +10,7 @@ import ProfileModal from './ProfileModal';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { setActiveUser, SetIsUserLogin, SetOrderdProd } from '../Redux/Slice/Auth.slice';
+import { useTranslation } from 'react-i18next';
 
 
 function Navbar() {
@@ -20,11 +21,11 @@ function Navbar() {
   const User=useSelector((state:any)=>state.Auth.ActiveUser)
 // let OrderdProducts=useSelector((state:any)=>state.Auth.OrderdProducts)
 let OrderdProductsFlag=useSelector((state:any)=>state.Auth.OrderdProductsFlag)
-
+const { t } =
+    useTranslation();
   const dispatch=useDispatch();
   const navigate=useNavigate();
     const { dark } = useTheme();
-    let MenuOptions:string[]=["Services", "Process", "App", "Contact"]
     let [Profile,setProfile]=useState("Ravi")
   
     useEffect(()=>{
@@ -97,13 +98,12 @@ GetAllOrders();
           <img src={dark?logo1:logo} className="md:h-25 h-20" />
 
           <div className="hidden lg:flex gap-8">
-            <Link to={"/"}>Home</Link>
+            <Link to={"/"}>{t("home")}</Link>
             {User?.role!=="user" && localStorage.getItem(LocalStorageLogedinuserId)?<Link to={"/admin"}>Admin</Link>:null}
-            {MenuOptions.map((item) => (
-              <a key={item} href={`#${item}`} className="font-medium">
-                {item}
-              </a>
-            ))}
+            { <Link  to={"/lang"}>{t("language")}</Link>}
+            { <a  href={"#Services"}>{t("services")}</a>}
+            { <a href={"#Contact"}>{t("contact")}</a>}
+           
           </div>
 
           <div className="flex items-center gap-3">
@@ -124,7 +124,7 @@ GetAllOrders();
   setprofileOpen(true)
 }} className='w-full h-full rounded-full' />
              </div>:<button className=" px-5 py-3 rounded-xl bg-cyan-400 text-black font-semibold">
-             <Link to={"/signin/1234123123"}>signin</Link>
+             <Link to={"/signin/1234123123"}>{t("login")}</Link>
             </button>}
 
             {/* cart button */}
@@ -153,12 +153,20 @@ GetAllOrders();
 
         {mobileOpen && (
           <div className="lg:hidden px-6 pb-6 flex flex-col gap-4">
-            <Link to={"/"}>Home</Link>
+            <Link onClick={()=>{
+              setMobileOpen(false)
+            }} to={"/"}>{t("home")}</Link>
             {User?.role!=="user" && localStorage.getItem(LocalStorageLogedinuserId)}
+            { <Link onClick={()=>{
+              setMobileOpen(false)
+            }} to={"/lang"}>{t("language")}</Link>}
             
-            {["Services", "Process", "App", "Contact"].map((item) => (
-              <a key={item} onClick={()=>setMobileOpen(false)} href={`#${item}`}>{item}</a>
-            ))}
+            { <a onClick={()=>{
+              setMobileOpen(false)
+            }} href={"#Services"}>{t("services")}</a>}
+            { <a onClick={()=>{
+              setMobileOpen(false)
+            }} href={"#Contact"}>{t("contact")}</a>}
         
           </div>
         )}

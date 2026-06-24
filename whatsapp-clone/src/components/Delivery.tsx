@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { CouponCode, generatePickupDays, generateTimeSlots, LocalStorageLogedinuserId } from "../utils/Dotenv";
 import { useTheme } from "../context/theme.context";
+import { useTranslation } from "react-i18next";
 
 export default function SchedulePickupPage() {
   const [selectedDay, setSelectedDay] = useState<string|undefined>();
@@ -24,6 +25,9 @@ export default function SchedulePickupPage() {
   const User=useSelector((state:any)=>state.Auth.ActiveUser)
   let [FinalAmount,setFinalAmount]=useState<number>(0)
 const {dark}=useTheme()
+const { t } =
+    useTranslation();
+
 
   const [selectedTime, setSelectedTime] =
     useState("11-1");
@@ -41,18 +45,18 @@ const {dark}=useTheme()
   const [pickupDays,setpickupDays] = useState(
     [
     {
-      id: "today",
-      label: "Today",
+      id: t("today"),
+      label: t("today"),
       date: "30 May",
     },
     {
       id: "tomorrow",
-      label: "Tomorrow",
+      label: t("tomorrow"),
       date: "31 May",
     },
     {
       id: "after",
-      label: "Day After Tomorrow",
+      label: t("day_after_tomorrow"),
       date: "1 Jun",
     },
   ]
@@ -129,9 +133,9 @@ return toast.warn("You are not logedin")
   useEffect(()=>{
     LangAndLat();
     let data=generatePickupDays([
-  "Today",
-  "Tomorrow",
-  "Day After Tomorrow",
+  t("today"),
+  t("tomorrow"),
+  t("day_after_tomorrow"),
 ]);
     setpickupDays(data)
 
@@ -260,7 +264,7 @@ try {
             "
             >
               <MapPin size={22} />
-              Address
+              {t("address")}
             </h2>
 
             <div
@@ -282,7 +286,7 @@ try {
             >
               <div>
                 <p className="text-lg">
-                  Tap to select your Delivery location location
+                  {t("select_location")}
                 </p>
 {/*                 
 
@@ -344,7 +348,7 @@ try {
             "
             >
               <Calendar size={22} />
-              Choose Pickup Day
+              {t("choose_pickup_day")}
             </h2>
 
             <div className="mt-5 space-y-4">
@@ -408,7 +412,7 @@ try {
             "
             >
               <Clock3 size={22} />
-              Preferred Pickup Time
+              {t("preferred_time")}
             </h2>
 
             <div className="mt-5 space-y-4">
@@ -488,7 +492,7 @@ try {
             <form action="">
               <div>
             <label className="block mb-2 font-medium">
-              Address
+              {t("address")}
             </label>
 
             <input
@@ -518,7 +522,7 @@ try {
           </div>
             <div>
             <label className="block mb-2 font-medium">
-              Phone
+              {t("phone_number")}
             </label>
 
             <input
@@ -548,7 +552,8 @@ try {
           </div>
               <div>
             <label className="block mb-2 font-medium">
-              Alternate Phone
+              {t("phone_number")}
+              
             </label>
 
             <input
@@ -598,7 +603,7 @@ try {
             "
             >
               <Ticket size={22} />
-              Coupon
+              {t("coupon")}
             </h2>
 
             <input
@@ -662,8 +667,7 @@ if(coupon!==CouponCode){
             />
 
             <p className="text-sm">
-              I agree to Terms &
-              Conditions
+              {t("agree_terms")}
             </p>
           </div>
 
@@ -701,7 +705,7 @@ if(coupon!==CouponCode){
             disabled:opacity-50
           "
           >
-            Place Order {`Rs.${FinalAmount}`}
+            {t("place_order")} {`Rs.${FinalAmount}`}
           </motion.button>
         </motion.div>
       </div>

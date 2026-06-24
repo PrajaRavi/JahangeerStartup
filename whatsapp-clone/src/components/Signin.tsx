@@ -7,6 +7,7 @@ import { LocalStorageLogedinuserId } from "../utils/Dotenv";
 import { useDispatch } from "react-redux";
 import { SetIsUserLogin } from "../Redux/Slice/Auth.slice";
 import { useTheme } from "../context/theme.context";
+import { useTranslation } from "react-i18next";
 
 interface LoginForm {
   identifier: string; // Email or Phone
@@ -17,6 +18,10 @@ export default function SignInPage() {
   const {phone}=useParams();
   const dispatch=useDispatch();
   const {dark}=useTheme()
+  const { t } =
+      useTranslation();
+
+  
   let [OpenPopModal,setOpenPopModal]=useState<boolean>(false)
   let [LoginOtp,setLoginOtp]=useState<string>("")
   const [formData, setFormData] =
@@ -296,17 +301,17 @@ setOpenPopModal(false)
             text-white
           "
           >
-            Welcome Back
+            {t("welcome")}
           </h1>
 
-          <p
+          {/* <p
             className="
             text-slate-400
             mt-2
           "
           >
             Login to your account
-          </p>
+          </p> */}
         </div>
 
         <form
@@ -323,7 +328,7 @@ setOpenPopModal(false)
               mb-2
             "
             >
-              Email or Phone
+              {t("email_or_phone")}
             </label>
 
             <input
@@ -333,7 +338,7 @@ setOpenPopModal(false)
                 formData.identifier
               }
               onChange={handleChange}
-              placeholder="Enter email or phone"
+              placeholder={t("email_or_phone")}
               className="
               w-full
               border
@@ -368,7 +373,7 @@ setOpenPopModal(false)
               mb-2
             "
             >
-              Password
+              {t("password")}
             </label>
 
             <div className="relative">
@@ -383,7 +388,7 @@ setOpenPopModal(false)
                   formData.password
                 }
                 onChange={handleChange}
-                placeholder="Enter password"
+                placeholder={t("password")}
                 className="
               w-full
               border
@@ -478,7 +483,7 @@ setOpenPopModal(false)
               hover:underline
             "
             >
-              Forgot Password?
+              {t("forgot_password")}
             </button>
           </div>
 
@@ -517,7 +522,7 @@ setOpenPopModal(false)
                 Signing In...
               </>
             ) : (
-              "Sign In"
+              t('login')
             )}
           </button>
 
@@ -574,14 +579,14 @@ setOpenPopModal(false)
           text-slate-400
         "
         >
-          Don't have an account?{" "}
+          {t("dont_have_account")}?{" "}
           <button
             className="
             text-cyan-400
             hover:underline
           "
           >
-            <Link to={"/signup"}>Sign Up</Link>
+            <Link to={"/signup"}>{t("signup")}</Link>
           </button>
         </p>
      

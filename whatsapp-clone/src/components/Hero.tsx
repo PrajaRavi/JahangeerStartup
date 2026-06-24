@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
 import WashingMachine from "../assets/washing_machine.png"
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 export default function Hero() {
+  const { t } =
+      useTranslation();
+  
   return (
     <>
     {[...Array(12)].map((_, i) => (
@@ -29,25 +33,25 @@ export default function Hero() {
             </span>
 
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mt-6 leading-tight">
-              Laundry Done
-              <br />
-              Right Every Time.
+              
+              {t("laundry_done_right")}.
             </h1>
 
             <p className="mt-6 text-lg opacity-80 max-w-xl">
-              Professional laundry and dry-cleaning service with free pickup,
-              tracking, and doorstep delivery.
-            </p>
+              {t("laundry_description")}
+                          </p>
 
             <div className="flex flex-wrap gap-4 mt-8">
               <button onClick={()=>{
                 toast.success("from our services")
               }} className="px-8 py-4 rounded-2xl bg-cyan-400 text-black font-bold">
-                Book Now
+{t("book_now")}
+                
               </button>
 
               <button className="px-8 py-4 rounded-2xl border">
-                Learn More
+{t("learn_more")}
+                
               </button>
             </div>
           </div>

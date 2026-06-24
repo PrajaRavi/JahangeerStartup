@@ -1,5 +1,6 @@
 import axios from "axios";
 import { X, Mail, Phone, Camera } from "lucide-react";
+import { useTranslation } from "react-i18next";
 // import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -29,6 +30,9 @@ export default function ProfileModal({
   setProfile,
 }: ProfileModalProps) {
   if (!open) return null;
+  const { t } =
+      useTranslation();
+  
   // const User=useSelector((state:any)=>state.Auth.ActiveUser)
   async function UpdateDP(file:any){
     try {
@@ -150,12 +154,12 @@ export default function ProfileModal({
             font-bold
           "
           >
-            My Profile
+            {t("my_profile")}
           </h2>
 
-          <p className="text-sm text-slate-400 mt-1">
+          {/* <p className="text-sm text-slate-400 mt-1">
             Manage your account information
-          </p>
+          </p> */}
         </div>
 
         {/* User Info */}
@@ -287,7 +291,7 @@ export default function ProfileModal({
             transition
           "
           >
-            Update Profile
+            {t("update_profile")}
           </button>
 
           <button
@@ -308,7 +312,7 @@ export default function ProfileModal({
             transition
           "
           >
-            Logout
+            {t("logout")}
           </button>
         </div>
       </div>

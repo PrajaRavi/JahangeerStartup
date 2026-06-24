@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import "./i18n"
 import { Provider } from 'react-redux'
 import { store } from './Redux/Stores/Store.files.ts'
 import {Bounce, ToastContainer} from "react-toastify"

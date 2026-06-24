@@ -1,15 +1,20 @@
-const steps = [
-  "Schedule",
-  "Pickup",
-  "Clean",
-  "Deliver",
-];
+import { useTranslation } from "react-i18next";
+
 
 export default function Process() {
+  const { t } =
+  useTranslation();
+  const steps = [
+    t("schedule"),
+  t( "pickup"),
+  t("clean"),
+   t( "delivery"),
+  ];
+  
   return (
     <section id="Process" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <h2 className="text-center text-4xl font-bold">
-          How It Works
+          {t("how_it_works")}
         </h2>
 
         <div className="grid md:grid-cols-4 gap-8 mt-16">

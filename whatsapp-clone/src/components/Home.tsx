@@ -5,6 +5,7 @@ import Hero from "./Hero"
 import {useTheme } from "../context/theme.context";
 import PosterSlider from "../utils/Poster";
 import poster from "../assets/poster/poster1.png"
+import { useTranslation } from "react-i18next";
 /**
  * 
 import Services from "./Services";
@@ -28,6 +29,9 @@ const LoadingComp=()=>{
 
 export default function Home() {
   const {dark}=useTheme();
+ const { t } =
+     useTranslation();
+  
   return (
     <main
       className={`min-h-screen  w-125 sm:w-full transition-all duration-500 ${
@@ -92,20 +96,19 @@ export default function Home() {
 
           <div>
             <h2 className="text-5xl font-black">
-              Manage Laundry From Your Phone
+              {t("manage_laundry")}
             </h2>
 
             <p className="mt-6 opacity-80 text-lg">
-              Schedule pickups, track orders, make payments and receive
-              notifications in real-time.
+              {t("laundry_app_description")}
             </p>
 
             <div className="mt-8 flex gap-4 flex-wrap">
               <button className="px-6 py-4 rounded-xl bg-black text-white">
-                App Store
+                {t("app_store")}
               </button>
               <button className="px-6 py-4 rounded-xl bg-black text-white">
-                Play Store
+                {t("play_store")}
               </button>
             </div>
           </div>
@@ -115,12 +118,12 @@ export default function Home() {
       {/* CTA */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="bg-white/10 text-black rounded-[40px] p-12 text-center">
-          <h2 className="text-5xl font-black">Ready For Fresh Clothes?</h2>
+          <h2 className="text-5xl font-black">{t("delivery_ready")}</h2>
 
-          <p className="mt-4">Schedule your first pickup today.</p>
+          <p className="mt-4">{t("schedule_pickup")}.</p>
 
           <button className="mt-8 px-8 py-4 bg-black text-white rounded-2xl">
-            Get Started
+            {t("get_started")}
           </button>
         </div>
       </section>

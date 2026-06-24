@@ -1,0 +1,93 @@
+{
+  "welcome": "Welcome",
+  "home": "Home",
+  "services": "Services",
+  "about": "About Us",
+  "contact": "Contact Us",
+  "login": "Login",
+  "signup": "Sign Up",
+
+  "language": "Language",
+
+  "laundry_done_right": "Laundry Done Right Every Time",
+  "laundry_description": "Professional laundry and dry-cleaning service with free pickup, tracking, and doorstep delivery",
+
+  "book_now": "Book Now",
+  "learn_more": "Learn More",
+
+  "our_services": "Our Services",
+  "wash_fold": "Wash & Fold",
+  "wash_iron": "Wash & Iron",
+  "heavy_wash": "Heavy Wash Service",
+  "bag_cleaning": "Bag Cleaning",
+  "shoe_cleaning": "Shoe Cleaning",
+
+  "how_it_works": "How It Works",
+  "schedule": "Schedule",
+  "pickup": "Pickup",
+  "clean": "Clean",
+  "delivery": "Delivery",
+  "manage_laundry": "Manage Laundry From Your Phone",
+  "laundry_app_description": "Schedule pickups, track orders, make payments and receive notifications in real-time",
+
+  "app_store": "App Store",
+  "play_store": "Play Store",
+
+  "company": "Company",
+
+  "email_or_phone": "Email or Phone",
+  "password": "Password",
+
+  "full_name": "Full Name",
+  "email": "Email",
+
+  "customers": "Customers",
+  "orders": "Orders",
+  "satisfaction": "Satisfaction",
+
+  "delivery_ready": "Ready For Fresh Clothes?",
+  "schedule_pickup": "Schedule your first pickup today",
+  "get_started": "Get Started",
+
+  "professional_solutions": "Professional laundry solutions",
+
+  "shirt": "Shirt",
+  "tshirt": "T-Shirt",
+  "trouser": "Trouser",
+  "jeans": "Jeans",
+  "saree_regular": "Saree (Regular)",
+  "saree_etc": "Saree (Etc)",
+  "dress_material": "Dress Material",
+  "school_uniform": "School Uniform",
+  "kurti": "Kurti",
+  "plazzo": "Plazzo",
+  "curtain": "Curtain",
+  "bed_sheet": "Bed Sheet",
+  "pillow_cover": "Pillow Cover",
+
+  "estimated_total": "ESTIMATED TOTAL",
+  "address": "Address",
+  "select_location": "Tap to select your delivery location",
+
+  "choose_pickup_day": "Choose Pickup Day",
+  "today": "Today",
+  "tomorrow": "Tomorrow",
+  "day_after_tomorrow": "Day After Tomorrow",
+
+  "preferred_time": "Preferred Pickup Time",
+
+  "my_profile": "My Profile",
+  "update_profile": "Update Profile",
+  "logout": "Logout",
+  "forgot_password": "Forgot Password",
+  "phone_number": "Phone Number",
+  "agree_terms": "I agree to Terms & Conditions",
+  "place_order": "Place Order",
+  "dont_have_account": "Don't have an account?",
+  "view_product": "View Product",
+  "coupon": "Coupon",
+
+  "choose_language": "Choose Language",
+  "select_preferred_language": "Select your preferred language",
+  "current_language": "Current Language"
+}

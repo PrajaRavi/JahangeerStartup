@@ -1,0 +1,93 @@
+{
+  "welcome": "स्वागत है",
+  "home": "होम",
+  "services": "सेवाएं",
+  "about": "हमारे बारे में",
+  "contact": "संपर्क करें",
+  "login": "लॉगिन",
+  "signup": "साइन अप",
+  
+  "language": "भाषा",
+
+  "laundry_done_right": "हर बार सही तरीके से लॉन्ड्री",
+  "laundry_description": "फ्री पिकअप, ट्रैकिंग और घर तक डिलीवरी के साथ प्रोफेशनल लॉन्ड्री और ड्राई-क्लीनिंग सेवा",
+
+  "book_now": "अभी बुक करें",
+  "learn_more": "और जानें",
+
+  "our_services": "हमारी सेवाएं",
+  "wash_fold": "धुलाई और फोल्ड",
+  "wash_iron": "धुलाई और इस्त्री",
+  "heavy_wash": "हैवी वॉश सेवा",
+  "bag_cleaning": "बैग सफाई",
+  "shoe_cleaning": "जूते की सफाई",
+
+  "how_it_works": "यह कैसे काम करता है",
+  "schedule": "शेड्यूल",
+  "pickup": "पिकअप",
+  "clean": "सफाई",
+  "delivery": "डिलीवरी",
+  "manage_laundry": "अपने फोन से लॉन्ड्री प्रबंधित करें",
+  "laundry_app_description": "पिकअप शेड्यूल करें, ऑर्डर ट्रैक करें, भुगतान करें और रियल-टाइम नोटिफिकेशन प्राप्त करें",
+
+  "app_store": "ऐप स्टोर",
+  "play_store": "प्ले स्टोर",
+
+  "company": "कंपनी",
+
+  "email_or_phone": "ईमेल या फोन",
+  "password": "पासवर्ड",
+
+  "full_name": "पूरा नाम",
+  "email": "ईमेल",
+
+  "customers": "ग्राहक",
+  "orders": "ऑर्डर",
+  "satisfaction": "संतुष्टि",
+
+  "delivery_ready": "ताज़े कपड़ों के लिए तैयार?",
+  "schedule_pickup": "आज ही अपना पहला पिकअप शेड्यूल करें",
+  "get_started": "शुरू करें",
+
+  "professional_solutions": "प्रोफेशनल लॉन्ड्री समाधान",
+
+  "shirt": "शर्ट",
+  "tshirt": "टी-शर्ट",
+  "trouser": "पैंट",
+  "jeans": "जींस",
+  "saree_regular": "साड़ी (रेगुलर)",
+  "saree_etc": "साड़ी (अन्य)",
+  "dress_material": "ड्रेस मटेरियल",
+  "school_uniform": "स्कूल यूनिफॉर्म",
+  "kurti": "कुर्ती",
+  "plazzo": "प्लाज़ो",
+  "curtain": "परदा",
+  "bed_sheet": "बेडशीट",
+  "pillow_cover": "तकिया कवर",
+
+  "estimated_total": "अनुमानित कुल",
+  "address": "पता",
+  "select_location": "डिलीवरी स्थान चुनें",
+
+  "choose_pickup_day": "पिकअप दिन चुनें",
+  "today": "आज",
+  "tomorrow": "कल",
+  "day_after_tomorrow": "परसों",
+
+  "preferred_time": "पसंदीदा पिकअप समय",
+
+  "my_profile": "मेरा प्रोफाइल",
+  "update_profile": "प्रोफाइल अपडेट करें",
+  "logout": "लॉगआउट",
+  "forgot_password": "पासवर्ड भूल गए",
+  "phone_number": "फोन नंबर",
+  "agree_terms": "मैं नियम एवं शर्तों से सहमत हूँ",
+  "place_order": "ऑर्डर करें",
+  "dont_have_account": "क्या आपका खाता नहीं है?",
+  "view_product": "उत्पाद देखें",
+  "coupon": "कूपन",
+
+  "choose_language": "भाषा चुनें",
+  "select_preferred_language": "अपनी पसंदीदा भाषा चुनें",
+  "current_language": "वर्तमान भाषा"
+}

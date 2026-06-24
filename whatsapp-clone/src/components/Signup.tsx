@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import {  useNavigate } from "react-router";
 import { useTheme } from "../context/theme.context";
+import { useTranslation } from "react-i18next";
 
 interface FormData {
   username: string;
@@ -30,6 +31,9 @@ export default function SignupPage() {
     useState(false);
     const {dark}=useTheme()
     const navigate=useNavigate();
+    const { t } =
+        useTranslation();
+    
 
   const validate = () => {
     const newErrors: Partial<FormData> = {};
@@ -132,7 +136,7 @@ export default function SignupPage() {
     <div
       className={` w-[80%] flex items-center justify-center flex-col`}
     >
-        <h1
+        {/* <h1
           className="
           text-3xl
           font-bold
@@ -141,9 +145,9 @@ export default function SignupPage() {
         "
         >
           Create Account
-        </h1>
+        </h1> */}
 
-        <p
+        {/* <p
           className="
           text-center
           text-gray-500
@@ -152,7 +156,7 @@ export default function SignupPage() {
         "
         >
           Join My Dhobi Today
-        </p>
+        </p> */}
 
         <form
           onSubmit={handleSubmit}
@@ -161,7 +165,7 @@ export default function SignupPage() {
           {/* Name */}
           <div>
             <label className="block mb-2 font-medium">
-              Full Name
+              {t("full_name")}
             </label>
 
             <input
@@ -169,7 +173,7 @@ export default function SignupPage() {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              placeholder="Enter your username"
+              placeholder={t("full_name")}
               className="
               w-full
               border
@@ -191,7 +195,7 @@ export default function SignupPage() {
           {/* Email */}
           <div>
             <label className="block mb-2 font-medium">
-              Email
+              {t("email")}
             </label>
 
             <input
@@ -199,7 +203,7 @@ export default function SignupPage() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder={t("email")}
               className="
               w-full
               border
@@ -220,7 +224,7 @@ export default function SignupPage() {
           </div>
           <div>
             <label className="block mb-2 font-medium">
-              Password
+              {t("password")}
             </label>
 
             <input
@@ -228,7 +232,7 @@ export default function SignupPage() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Enter your password"
+              placeholder={t("password")}
               className="
               w-full
               border
@@ -250,7 +254,7 @@ export default function SignupPage() {
           
           <div>
             <label className="block mb-2 font-medium">
-              Address
+              {t("address")}
             </label>
 
             <input
@@ -258,7 +262,7 @@ export default function SignupPage() {
               name="Address"
               value={formData.Address}
               onChange={handleChange}
-              placeholder="Enter your Address"
+              placeholder={t("address")}
               className="
               w-full
               border
@@ -277,7 +281,7 @@ export default function SignupPage() {
           {/* Contact */}
           <div>
             <label className="block mb-2 font-medium">
-              Contact Number
+              {t("phone_number")}
             </label>
 
             <input
@@ -342,7 +346,7 @@ export default function SignupPage() {
                 Creating Account...
               </>
             ) : (
-              "Sign Up"
+              t("signup")
             )}
           </button>
         </form>
